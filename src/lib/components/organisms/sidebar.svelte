@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
 	import SideHeader from '$lib/components/molecules/sidebar-header.svelte';
-	import NavUser from '$lib/components/molecules/siderbar-user.svelte';
+	import NavUser from '$lib/components/molecules/sidebar-user.svelte';
 	import { getContext } from 'svelte';
 
 	// Sample data
