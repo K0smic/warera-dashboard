@@ -1,19 +1,20 @@
 <script lang="ts">
-  import "./layout.css";
-  import favicon from "$lib/assets/favicon.svg";
+	import './layout.css';
+	import favicon from '$lib/assets/favicon.svg';
 
-  import * as Sidebar from "$lib/components/atoms/sidebar/index.js";
-  import AppSidebar from "$lib/components/organisms/sidebar.svelte";
+	import { getContext, setContext } from 'svelte';
 
-  export const prerender = true;
+	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
+	import AppSidebar from '$lib/components/organisms/sidebar.svelte';
 
-  let { children } = $props();
+	let { children } = $props();
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <Sidebar.Provider>
-  <AppSidebar />
-  <main>
-    {@render children?.()}
-  </main>
+	<AppSidebar />
+	<main>
+		<Sidebar.Trigger />
+		{@render children?.()}
+	</main>
 </Sidebar.Provider>
