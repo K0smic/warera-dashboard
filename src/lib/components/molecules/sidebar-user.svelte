@@ -1,27 +1,81 @@
 <script lang="ts">
+	import * as InputGroup from '$lib/components/atoms/input-group/index.js';
 	import * as Avatar from '$lib/components/atoms/avatar/index.js';
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
-	import LogOutIcon from '@lucide/svelte/icons/log-out';
-	let { user }: { user: { name: string; email: string; avatar: string } } = $props();
+	import * as Collapsible from '$lib/components/atoms/collapsible/index.js';
+	import * as Card from '$lib/components/atoms/card/index.js';
+	import MdiExitRun from '~icons/mdi/exit-run';
+	import MdiUserSearch from '~icons/mdi/user-search';
+	import MdiSearch from '~icons/mdi/search';
+	import { createUserState } from '$lib/stores/user.svelte.js';
+	import Button from '../atoms/button/button.svelte';
+
+	const userState = createUserState();
+	let userId = $state('');
+	let isOpen = $state(false);
 </script>
 
 <Sidebar.Menu>
-	<Sidebar.MenuItem>
+	<Sidebar.MenuItem class="">
+		<Collapsible.Root bind:open={isOpen}>
+			<Collapsible.Content>
+				<Card.Root class="">
+					<Card.Header>
+						<Card.Title>Enter your account ID</Card.Title>
+						<Card.Description>Enter your account ID below to get your stats.</Card.Description>
+					</Card.Header>
+					<Card.CardContent class="flex w-full content-center justify-between">
+						<InputGroup.Root>
+							<InputGroup.Input placeholder="Your account ID" bind:value={userId} />
+							<InputGroup.Addon align="inline-end">
+								<MdiSearch />
+							</InputGroup.Addon>
+						</InputGroup.Root>
+					</Card.CardContent>
+					<Card.Footer>
+						<Button
+							class="w-full"
+							onclick={() => {
+								userState.loadUser(userId);
+								isOpen = false;
+							}}>Login</Button
+						>
+					</Card.Footer>
+				</Card.Root>
+			</Collapsible.Content>
+		</Collapsible.Root>
+
 		<Sidebar.MenuButton
+			onclick={() => !userState.user && (isOpen = !isOpen)}
 			size="lg"
 			class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 		>
 			<Avatar.Root class="size-8 rounded-lg">
-				<Avatar.Image src={user.avatar} alt={user.name} />
-				<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+				<Avatar.Image
+					src={userState.user ? userState.user.avatarUrl : ''}
+					alt={userState.user ? userState.user.username : ''}
+				/>
+				<Avatar.Fallback class="rounded-lg"><MdiUserSearch class="size-6" /></Avatar.Fallback>
 			</Avatar.Root>
 			<div class="grid flex-1 text-start text-sm leading-tight">
-				<span class="truncate font-medium">{user.name}</span>
-				<span class="truncate text-xs">{user.email}</span>
+				<span class="truncate font-medium"
+					>{userState.user ? userState.user.username : 'Welcome'}</span
+				>
+				<span class="truncate text-xs"
+					>{userState.user ? userState.user.leveling.level : 'Search your username'}</span
+				>
 			</div>
 		</Sidebar.MenuButton>
-		<Sidebar.MenuAction>
-			<LogOutIcon />
-		</Sidebar.MenuAction>
+		{#if userState.user}
+			<Sidebar.MenuAction
+				class="size-7"
+				title="Logout"
+				style="color: var(--destructive)"
+				onclick={() => userState.reset()}
+			>
+				<MdiExitRun />
+				<span class="sr-only">Logout</span>
+			</Sidebar.MenuAction>
+		{/if}
 	</Sidebar.MenuItem>
 </Sidebar.Menu>

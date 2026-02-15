@@ -1,7 +1,13 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
-	import Item from '$lib/components/atoms/item/item.svelte';
+	import Button from '$lib/components/atoms/button/button.svelte';
+	import { toggleMode } from 'mode-watcher';
 	import IconWorld from 'virtual:icons/mdi/world';
+	import MdiWhiteBalanceSunny from '~icons/mdi/white-balance-sunny';
+	import MdiMoonAndStars from '~icons/mdi/moon-and-stars';
+
+	import SunIcon from '@lucide/svelte/icons/sun';
+	import MoonIcon from '@lucide/svelte/icons/moon';
 	// This should be `Component` after @lucide/svelte updates types
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 </script>
@@ -10,7 +16,7 @@
 	<Sidebar.MenuItem>
 		<Sidebar.MenuButton
 			size="lg"
-			class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+			class="flex-1 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 			tabindex={-1}
 		>
 			<div
@@ -19,9 +25,18 @@
 				<IconWorld class="size-7" />
 			</div>
 			<div class="grid flex-1 text-start text-sm leading-tight">
-				<span class="truncate font-medium">War Era</span>
+				<h1 class="truncate font-medium">War Era</h1>
 				<span class="truncate text-xs">Dashboard</span>
 			</div>
 		</Sidebar.MenuButton>
+		<Sidebar.MenuAction onclick={toggleMode} class="size-7" title="Toggle light/dark theme">
+			<MdiWhiteBalanceSunny
+				class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 !transition-all dark:scale-0 dark:-rotate-90"
+			/>
+			<MdiMoonAndStars
+				class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 !transition-all dark:scale-100 dark:rotate-0"
+			/>
+			<span class="sr-only">Toggle theme</span>
+		</Sidebar.MenuAction>
 	</Sidebar.MenuItem>
 </Sidebar.Menu>

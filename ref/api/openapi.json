@@ -204,7 +204,10 @@
                                                 "regionLiberated",
                                                 "strategicResourcesReshuffled",
                                                 "resistanceIncreased",
-                                                "resistanceDecreased"
+                                                "resistanceDecreased",
+                                                "revolutionStarted",
+                                                "revolutionEnded",
+                                                "financedRevolt"
                                             ]
                                         },
                                         "description": "Filter events by event types"
@@ -889,7 +892,7 @@
                 "tags": [
                     "search"
                 ],
-                "description": "Performs a global search across users, companies, articles, and other entities",
+                "description": "Performs a global search across users, countries, regions, military units, parties, and other entities",
                 "summary": "Global search",
                 "operationId": "search.searchAnything",
                 "responses": {
@@ -1082,6 +1085,40 @@
                 }
             }
         },
+        "/article.getArticleLiteById": {
+            "post": {
+                "tags": [
+                    "article"
+                ],
+                "description": "Retrieves only the title and basic stats of an article without counting as a view",
+                "summary": "Get article lite by ID",
+                "operationId": "article.getArticleLiteById",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "articleId": {
+                                        "type": "string",
+                                        "description": "The ID of the article to get"
+                                    }
+                                },
+                                "required": [
+                                    "articleId"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/article.getArticlesPaginated": {
             "post": {
                 "tags": [
@@ -1104,6 +1141,7 @@
                                     "type": {
                                         "type": "string",
                                         "enum": [
+                                            "daily",
                                             "weekly",
                                             "top",
                                             "my",
@@ -1274,6 +1312,10 @@
                                         "type": "string",
                                         "description": "The country ID to get transactions for"
                                     },
+                                    "partyId": {
+                                        "type": "string",
+                                        "description": "The party ID to get transactions for"
+                                    },
                                     "itemCode": {
                                         "type": "string",
                                         "description": "The item code to get transactions for"
@@ -1346,6 +1388,7 @@
                                         "enum": [
                                             "bunker",
                                             "base",
+                                            "pacificationCenter",
                                             "storage",
                                             "automatedEngine",
                                             "breakRoom",
