@@ -1,0 +1,15 @@
+meta {
+  name: region.getById
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://api2.warera.io/trpc/region.getById?input={"regionId": ""}
+  body: none
+  auth: none
+}
+
+params:query {
+  input: {"regionId": ""}
+}

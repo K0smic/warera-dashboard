@@ -1453,6 +1453,134 @@
                 }
             }
         },
+        "/company.getProductionBonus": {
+            "post": {
+                "tags": [
+                    "company"
+                ],
+                "description": "Get production bonus for a company",
+                "summary": "Get company production bonus",
+                "operationId": "company.getProductionBonus",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "companyId": {
+                                        "type": "string",
+                                        "description": "The unique identifier of the company"
+                                    }
+                                },
+                                "required": [
+                                    "companyId"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/company.getCompaniesCount": {
+            "post": {
+                "tags": [
+                    "company"
+                ],
+                "description": "Get the total count of companies for a user",
+                "summary": "Get companies count",
+                "operationId": "company.getCompaniesCount",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "userId": {
+                                        "type": "string",
+                                        "description": "The unique identifier of the user"
+                                    }
+                                },
+                                "required": [
+                                    "userId"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/company.getActiveCompaniesCount": {
+            "post": {
+                "tags": [
+                    "company"
+                ],
+                "description": "Get the count of active companies for a user",
+                "summary": "Get active companies count",
+                "operationId": "company.getActiveCompaniesCount",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "userId": {
+                                        "type": "string",
+                                        "description": "The unique identifier of the user"
+                                    }
+                                },
+                                "required": [
+                                    "userId"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/workOffer.getWageStats": {
+            "post": {
+                "tags": [
+                    "workOffer"
+                ],
+                "description": "Get wage statistics and eligible work offers",
+                "summary": "Get wage stats",
+                "operationId": "workOffer.getWageStats",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {},
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/worker.getTotalWorkersCount": {
             "post": {
                 "tags": [

@@ -14,6 +14,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
+		"@iconify-json/material-symbols-light": "^1.2.55",
 		"@iconify-json/mdi": "^1.2.3",
 		"@internationalized/date": "^3.11.0",
 		"@lucide/svelte": "^0.561.0",

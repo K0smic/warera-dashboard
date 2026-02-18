@@ -1,5 +1,5 @@
 // src/lib/api/user.api.ts
-import type { paths } from '$lib/services/api/types';
+import type { paths, responses } from '$lib/services/index';
 import { trpcFetch } from './client';
 
 /* =======================
@@ -14,16 +14,23 @@ type RequestBody<P extends keyof paths> = NonNullable<
  * User endpoints
  * ======================= */
 
-export function getUserLite(input: RequestBody<'/user.getUserLite'>) {
-	return trpcFetch<
-		RequestBody<'/user.getUserLite'>,
-		paths['/user.getUserLite']['post']['responses']['200']
-	>('user.getUserLite', input);
+export function getUserLite(
+	input: RequestBody<'/user.getUserLite'>,
+	fetchFn: typeof fetch = fetch
+) {
+	return trpcFetch<RequestBody<'/user.getUserLite'>, responses['schemas']['UserLite']>(
+		'user.getUserLite',
+		input,
+		fetchFn
+	);
 }
 
-export function getUsersByCountry(input: RequestBody<'/user.getUsersByCountry'>) {
+export function getUsersByCountry(
+	input: RequestBody<'/user.getUsersByCountry'>,
+	fetchFn: typeof fetch = fetch
+) {
 	return trpcFetch<
 		RequestBody<'/user.getUsersByCountry'>,
 		paths['/user.getUsersByCountry']['post']['responses']['200']
-	>('user.getUsersByCountry', input);
+	>('user.getUsersByCountry', input, fetchFn);
 }

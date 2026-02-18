@@ -1,0 +1,284 @@
+{
+    "/company.getById": {
+        "company": {
+            "_id": "6986122cc04890e13615f260",
+            "user": "696f3823bcd04419d1f91460",
+            "region": "6813b7039403bc4170a5d6b7",
+            "itemCode": "lightAmmo",
+            "isFull": false,
+            "name": "Yes Rico, Kaboom!",
+            "concreteInvested": 250,
+            "production": 3,
+            "activeUpgradeLevels": {
+                "storage": 1,
+                "automatedEngine": 3,
+                "breakRoom": 1
+            },
+            "workerCount": 0,
+            "createdAt": "2026-02-06T16:09:16.936Z",
+            "updatedAt": "2026-02-18T08:00:36.056Z",
+            "__v": 0,
+            "estimatedValue": 539.7637377298172,
+            "movedUpAt": "2026-02-16T22:37:02.987Z"
+        }
+    },
+    "/region.getById": {
+        {
+            "result": {
+                "data": {
+                    "stats": {
+                        "investedMoney": 0
+                    },
+                    "dates": {
+                        "lastOwnershipChangeAt": "2025-11-17T13:55:03.081Z"
+                    },
+                    "_id": "6813b7039403bc4170a5d6b7",
+                    "code": "fr-center",
+                    "country": "6813b6d446e731854c7ac79a",
+                    "initialCountry": "6813b6d446e731854c7ac79a",
+                    "neighbors": [
+                        "6813b7049403bc4170a5d6bd",
+                        "6813b7049403bc4170a5d6ba",
+                        "6813b7049403bc4170a5d6c0",
+                        "6813b7049403bc4170a5d6c3",
+                        "6813b7039403bc4170a5d6b4",
+                        "6813b7049403bc4170a5d6c6",
+                        "6813b7039403bc4170a5d693",
+                        "6813b7039403bc4170a5d686",
+                        "6813b7039403bc4170a5d68a"
+                    ],
+                    "isCapital": false,
+                    "isLinkedToCapital": true,
+                    "upgradesV2": {
+                        "upgrades": {
+                            "base": {
+                                "level": 2,
+                                "constructionPoints": 0,
+                                "investedMoney": 300,
+                                "constructionStartedAt": "2025-06-10T23:07:01.447Z",
+                                "isUnderConstruction": null,
+                                "lastConstructions": [],
+                                "status": "disabled",
+                                "constructionEndedAt": "2025-06-11T00:27:01.242Z",
+                                "statusChangedAt": "2025-06-15T01:41:27.894Z"
+                            },
+                            "bunker": {
+                                "level": 1,
+                                "constructionPoints": 0,
+                                "investedMoney": 100,
+                                "constructionStartedAt": "2025-06-21T13:36:11.987Z",
+                                "isUnderConstruction": null,
+                                "lastConstructions": [],
+                                "status": "active",
+                                "constructionEndedAt": "2025-06-21T14:40:35.335Z"
+                            }
+                        },
+                        "activeConstructionCount": 0
+                    },
+                    "name": "Central France",
+                    "mainCity": "Lyon",
+                    "development": 9.76,
+                    "baseDevelopment": 9.76,
+                    "countryCode": "fr",
+                    "position": [
+                        4.8357,
+                        45.764
+                    ],
+                    "biome": "plains",
+                    "climate": "moderate",
+                    "__v": 28,
+                    "resistance": 0,
+                    "activeUpgradeLevels": {},
+                    "strategicResource": "gold",
+                    "resistanceMax": 976
+                }
+            }
+        }
+    },
+    "/region.getById w/ deposit"{
+        {
+            "result": {
+                "data": {
+                    "stats": {
+                        "investedMoney": 0
+                    },
+                    "dates": {
+                        "lastOwnershipChangeAt": "2026-01-27T13:12:48.042Z"
+                    },
+                    "_id": "6813b70b9403bc4170a5dac5",
+                    "code": "ir-balochistan",
+                    "country": "6813b6d546e731854c7ac862",
+                    "initialCountry": "6813b6d546e731854c7ac8a6",
+                    "neighbors": [
+                        "6813b70b9403bc4170a5dabc",
+                        "6813b70b9403bc4170a5dac8",
+                        "6813b70b9403bc4170a5dabf",
+                        "6813b70d9403bc4170a5db8e",
+                        "6813b70d9403bc4170a5db9d",
+                        "6813b70d9403bc4170a5db8b"
+                    ],
+                    "isCapital": false,
+                    "isLinkedToCapital": true,
+                    "upgradesV2": {
+                        "upgrades": {}
+                    },
+                    "name": "Iranian Balochistan",
+                    "mainCity": "Zahedan",
+                    "development": 0.12,
+                    "baseDevelopment": 0.12,
+                    "countryCode": "ir",
+                    "position": [
+                        60.8629,
+                        29.4963
+                    ],
+                    "biome": "desert",
+                    "climate": "arid",
+                    "__v": 28,
+                    "resistance": 80,
+                    "hasCoast": true,
+                    "resistanceMax": 100,
+                    "deposit": {
+                        "type": "limestone",
+                        "startsAt": "2026-02-17T10:00:42.206Z",
+                        "endsAt": "2026-02-22T10:00:42.206Z",
+                        "bonusPercent": 30
+                    }
+                }
+            }
+        }
+    },
+    "/country.getCountryById": {
+        {
+            "result": {
+                "data": {
+                    "taxes": {
+                        "income": 12,
+                        "market": 1,
+                        "selfWork": 8
+                    },
+                    "unrest": {
+                        "barMax": 8939,
+                        "bar": 0,
+                        "lastContributionAt": "2026-02-12T14:15:00.181Z"
+                    },
+                    "_id": "6813b6d546e731854c7ac862",
+                    "name": "India",
+                    "code": "in",
+                    "money": 935.3598000000044,
+                    "orgs": [
+                        "6813b6f33e57e0601e792db6"
+                    ],
+                    "allies": [
+                        "6813b6d546e731854c7ac87d",
+                        "6813b6d446e731854c7ac79c",
+                        "6813b6d446e731854c7ac7ac",
+                        "6813b6d446e731854c7ac7eb",
+                        "6813b6d546e731854c7ac829",
+                        "683ddd2c24b5a2e114af15c3"
+                    ],
+                    "warsWith": [
+                        "683ddd2c24b5a2e114af15d1",
+                        "683ddd2c24b5a2e114af15b9",
+                        "6813b6d446e731854c7ac7e2",
+                        "6813b6d546e731854c7ac8da",
+                        "683ddd2c24b5a2e114af15d9",
+                        "683ddd2c24b5a2e114af15c1",
+                        "683ddd2c24b5a2e114af1609",
+                        "683ddd2c24b5a2e114af15b5",
+                        "6813b6d446e731854c7ac7b6",
+                        "6813b6d446e731854c7ac80e",
+                        "6813b6d546e731854c7ac8cb",
+                        "6873d0ea1758b40e712b5f59",
+                        "683ddd2c24b5a2e114af1603",
+                        "683ddd2c24b5a2e114af160f"
+                    ],
+                    "scheme": "blue",
+                    "mapAccent": "light",
+                    "__v": 71,
+                    "strategicResources": {
+                        "resources": {
+                            "lithium": [
+                                "6813b70c9403bc4170a5dafe"
+                            ],
+                            "rareEarths": [
+                                "683ddd3f36dbc90b780475cb",
+                                "6813b70a9403bc4170a5d9de"
+                            ],
+                            "diamonds": [
+                                "6873d11794e6b3b7989a4ce6",
+                                "683ddd3f36dbc90b78047562"
+                            ],
+                            "coal": [
+                                "687eab418fc7f0dfa1d2b988"
+                            ],
+                            "uranium": [
+                                "6813b70d9403bc4170a5db9d"
+                            ],
+                            "gold": [
+                                "6873d11494e6b3b7989a4c11"
+                            ]
+                        },
+                        "bonuses": {
+                            "productionPercent": 31,
+                            "developmentPercent": 31
+                        }
+                    },
+                    "rankings": {
+                        "countryRegionDiff": {
+                            "value": 29,
+                            "rank": 4,
+                            "tier": "diamond"
+                        },
+                        "countryDamages": {
+                            "value": 127202719,
+                            "rank": 23,
+                            "tier": "platinum"
+                        },
+                        "weeklyCountryDamages": {
+                            "value": 2495559,
+                            "rank": 27,
+                            "tier": "platinum"
+                        },
+                        "weeklyCountryDamagesPerCitizen": {
+                            "value": 15895.28025477707,
+                            "rank": 51,
+                            "tier": "bronze"
+                        },
+                        "countryDevelopment": {
+                            "value": 120.14,
+                            "rank": 13,
+                            "tier": "platinum"
+                        },
+                        "countryActivePopulation": {
+                            "value": 157,
+                            "rank": 8,
+                            "tier": "diamond"
+                        },
+                        "countryWealth": {
+                            "value": 12334.170895049625,
+                            "rank": 6,
+                            "tier": "diamond"
+                        },
+                        "countryBounty": {
+                            "value": 10188.7740935763,
+                            "rank": 25,
+                            "tier": "platinum"
+                        },
+                        "countryProductionBonus": {
+                            "value": 31,
+                            "rank": 4,
+                            "tier": "diamond"
+                        }
+                    },
+                    "currentBattleOrder": "6870140f80d2db2a8ef133e4",
+                    "updatedAt": "2026-02-18T09:00:04.510Z",
+                    "development": 89.39974914086923,
+                    "discordUrl": "https://discord.gg/g3jm8aGGMv",
+                    "specializedItem": "limestone",
+                    "rulingParty": "698d07a0335cf9b55ccbf4c1",
+                    "pinnedArticle": "694d7aee5b77a68527db1044"
+                }
+            }
+        }
+    }
+}

@@ -3,11 +3,19 @@
 	import SideHeader from '$lib/components/molecules/sidebar-header.svelte';
 	import NavUser from '$lib/components/molecules/sidebar-user.svelte';
 	import SideNav from '$lib/components/molecules/sidebar-nav.svelte';
+	import { createUserState } from '$lib/stores/user.svelte';
+	import type { ComponentProps } from 'svelte';
 
 	import MdiCartVariant from '~icons/mdi/cart-variant';
 	import MdiIndustrial from '~icons/mdi/industrial';
 
 	// Sample data
+
+	const userState = createUserState();
+	let userId: string = '';
+	if (userState.user) {
+		userId = userState.user._id;
+	}
 
 	const sideNav = [
 		{
@@ -30,7 +38,7 @@
 			items: [
 				{
 					title: 'Overview',
-					url: '#'
+					url: '/companies/' + userId
 				},
 				{
 					title: 'Wages',
@@ -39,9 +47,15 @@
 			]
 		}
 	];
+
+	let {
+		ref = $bindable(null),
+		collapsible = 'icon',
+		...restProps
+	}: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
 
-<Sidebar.Root collapsible="icon">
+<Sidebar.Root {collapsible} {...restProps}>
 	<Sidebar.Header>
 		<SideHeader />
 	</Sidebar.Header>

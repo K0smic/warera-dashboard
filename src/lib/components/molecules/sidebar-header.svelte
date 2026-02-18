@@ -14,21 +14,23 @@
 
 <Sidebar.Menu>
 	<Sidebar.MenuItem>
-		<Sidebar.MenuButton
-			size="lg"
-			class="flex-1 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-			tabindex={-1}
-		>
-			<div
-				class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+		<a href="/">
+			<Sidebar.MenuButton
+				size="lg"
+				class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+				tabindex={-1}
 			>
-				<IconWorld class="size-7" />
-			</div>
-			<div class="grid flex-1 text-start text-sm leading-tight">
-				<h1 class="truncate font-medium">War Era</h1>
-				<span class="truncate text-xs">Dashboard</span>
-			</div>
-		</Sidebar.MenuButton>
+				<div
+					class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+				>
+					<IconWorld class="size-7" />
+				</div>
+				<div class="grid flex-1 text-start text-sm leading-tight">
+					<h1 class="truncate font-medium">War Era</h1>
+					<span class="truncate text-xs">Dashboard</span>
+				</div>
+			</Sidebar.MenuButton>
+		</a>
 		<Sidebar.MenuAction onclick={toggleMode} class="size-7" title="Toggle light/dark theme">
 			<MdiWhiteBalanceSunny
 				class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 !transition-all dark:scale-0 dark:-rotate-90"
