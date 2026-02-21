@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/atoms/card/index';
 	import { Badge } from '$lib/components/atoms/badge';
+	import { camelCaseToNormalText } from '$lib/utils';
 
 	import type { responses } from '$lib/services/index';
 	import MdiBitcoin from '~icons/mdi/bitcoin';
@@ -45,10 +46,7 @@
 			<div>
 				<Card.Title class="text-lg">{company.name}</Card.Title>
 				<Card.Description>
-					{company.itemCode
-						.replace(/([a-z])([A-Z])/g, '$1 $2')
-						.charAt(0)
-						.toUpperCase() + company.itemCode.replace(/([a-z])([A-Z])/g, '$1 $2').slice(1)}
+					{camelCaseToNormalText(company.itemCode)}
 				</Card.Description>
 			</div>
 

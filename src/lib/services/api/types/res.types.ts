@@ -10,8 +10,8 @@ export interface responses {
 			concreteInvested: number;
 			production: number;
 			activeUpgradeLevels: {
-				storage?: number;
-				automatedEngine?: number;
+				storage: number;
+				automatedEngine: number;
 				breakRoom?: number;
 				[key: string]: number | undefined;
 			};

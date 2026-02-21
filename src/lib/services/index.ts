@@ -11,8 +11,9 @@ export {
 	getUpgradeByTypeAndEntity,
 	getRecommendedRegionIdsByItemCode
 } from './api/companies.api';
-export { getCountry, getRegion } from './api/country.api';
+export { getCountries, getCountry, getRegions, getRegion } from './api/countries.api';
 export { getGameConfig } from './api/configs.api';
+export { getTopOrders } from './api/trading.api';
 
 export type * from './api/types/paths.types';
 export type * from './api/types/res.types';

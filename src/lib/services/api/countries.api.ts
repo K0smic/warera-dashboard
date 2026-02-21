@@ -12,6 +12,28 @@ type RequestBody<P extends keyof paths> = NonNullable<
  * User endpoints
  * ======================= */
 
+export function getCountries(
+	input: RequestBody<'/country.getAllCountries'>,
+	fetchFn: typeof fetch = fetch
+) {
+	return trpcFetch<RequestBody<'/country.getAllCountries'>, responses['responses']>(
+		'country.getAllCountries',
+		input,
+		fetchFn
+	);
+}
+
+export function getRegions(
+	input: RequestBody<'/region.getRegionsObject'>,
+	fetchFn: typeof fetch = fetch
+) {
+	return trpcFetch<RequestBody<'/region.getRegionsObject'>, responses['responses']>(
+		'region.getRegionsObject',
+		input,
+		fetchFn
+	);
+}
+
 export function getCountry(
 	input: RequestBody<'/country.getCountryById'>,
 	fetchFn: typeof fetch = fetch
