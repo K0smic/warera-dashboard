@@ -3,6 +3,7 @@
 	import { Badge } from '$lib/components/atoms/badge';
 	import { Separator } from '$lib/components/atoms/separator';
 	import IconUpgrade from '~icons/material-symbols/upgrade';
+	import CardFooter from '../atoms/card/card-footer.svelte';
 
 	interface UpgradeStats {
 		totalSteelInvested: number;
@@ -22,11 +23,11 @@
 	let { engineLevel, storageLevel, breakRoomLevel, engineStats, storageStats }: Props = $props();
 </script>
 
-<Card>
+<Card class="col-span-2 xl:col-span-1">
 	<CardHeader>
 		<div class="flex items-start justify-between">
 			<CardTitle class="flex flex-1"><IconUpgrade class="h-5 w-5" />Upgrades</CardTitle>
-			<div class="flex flex-1 grow justify-between gap-1">
+			<div class="hidden flex-1 grow justify-between gap-1 sm:flex">
 				<Badge class="grow rounded-sm font-semibold">Engine: {engineLevel}</Badge>
 				<Badge class="grow rounded-sm font-semibold">Storage: {storageLevel}</Badge>
 				<Badge class="grow rounded-sm font-semibold">Rooms: {breakRoomLevel}</Badge>
@@ -59,4 +60,11 @@
 			</div>
 		{/each}
 	</CardContent>
+	<CardFooter>
+		<div class="flex flex-1 grow justify-between gap-1 sm:hidden">
+			<Badge class="grow rounded-sm font-semibold">Engine: {engineLevel}</Badge>
+			<Badge class="grow rounded-sm font-semibold">Storage: {storageLevel}</Badge>
+			<Badge class="grow rounded-sm font-semibold">Rooms: {breakRoomLevel}</Badge>
+		</div>
+	</CardFooter>
 </Card>

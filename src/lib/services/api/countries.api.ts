@@ -5,7 +5,7 @@ import { trpcFetch } from './client';
  * ======================= */
 
 type RequestBody<P extends keyof paths> = NonNullable<
-	paths[P]['post']['requestBody']
+	paths[P]['get']['requestBody']
 >['content']['application/json'];
 
 /* =======================

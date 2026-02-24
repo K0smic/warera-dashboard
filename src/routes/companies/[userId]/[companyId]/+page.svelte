@@ -7,16 +7,22 @@
 	import {
 		CompanyHeader,
 		SummaryCards,
-		CompanyPerformanceCard,
 		UpgradesCard,
-		BestRegionsTable
+		BestRegionsTable,
+		CompanyWage,
+		CompanyWorkers
 	} from '$lib/components/molecules';
 
 	let { data }: PageProps = $props();
+
+	//DEBUG:
+	$inspect(data);
+
 	const configsState = createGameConfigs();
 	const countriesState = createCountries();
 
 	const item = $derived(configsState.configs.items[data.company.itemCode]);
+	const inputPrice = $derived(data.productionNeeds.reduce((input, obj) => obj.cost + input, 0));
 
 	// ===== HELPER FUNCTIONS =====
 	const getOrderPrice = (orders: any[], orderType: 'buy' | 'sell') => orders[0]?.price ?? 0;
@@ -103,7 +109,7 @@
 	const getRegionName = (regionId: string) => countriesState.regions[regionId].name;
 </script>
 
-<div class="grid gap-6 px-4">
+<div class="grid gap-6">
 	<!-- HEADER -->
 	<CompanyHeader
 		companyName={data.company.name}
@@ -128,9 +134,18 @@
 
 	<!-- PERFORMANCE & UPGRADES -->
 	<div
-		class="grid gap-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-2 dark:*:data-[slot=card]:bg-card"
+		class="grid grid-cols-2 gap-4 overflow-hidden *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-2 dark:*:data-[slot=card]:bg-card"
 	>
-		<CompanyPerformanceCard {bonusLabels} {countryTaxes} {depositInfo} />
+		<!-- <CompanyPerformanceCard {bonusLabels} {countryTaxes} {depositInfo} /> -->
+
+		<CompanyWage
+			marketPrice={bestSellPrice}
+			{inputPrice}
+			productionPoints={item.productionPoints}
+			totalBonus={data.activeProductionBonus.total}
+		/>
+
+		<CompanyWorkers />
 
 		<UpgradesCard
 			engineLevel={data.company.activeUpgradeLevels.automatedEngine}
@@ -142,8 +157,11 @@
 
 		<BestRegionsTable
 			bonuses={data.availableProductionBonuses as any}
-			currentTotalBonus={data.activeProductionBonus.total}
+			activeProductionBonus={data.activeProductionBonus}
 			currentRegion={data.company.region}
+			{countryRegion}
+			{countryTaxes}
+			{depositInfo}
 			{getCountryName}
 			{getRegionName}
 		/>

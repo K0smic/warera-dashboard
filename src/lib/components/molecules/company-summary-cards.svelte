@@ -37,7 +37,7 @@
 </script>
 
 <div
-	class="grid gap-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card"
+	class="grid gap-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card"
 >
 	<Card>
 		<CardHeader>
@@ -103,7 +103,7 @@
 		<CardHeader>
 			<CardTitle class="item-center flex gap-2">
 				<IconChart class="h-5 w-5" />
-				Market
+				{camelCaseToNormalText(item.code)} market
 			</CardTitle>
 		</CardHeader>
 		<CardContent class="space-y-1 text-sm">

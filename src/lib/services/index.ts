@@ -1,5 +1,6 @@
 // Client base
 export { trpcFetch } from './api/client';
+export { batchFetch } from './api/batch.api';
 
 // User API
 export { getUserLite, getUsersByCountry } from './api/user.api';
@@ -9,7 +10,8 @@ export {
 	getProductionBonus,
 	getWageStats,
 	getUpgradeByTypeAndEntity,
-	getRecommendedRegionIdsByItemCode
+	getRecommendedRegionIdsByItemCode,
+	getWorkers
 } from './api/companies.api';
 export { getCountries, getCountry, getRegions, getRegion } from './api/countries.api';
 export { getGameConfig } from './api/configs.api';

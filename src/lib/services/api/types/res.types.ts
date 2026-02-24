@@ -258,6 +258,37 @@ export interface responses {
 			updatedAt: string;
 			__v: number;
 		};
+		WorkerData: {
+			_id: string;
+			user: string;
+			company: string;
+			employer: string;
+			wage: number;
+			joinedAt: string;
+			fidelity: number;
+			lastFidelityIncreaseAt: string;
+			createdAt: string;
+			updatedAt: string;
+			__v: number;
+			lockedUntil?: string;
+		};
+		WorkersByCompany: {
+			type: 'company';
+			workers: responses['schemas']['WorkerData'][];
+		};
+		CompanyInfo: {
+			_id: string;
+			name: string;
+			itemCode: string;
+		};
+		WorkersPerCompanyItem: {
+			company: responses['schemas']['CompanyInfo'];
+			workers: responses['schemas']['WorkerData'][];
+		};
+		WorkersByUser: {
+			type: 'user';
+			workersPerCompany: responses['schemas']['WorkersPerCompanyItem'][];
+		};
 	};
 	responses: never;
 	parameters: never;

@@ -14,13 +14,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get company by ID
 		 * @description Retrieves detailed information about a specific company
 		 */
-		post: operations['company.getById'];
+		get: operations['company.getById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -34,13 +34,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get companies with pagination
 		 * @description Retrieves a paginated list of companies with optional filtering
 		 */
-		post: operations['company.getCompanies'];
+		get: operations['company.getCompanies'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -54,13 +54,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get best company bonuses data
 		 * @description Retrieves best possible company region by bonuses
 		 */
-		post: operations['company.getRecommendedRegionIdsByItemCode'];
+		get: operations['company.getRecommendedRegionIdsByItemCode'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -74,13 +74,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get country by ID
 		 * @description Retrieves detailed information about a specific country
 		 */
-		post: operations['country.getCountryById'];
+		get: operations['country.getCountryById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -94,13 +94,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get all countries
 		 * @description Retrieves a list of all available countries
 		 */
-		post: operations['country.getAllCountries'];
+		get: operations['country.getAllCountries'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -114,13 +114,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get paginated events
 		 * @description Retrieves a paginated list of events with optional country and event type filters
 		 */
-		post: operations['event.getEventsPaginated'];
+		get: operations['event.getEventsPaginated'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -134,13 +134,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get government by country ID
 		 * @description Retrieves government information for a specific country
 		 */
-		post: operations['government.getByCountryId'];
+		get: operations['government.getByCountryId'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -154,13 +154,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get region by ID
 		 * @description Retrieves detailed information about a specific region
 		 */
-		post: operations['region.getById'];
+		get: operations['region.getById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -174,13 +174,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get all regions
 		 * @description Retrieves a complete object containing all available regions
 		 */
-		post: operations['region.getRegionsObject'];
+		get: operations['region.getRegionsObject'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -194,13 +194,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get battle by ID
 		 * @description Retrieves detailed information about a specific battle
 		 */
-		post: operations['battle.getById'];
+		get: operations['battle.getById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -214,13 +214,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get live battle data
 		 * @description Retrieves real-time battle data including current round information
 		 */
-		post: operations['battle.getLiveBattleData'];
+		get: operations['battle.getLiveBattleData'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -234,13 +234,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get battles
 		 * @description Retrieves a list of battles
 		 */
-		post: operations['battle.getBattles'];
+		get: operations['battle.getBattles'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -254,13 +254,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get round by ID
 		 * @description Retrieves detailed information about a specific battle round
 		 */
-		post: operations['round.getById'];
+		get: operations['round.getById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -274,13 +274,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get last hits in round
 		 * @description Retrieves the most recent hits/damages in a specific battle round
 		 */
-		post: operations['round.getLastHits'];
+		get: operations['round.getLastHits'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -294,13 +294,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get battle rankings
 		 * @description Retrieves damage, ground, or money rankings for users or countries in battles, rounds, or wars
 		 */
-		post: operations['battleRanking.getRanking'];
+		get: operations['battleRanking.getRanking'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -314,13 +314,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get item prices
 		 * @description Retrieves current market prices for all tradeable items
 		 */
-		post: operations['itemTrading.getPrices'];
+		get: operations['itemTrading.getPrices'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -334,13 +334,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get best orders for an item
 		 * @description Retrieves the best orders for an item
 		 */
-		post: operations['tradingOrder.getTopOrders'];
+		get: operations['tradingOrder.getTopOrders'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -354,13 +354,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get item offer by ID
 		 * @description Retrieves detailed information about a specific item offer
 		 */
-		post: operations['itemOffer.getById'];
+		get: operations['itemOffer.getById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -374,13 +374,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get work offer by ID
 		 * @description Retrieves detailed information about a specific work offer
 		 */
-		post: operations['workOffer.getById'];
+		get: operations['workOffer.getById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -394,13 +394,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get wages
 		 * @description Retrieves wages stats, not premium
 		 */
-		post: operations['workOffer.getWageStats'];
+		get: operations['workOffer.getWageStats'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -414,13 +414,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get work offer by company ID
 		 * @description Retrieves work offer for a specific company
 		 */
-		post: operations['workOffer.getWorkOfferByCompanyId'];
+		get: operations['workOffer.getWorkOfferByCompanyId'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -434,13 +434,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get paginated work offers
 		 * @description Retrieves a paginated list of work offers with optional user and region filtering
 		 */
-		post: operations['workOffer.getWorkOffersPaginated'];
+		get: operations['workOffer.getWorkOffersPaginated'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -454,13 +454,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get ranking data
 		 * @description Retrieves ranking data for the specified ranking type and optional year-week filter
 		 */
-		post: operations['ranking.getRanking'];
+		get: operations['ranking.getRanking'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -474,13 +474,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Global search
 		 * @description Performs a global search across users, countries, regions, military units, parties, and other entities
 		 */
-		post: operations['search.searchAnything'];
+		get: operations['search.searchAnything'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -494,13 +494,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get game dates
 		 * @description Retrieves game-related dates and timings
 		 */
-		post: operations['gameConfig.getDates'];
+		get: operations['gameConfig.getDates'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -514,13 +514,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get game configuration
 		 * @description Retrieves static game configuration
 		 */
-		post: operations['gameConfig.getGameConfig'];
+		get: operations['gameConfig.getGameConfig'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -534,13 +534,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get user profile (lite)
 		 * @description Retrieves basic public information about a user including username, skills, and rankings
 		 */
-		post: operations['user.getUserLite'];
+		get: operations['user.getUserLite'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -554,13 +554,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get users by country
 		 * @description Retrieves a list of users by country
 		 */
-		post: operations['user.getUsersByCountry'];
+		get: operations['user.getUsersByCountry'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -574,13 +574,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get article by ID
 		 * @description Retrieves detailed information about a specific article
 		 */
-		post: operations['article.getArticleById'];
+		get: operations['article.getArticleById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -594,13 +594,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get article lite by ID
 		 * @description Retrieves only the title and basic stats of an article without counting as a view
 		 */
-		post: operations['article.getArticleLiteById'];
+		get: operations['article.getArticleLiteById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -614,13 +614,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get paginated articles
 		 * @description Retrieves a paginated list of articles
 		 */
-		post: operations['article.getArticlesPaginated'];
+		get: operations['article.getArticlesPaginated'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -634,13 +634,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get military unit by ID
 		 * @description Retrieves detailed information about a specific military unit
 		 */
-		post: operations['mu.getById'];
+		get: operations['mu.getById'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -654,13 +654,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get military units (paginated)
 		 * @description Retrieves a paginated list of military units with optional filters
 		 */
-		post: operations['mu.getManyPaginated'];
+		get: operations['mu.getManyPaginated'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -674,13 +674,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get paginated transactions
 		 * @description Retrieves a paginated list of transactions
 		 */
-		post: operations['transaction.getPaginatedTransactions'];
+		get: operations['transaction.getPaginatedTransactions'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -694,13 +694,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get upgrade by type and entity
 		 * @description Retrieves upgrade information for a specific upgrade type and entity (region, company, or military unit)
 		 */
-		post: operations['upgrade.getUpgradeByTypeAndEntity'];
+		get: operations['upgrade.getUpgradeByTypeAndEntity'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -714,13 +714,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get workers
 		 * @description Get workers for a company or user
 		 */
-		post: operations['worker.getWorkers'];
+		get: operations['worker.getWorkers'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -734,13 +734,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get total workers count
 		 * @description Get total workers count for a user
 		 */
-		post: operations['worker.getTotalWorkersCount'];
+		get: operations['worker.getTotalWorkersCount'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -754,13 +754,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get all company bonuses
 		 * @description Get all company bonuses
 		 */
-		post: operations['company.getProductionBonus'];
+		get: operations['company.getProductionBonus'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -774,13 +774,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get total companies count
 		 * @description Get total companies count
 		 */
-		post: operations['company.getCompaniesCount'];
+		get: operations['company.getCompaniesCount'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -794,13 +794,13 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		post?: never;
 		put?: never;
 		/**
 		 * Get total active companies count
 		 * @description Get total active companies count
 		 */
-		post: operations['company.getActiveCompaniesCount'];
+		get: operations['company.getActiveCompaniesCount'];
 		delete?: never;
 		options?: never;
 		head?: never;

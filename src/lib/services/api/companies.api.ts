@@ -5,7 +5,7 @@ import { trpcFetch } from './client';
  * ======================= */
 
 type RequestBody<P extends keyof paths> = NonNullable<
-	paths[P]['post']['requestBody']
+	paths[P]['get']['requestBody']
 >['content']['application/json'];
 
 /* =======================
@@ -70,4 +70,14 @@ export function getRecommendedRegionIdsByItemCode(
 		RequestBody<'/company.getRecommendedRegionIdsByItemCode'>,
 		responses['schemas']['ProductionBonuses']
 	>('company.getRecommendedRegionIdsByItemCode', input, fetchFn);
+}
+
+export function getWorkers(
+	input: RequestBody<'/worker.getWorkers'>,
+	fetchFn: typeof fetch = fetch
+) {
+	return trpcFetch<
+		RequestBody<'/worker.getWorkers'>,
+		responses['schemas']['WorkersByCompany'] | responses['schemas']['WorkersByUser']
+	>('worker.getWorkers', input, fetchFn);
 }
