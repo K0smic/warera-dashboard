@@ -1,17 +1,6 @@
 import type { PageLoad } from './$types';
 import { createGameConfigs } from '$lib/stores/configs.svelte';
-import {
-	batchFetch
-	// getCompany,
-	// getProductionBonus,
-	// getRegion,
-	// getCountry,
-	// getWageStats,
-	// getUpgradeByTypeAndEntity,
-	// getRecommendedRegionIdsByItemCode,
-	// getTopOrders,
-	// getWorkers
-} from '$lib/services';
+import { batchFetch } from '$lib/services';
 
 const configsState = createGameConfigs();
 
@@ -54,17 +43,12 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		],
 		fetch
 	);
-	// await Promise.all([
-	// 	getCompany({ companyId: params.companyId }, fetch),
-	// 	getWorkers({ companyId: params.companyId }, fetch),
-	// 	getProductionBonus({ companyId: params.companyId }, fetch),
-	// 	getUpgradeByTypeAndEntity({ upgradeType: 'storage', companyId: params.companyId }, fetch),
-	// 	getUpgradeByTypeAndEntity(
-	// 		{ upgradeType: 'automatedEngine', companyId: params.companyId },
-	// 		fetch
-	// 	),
-	// 	getWageStats({}, fetch)
-	// ]);
+
+	const workerUserRequests = workers.workers.map((user) => ({
+		path: 'user.getUserLite',
+		input: { userId: user.user }
+	}));
+
 	const productionNeedsConfig = configsState.configs.items[company.itemCode].productionNeeds;
 
 	// Get production needs item codes and prepare batch requests
@@ -74,7 +58,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		input: { itemCode, limit }
 	}));
 
-	const [availableProductionBonuses, companyOrders, ...productionNeedsOrders] = await batchFetch(
+	const [availableProductionBonuses, companyOrders, ...rest] = await batchFetch(
 		[
 			{
 				path: 'company.getRecommendedRegionIdsByItemCode',
@@ -84,11 +68,19 @@ export const load: PageLoad = async ({ fetch, params }) => {
 				path: 'tradingOrder.getTopOrders',
 				input: { itemCode: company.itemCode, limit }
 			},
+			...workerUserRequests,
 			...productionNeedsRequests
 		],
 		fetch
 	);
 
+	const workerData = rest.slice(0, workerUserRequests.length);
+	const workersWithData = workers.workers.map((worker, index) => ({
+		...worker,
+		userData: workerData[index]
+	}));
+
+	const productionNeedsOrders = rest.slice(workerUserRequests.length);
 	// Build production needs data with cost and quantity
 	const productionNeeds = productionNeedsKeys.map((itemCode, index) => ({
 		itemCode,
@@ -98,7 +90,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
 	return {
 		company,
-		workers: workers.workers,
+		workers: workersWithData,
 		activeProductionBonus,
 		availableProductionBonuses,
 		storageUpgrade,
