@@ -12,6 +12,7 @@
 		CompanyWage,
 		CompanyWorkers
 	} from '$lib/components/molecules';
+	import WorkersWidget from '$lib/components/organisms/company-workers-widget.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -137,15 +138,14 @@
 		class="grid grid-cols-2 gap-4 overflow-hidden *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-2 dark:*:data-[slot=card]:bg-card"
 	>
 		<!-- <CompanyPerformanceCard {bonusLabels} {countryTaxes} {depositInfo} /> -->
-
-		<CompanyWage
+		<WorkersWidget
 			marketPrice={bestSellPrice}
 			{inputPrice}
 			productionPoints={item.productionPoints}
 			totalBonus={data.activeProductionBonus.total}
+			workers={data.workers}
+			tax={countryTaxes}
 		/>
-
-		<CompanyWorkers />
 
 		<UpgradesCard
 			engineLevel={data.company.activeUpgradeLevels.automatedEngine}

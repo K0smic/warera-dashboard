@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import * as Card from '$lib/components/atoms/card';
 	import * as InputGroup from '$lib/components/atoms/input-group/index.js';
 	import Button from '$lib/components/atoms/button/button.svelte';
@@ -17,6 +18,11 @@
 
 	const props: Props = $props();
 
+	const breakEvenWageConnector = getContext<{
+		wage: number;
+		getByFidelity: (fidelity: number) => number;
+	}>('breakEvenWage');
+
 	let marketPrice = $derived(props.marketPrice ?? 0);
 	let inputPrice = $derived(props.inputPrice ?? 0);
 	let productionPoints = $derived(props.productionPoints ?? 1);
@@ -33,23 +39,74 @@
 		margin: props.margin ?? 0
 	};
 
-	let breakeven = $derived(
-		(marketPrice - productionPoints * inputPrice) / (productionPoints / (1 + totalBonus / 100))
+	// let breakEvenWage = $derived(
+	// 	(marketPrice - productionPoints * inputPrice) / (productionPoints / (1 + totalBonus / 100))
+	// );
+
+	// let breakEvenWageWithFidelity = $derived(
+	// 	(marketPrice - productionPoints * inputPrice) /
+	// 		(productionPoints / (1 + fidelity / 100) / (1 + totalBonus / 100))
+	// );
+
+	// let breakEvenWageWithMargin = $derived(
+	// 	(marketPrice - productionPoints * inputPrice) /
+	// 		((productionPoints * (1 + margin / 100)) / (1 + totalBonus / 100))
+	// );
+	// let breakEvenWageWithFidelityAndMargin = $derived(
+	// 	(marketPrice - productionPoints * inputPrice) /
+	// 		(((productionPoints / (1 + fidelity / 100)) * (1 + margin / 100)) / (1 + totalBonus / 100))
+	// );
+
+	// Input costs
+	let totalInputCost = $derived(productionPoints * inputPrice);
+
+	// Production without global production bonuses
+	let baseProductionOutput = $derived(productionPoints / (1 + totalBonus / 100));
+
+	// Production adjusted by worker fidelity
+	// Higher fidelity increases the economic value per production point
+	let productionAdjustedByFidelity = $derived(baseProductionOutput / (1 + fidelity / 100));
+
+	// Production adjusted to include a safety margin
+	// Higher margin lowers the sustainable wage
+	let productionWithMargin = $derived(baseProductionOutput * (1 + margin / 100));
+
+	// Production adjusted by both fidelity and margin
+	let productionWithFidelityAndMargin = $derived(productionAdjustedByFidelity * (1 + margin / 100));
+
+	// Break-even wage calculation per production point
+	// Returns the maximum sustainable wage without losses
+	function calculateBreakEvenWage(inputCost: number, productionCapacity: number) {
+		return (marketPrice - inputCost) / productionCapacity;
+	}
+
+	// Base break-even wage
+	let breakEvenWage = $derived(calculateBreakEvenWage(totalInputCost, baseProductionOutput));
+
+	// Break-even wage adjusted by fidelity
+	let breakEvenWageWithFidelity = $derived(
+		calculateBreakEvenWage(totalInputCost, productionAdjustedByFidelity)
 	);
 
-	let breakeveneWithFidelity = $derived(
-		(marketPrice - productionPoints * inputPrice) /
-			(productionPoints / (1 + fidelity / 100) / (1 + totalBonus / 100))
+	// Break-even wage adjusted by margin
+	let breakEvenWageWithMargin = $derived(
+		calculateBreakEvenWage(totalInputCost, productionWithMargin)
 	);
 
-	let margins = $derived(
-		(marketPrice - productionPoints * inputPrice) /
-			((productionPoints * (1 + margin / 100)) / (1 + totalBonus / 100))
+	// Final break-even wage adjusted by both fidelity and margin
+	let breakEvenWageWithFidelityAndMargin = $derived(
+		calculateBreakEvenWage(totalInputCost, productionWithFidelityAndMargin)
 	);
-	let marginWithFidelitys = $derived(
-		(marketPrice - productionPoints * inputPrice) /
-			(((productionPoints / (1 + fidelity / 100)) * (1 + margin / 100)) / (1 + totalBonus / 100))
-	);
+
+	// $effect(() => {
+	// 	breakEvenWageConnector.wage = breakEvenWage;
+	// });
+
+	breakEvenWageConnector.getByFidelity = (fidelity: number) => {
+		const productionAdjustedByFidelity = baseProductionOutput / (1 + fidelity / 100);
+
+		return calculateBreakEvenWage(totalInputCost, productionAdjustedByFidelity);
+	};
 
 	function handleReset() {
 		marketPrice = initialValues.marketPrice;
@@ -59,8 +116,6 @@
 		fidelity = initialValues.fidelity;
 		margin = initialValues.margin;
 	}
-
-	// $inspect();
 </script>
 
 <Card.Root class="col-span-2 xl:col-span-1">
@@ -75,6 +130,7 @@
 					<label for="market-price" class="text-sm font-medium">Market price</label>
 					<InputGroup.Root>
 						<InputGroup.Input
+							min="0"
 							id="market-price"
 							type="number"
 							step=".001"
@@ -91,6 +147,7 @@
 					<label for="input-price" class="text-sm font-medium">Input price</label>
 					<InputGroup.Root>
 						<InputGroup.Input
+							min="0"
 							id="input-price"
 							type="number"
 							step=".001"
@@ -107,6 +164,7 @@
 					<label for="production-points" class="text-sm font-medium">Production points</label>
 					<InputGroup.Root>
 						<InputGroup.Input
+							min="0"
 							id="production-points"
 							type="number"
 							placeholder="Enter production points"
@@ -122,6 +180,7 @@
 					<label for="total-bonus" class="text-sm font-medium">Total bonus</label>
 					<InputGroup.Root>
 						<InputGroup.Input
+							min="0"
 							id="total-bonus"
 							type="number"
 							placeholder="Enter total bonus"
@@ -136,6 +195,7 @@
 					<label for="fidelity" class="text-sm font-medium">Fidelity</label>
 					<InputGroup.Root>
 						<InputGroup.Input
+							min="0"
 							id="fidelity"
 							type="number"
 							placeholder="Enter total fidelity"
@@ -151,6 +211,7 @@
 					<label for="margin" class="text-sm font-medium">Margin</label>
 					<InputGroup.Root>
 						<InputGroup.Input
+							min="0"
 							id="margin"
 							type="number"
 							placeholder="Enter total margin"
@@ -171,17 +232,17 @@
 						<div>
 							<p class="mb-1 text-xs text-muted-foreground">Without fidelity</p>
 							<p class="text-2xl font-bold">
-								{isFinite(breakeven) ? breakeven.toFixed(4) : 0}
+								{isFinite(breakEvenWage) ? breakEvenWage.toFixed(4) : 0}
 							</p>
 						</div>
 						<div>
 							<p class="mb-1 text-xs text-muted-foreground">With fidelity (+{fidelity}%)</p>
 							<p class="text-2xl font-bold text-green-600">
-								{isFinite(breakeveneWithFidelity) ? breakeveneWithFidelity.toFixed(4) : 0}
+								{isFinite(breakEvenWageWithFidelity) ? breakEvenWageWithFidelity.toFixed(4) : 0}
 							</p>
 							<p class="mt-1 text-xs text-muted-foreground">
-								Value: {isFinite(breakeveneWithFidelity - breakeven)
-									? (breakeveneWithFidelity - breakeven).toFixed(4)
+								Value: {isFinite(breakEvenWageWithFidelity - breakEvenWage)
+									? (breakEvenWageWithFidelity - breakEvenWage).toFixed(4)
 									: 0}
 							</p>
 						</div>
@@ -193,20 +254,24 @@
 						<div>
 							<p class="mb-1 text-xs text-muted-foreground">Without fidelity</p>
 							<p class="text-2xl font-bold">
-								{isFinite(margins) ? margins.toFixed(4) : 0}
+								{isFinite(breakEvenWageWithMargin) ? breakEvenWageWithMargin.toFixed(4) : 0}
 							</p>
 							<p class="mt-1 text-xs text-muted-foreground">
-								Value: {isFinite(margins - breakeven) ? (margins - breakeven).toFixed(4) : 0}
+								Value: {isFinite(breakEvenWageWithMargin - breakEvenWage)
+									? (breakEvenWageWithMargin - breakEvenWage).toFixed(4)
+									: 0}
 							</p>
 						</div>
 						<div>
 							<p class="mb-1 text-xs text-muted-foreground">With fidelity (+{fidelity}%)</p>
 							<p class="text-2xl font-bold text-green-600">
-								{isFinite(marginWithFidelitys) ? marginWithFidelitys.toFixed(4) : 0}
+								{isFinite(breakEvenWageWithFidelityAndMargin)
+									? breakEvenWageWithFidelityAndMargin.toFixed(4)
+									: 0}
 							</p>
 							<p class="mt-1 text-xs text-muted-foreground">
-								Value: {isFinite(marginWithFidelitys - breakeven)
-									? (marginWithFidelitys - breakeven).toFixed(4)
+								Value: {isFinite(breakEvenWageWithFidelityAndMargin - breakEvenWage)
+									? (breakEvenWageWithFidelityAndMargin - breakEvenWage).toFixed(4)
 									: 0}
 							</p>
 						</div>
