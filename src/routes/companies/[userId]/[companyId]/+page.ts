@@ -84,7 +84,8 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	// Build production needs data with cost and quantity
 	const productionNeeds = productionNeedsKeys.map((itemCode, index) => ({
 		itemCode,
-		cost: productionNeedsOrders[index]?.sellOrders[0]?.price ?? 0,
+		buy: productionNeedsOrders[index]?.buyOrders[0]?.price ?? 0,
+		sell: productionNeedsOrders[index]?.sellOrders[0]?.price ?? 0,
 		quantity: productionNeedsConfig[itemCode]
 	}));
 

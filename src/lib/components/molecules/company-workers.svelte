@@ -3,7 +3,11 @@
 	import * as Card from '$lib/components/atoms/card';
 	import * as Avatar from '$lib/components/atoms/avatar';
 	import Badge from '$lib/components/atoms/badge/badge.svelte';
-	import * as Separator from '$lib/components/atoms/separator';
+
+	import MdiHeart from '~icons/mdi/heart';
+	import MdiPickaxe from '~icons/mdi/pickaxe';
+	import MdiLightningBolt from '~icons/mdi/lightning-bolt';
+	import MdiBitcoin from '~icons/mdi/bitcoin';
 
 	interface Props {
 		workers: [any];
@@ -55,10 +59,12 @@
 		{#each workers as worker (worker._id)}
 			{@const breakEvenWithFidelity = breakEvenWage.getByFidelity?.(worker.fidelity)}
 			{@const isOverBreakEven = worker.wage >= breakEvenWithFidelity}
-			{@const taxedWage = (worker.wage - (worker.wage * tax) / 100).toFixed(2)}
+			{@const taxedWage = (worker.wage - (worker.wage * tax) / 100).toFixed(3)}
 
 			<article
-				class="flex items-center gap-3 rounded-lg border bg-card p-3 transition-colors hover:bg-muted/40"
+				class="flex items-center gap-3 rounded-lg bg-card p-3 transition-colors hover:bg-muted/40 {isOverBreakEven
+					? 'border border-destructive'
+					: 'border'}"
 			>
 				<Avatar.Root class="size-9 shrink-0 rounded-lg">
 					<Avatar.Image
@@ -74,34 +80,44 @@
 				<div class="flex min-w-0 flex-1 flex-col gap-1.5">
 					<!-- Top row: name + wage badges -->
 					<div class="flex flex-wrap items-center justify-between gap-1">
-						<h3 class="truncate text-sm font-semibold">{worker.userData.username}</h3>
+						<h3 class="truncate text-sm font-semibold">
+							{worker.userData.username}
+						</h3>
 						<div class="flex shrink-0 gap-1">
 							<Badge
 								variant={isOverBreakEven ? 'destructive' : 'outline'}
 								class="rounded px-1.5 py-0 text-xs"
+								title="Wage"
 							>
-								{worker.wage.toFixed(2)}
+								{worker.wage.toFixed(3)}<MdiBitcoin />
 							</Badge>
-							<Badge variant="secondary" class="rounded px-1.5 py-0 text-xs">
-								-{tax}% → {taxedWage}
+							<Badge variant="secondary" class="rounded px-1.5 py-0 text-xs" title="Net wage">
+								-{tax}% → {taxedWage}<MdiBitcoin />
 							</Badge>
 						</div>
 					</div>
 
 					<!-- Bottom row: stats -->
-					<div class="flex flex-wrap gap-3 text-xs text-muted-foreground">
-						<span>
-							<span class="font-medium text-foreground">Fidelity</span>
-							{' '}{worker.fidelity}%
-						</span>
-						<span>
-							<span class="font-medium text-foreground">Prod.</span>
-							{' '}{worker.userData.skills.production.total}
-						</span>
-						<span>
-							<span class="font-medium text-foreground">Energy</span>
-							{' '}{worker.userData.skills.energy.total}
-						</span>
+					<div class="flex flex-row gap-2 align-middle text-xs text-muted-foreground sm:w-1/2">
+						<Badge
+							variant="outline"
+							class="flex w-1/4 grow gap-1 rounded-sm font-medium text-foreground"
+							title="Fidelity"><MdiHeart class="size-4" /> {worker.fidelity}%</Badge
+						>
+
+						<Badge
+							variant="outline"
+							class="flex w-1/4 grow gap-1 rounded-sm font-medium text-foreground"
+							title="Production"
+							><MdiPickaxe class="size-4" /> {worker.userData.skills.production.total}</Badge
+						>
+
+						<Badge
+							variant="outline"
+							class="flex w-1/4 grow rounded-sm font-medium text-foreground"
+							title="Energy"
+							><MdiLightningBolt class="size-4" /> {worker.userData.skills.energy.total}</Badge
+						>
 					</div>
 				</div>
 			</article>

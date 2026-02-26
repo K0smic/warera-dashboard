@@ -23,7 +23,7 @@
 	const countriesState = createCountries();
 
 	const item = $derived(configsState.configs.items[data.company.itemCode]);
-	const inputPrice = $derived(data.productionNeeds.reduce((input, obj) => obj.cost + input, 0));
+	const inputPrice = $derived(data.productionNeeds.reduce((input, obj) => obj.sell + input, 0));
 
 	// ===== HELPER FUNCTIONS =====
 	const getOrderPrice = (orders: any[], orderType: 'buy' | 'sell') => orders[0]?.price ?? 0;
