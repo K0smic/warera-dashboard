@@ -28,27 +28,6 @@
 	// ===== HELPER FUNCTIONS =====
 	const getOrderPrice = (orders: any[], orderType: 'buy' | 'sell') => orders[0]?.price ?? 0;
 
-	const calculateTotalSteelInvested = (upgradeKey: string, currentLevel: number) => {
-		const levels = configsState.configs.upgradesConfig[upgradeKey].levels;
-		return Object.entries(levels)
-			.filter(([level]) => Number(level) <= currentLevel)
-			.reduce((total, [, cfg]) => total + ((cfg as any).steelCost ?? 0), 0);
-	};
-
-	const getNextUpgradeSteelCost = (upgradeKey: string, currentLevel: number) =>
-		configsState.configs.upgradesConfig[upgradeKey].levels[currentLevel + 1]?.steelCost ?? 0;
-
-	const calculateUpgradeStats = (upgrade: any, steelPrice: number) => ({
-		totalSteelInvested: calculateTotalSteelInvested(upgrade.upgradeType, upgrade.level),
-		nextSteelCost: getNextUpgradeSteelCost(upgrade.upgradeType, upgrade.level),
-		get steelValue() {
-			return this.totalSteelInvested * steelPrice;
-		},
-		get upgradeCost() {
-			return this.nextSteelCost * steelPrice;
-		}
-	});
-
 	// ===== MARKET DATA =====
 	const bestBuyPrice = $derived(getOrderPrice(data.companyOrders.buyOrders, 'buy'));
 	const bestSellPrice = $derived(getOrderPrice(data.companyOrders.sellOrders, 'sell'));
@@ -70,9 +49,6 @@
 
 	// ===== INVESTMENTS & VALUES =====
 	const concreteValue = $derived(data.company.concreteInvested * concretePrice);
-
-	const engineStats = $derived(calculateUpgradeStats(data.engineUpgrade, steelPrice));
-	const storageStats = $derived(calculateUpgradeStats(data.storageUpgrade, steelPrice));
 
 	// ===== DEPOSIT DATA =====
 	const currentDeposit = $derived(countriesState.regions[data.company.region].deposit);
@@ -151,8 +127,9 @@
 			engineLevel={data.company.activeUpgradeLevels.automatedEngine}
 			storageLevel={data.company.activeUpgradeLevels.storage}
 			breakRoomLevel={data.company.activeUpgradeLevels.breakRoom}
-			{engineStats}
-			{storageStats}
+			engineUpgrade={data.engineUpgrade}
+			storageUpgrade={data.storageUpgrade}
+			{steelPrice}
 		/>
 
 		<BestRegionsTable
