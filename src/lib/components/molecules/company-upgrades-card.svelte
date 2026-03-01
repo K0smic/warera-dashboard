@@ -3,25 +3,25 @@
 	import { Badge } from '$lib/components/atoms/badge';
 	import { Separator } from '$lib/components/atoms/separator';
 	import IconUpgrade from '~icons/material-symbols/upgrade';
-	import IconEngine from '~icons/material-symbols/settings';
-	import IconStorage from '~icons/material-symbols/inventory-2';
 
 	import { createGameConfigs } from '$lib/stores/configs.svelte';
 
 	const configsState = createGameConfigs();
 
-	interface UpgradeStats {
-		totalSteelInvested: number;
-		nextSteelCost: number;
-		steelValue: number;
-		upgradeCost: number;
-	}
-
 	interface Props {
 		engineLevel: number;
 		storageLevel: number;
 		breakRoomLevel: number | undefined;
+		engineUpgrade: any;
+		storageUpgrade: any;
+		productionPoints: number;
+		inputPrice?: number;
+		outputBestSellPrice: number;
+		outputBestBuyPrice: number;
+		outputMarketSpread?: number;
 		steelPrice: number;
+		baselineSteelPrice: number;
+		totalBonus?: number;
 	}
 
 	let {
@@ -30,148 +30,455 @@
 		breakRoomLevel,
 		engineUpgrade,
 		storageUpgrade,
-		steelPrice
+		productionPoints = 1,
+		inputPrice = 0,
+		outputBestSellPrice,
+		outputBestBuyPrice,
+		outputMarketSpread,
+		steelPrice,
+		baselineSteelPrice,
+		totalBonus = 0
 	}: Props = $props();
 
-	const getNextUpgradeSteelCost = (upgradeKey: string, currentLevel: number) =>
-		configsState.configs.upgradesConfig[upgradeKey].levels[currentLevel + 1]?.steelCost ?? 0;
+	// TODO: Remove test
+	baselineSteelPrice = 1.6666;
+	let wage = 0.14;
 
-	const calculateTotalSteelInvested = (upgradeKey: string, currentLevel: number) => {
-		const levels = configsState.configs.upgradesConfig[upgradeKey].levels;
+	// --- Horizon toggle ---
+	const horizons = [
+		{ label: '7d', days: 7 },
+		{ label: '1mo', days: 30 },
+		{ label: '1yr', days: 365 }
+	] as const;
+	type HorizonDays = 7 | 30 | 365;
+	let selectedHorizon = $state<HorizonDays>(365);
+
+	// --- Config helpers ---
+	const getLevel = (upgradeKey: string, level: number) =>
+		configsState.configs.upgradesConfig[upgradeKey]?.levels[level];
+
+	const getNextUpgradeSteelCost = (upgradeKey: string, currentLevel: number): number =>
+		getLevel(upgradeKey, currentLevel + 1)?.steelCost ?? 0;
+
+	const calculateTotalSteelInvested = (upgradeKey: string, currentLevel: number): number => {
+		const levels = configsState.configs.upgradesConfig[upgradeKey]?.levels ?? {};
 		return Object.entries(levels)
-			.filter(([level]) => Number(level) <= currentLevel)
+			.filter(([l]) => Number(l) <= currentLevel)
 			.reduce((total, [, cfg]) => total + ((cfg as any).steelCost ?? 0), 0);
 	};
 
-	const calculateUpgradeStats = (upgrade: any, steelPrice: number) => ({
-		totalSteelInvested: calculateTotalSteelInvested(upgrade.upgradeType, upgrade.level),
-		nextSteelCost: getNextUpgradeSteelCost(upgrade.upgradeType, upgrade.level),
-		get steelValue() {
-			return this.totalSteelInvested * steelPrice;
-		},
-		get upgradeCost() {
-			return this.nextSteelCost * steelPrice;
+	// --- Bonus multiplier ---
+	// Applies to raw dailyProd from configs: effectiveDailyProd = dailyProd × (1 + totalBonus / 100)
+	const bonusMultiplier = $derived(1 + totalBonus / 100);
+
+	const applyBonus = (rawProd: number) => rawProd * bonusMultiplier;
+
+	// --- Net margin per unit of output ---
+	// const netMarginPerUnit = $derived(outputBestSellPrice - inputPrice * productionPoints);
+	// const netMarginPerUnit = $derived(outputBestSellPrice - inputPrice * productionPoints);
+	const netMarginPerUnit = $derived(wage * productionPoints);
+
+	// --- Discount rate from steel price volatility ---
+	const discountRate = $derived(
+		Math.min(0.4, Math.max(0.05, Math.abs(steelPrice - baselineSteelPrice) / baselineSteelPrice))
+	);
+
+	// --- DCF core ---
+	function calcDcf(
+		investmentCost: number,
+		dailyCashFlow: number,
+		rate: number,
+		maxPeriods: number
+	): { npv: number; paybackDays: number | null } {
+		if (dailyCashFlow <= 0 || investmentCost <= 0) {
+			return { npv: -investmentCost, paybackDays: null };
 		}
+		let cumulative = 0;
+		let paybackDays: number | null = null;
+		for (let t = 1; t <= maxPeriods; t++) {
+			cumulative += dailyCashFlow / Math.pow(1 + rate, t);
+			if (paybackDays === null && cumulative >= investmentCost) {
+				paybackDays = t;
+			}
+		}
+		return { npv: cumulative - investmentCost, paybackDays };
+	}
+
+	// --- Engine DCF ---
+	// Raw prod delta from configs, then boosted by totalBonus
+	// marginalDailyFlow = (outputSellPrice - inputPrice) × (nextEffectiveProd - currentEffectiveProd)
+	const engineDcf = $derived(
+		(() => {
+			const rawCurrentProd = getLevel('automatedEngine', engineLevel)?.stats?.dailyProd ?? 0;
+			const rawNextProd = getLevel('automatedEngine', engineLevel + 1)?.stats?.dailyProd ?? 0;
+
+			const currentDailyProd = applyBonus(rawCurrentProd);
+			const nextDailyProd = applyBonus(rawNextProd);
+			const prodDelta = nextDailyProd - currentDailyProd;
+
+			const marginalDailyFlow = netMarginPerUnit * prodDelta;
+			const investmentCost = getNextUpgradeSteelCost('automatedEngine', engineLevel) * steelPrice;
+			const totalInvested = calculateTotalSteelInvested('automatedEngine', engineLevel);
+
+			const byHorizon = Object.fromEntries(
+				horizons.map(({ days }) => [
+					days,
+					calcDcf(investmentCost, marginalDailyFlow, discountRate, days)
+				])
+			) as Record<HorizonDays, { npv: number; paybackDays: number | null }>;
+
+			return {
+				byHorizon,
+				investmentCost,
+				marginalDailyFlow,
+				totalSteelInvested: totalInvested,
+				currentDailyProd,
+				nextDailyProd,
+				prodDelta,
+				nextSteelCost: getNextUpgradeSteelCost('automatedEngine', engineLevel)
+			};
+		})()
+	);
+
+	// --- Storage DCF ---
+	// Uses bonus-adjusted hourlyProd to correctly model blockage with the real effective production rate
+	// --- Storage — no DCF, only capacity & blockage analysis ---
+	const storageStats = $derived(
+		(() => {
+			const currentMax = getLevel('storage', storageLevel)?.stats?.maxProduction ?? 0;
+			const nextMax = getLevel('storage', storageLevel + 1)?.stats?.maxProduction ?? 0;
+			const extraCapacity = nextMax - currentMax;
+
+			const rawDailyProd = getLevel('automatedEngine', engineLevel)?.stats?.dailyProd ?? 0;
+			const effectiveDailyProd = applyBonus(rawDailyProd);
+			const hourlyProd = effectiveDailyProd / 24;
+
+			// Hours until storage fills at current production rate
+			const hoursToFillCurrent = hourlyProd > 0 ? currentMax / hourlyProd : Infinity;
+			const hoursToFillNext = hourlyProd > 0 ? nextMax / hourlyProd : Infinity;
+
+			// Is the engine being blocked today?
+			const isBlocked = hoursToFillCurrent < 24;
+			const blockedHoursPerDay = isBlocked ? Math.max(0, 24 - hoursToFillCurrent) : 0;
+			const blockedUnitsPerDay = hourlyProd * blockedHoursPerDay;
+
+			// Would it still be blocked after upgrade?
+			const stillBlockedAfter = hoursToFillNext < 24;
+			const blockedHoursAfter = stillBlockedAfter ? Math.max(0, 24 - hoursToFillNext) : 0;
+			const blockedUnitsAfter = hourlyProd * blockedHoursAfter;
+
+			const nextSteelCost = getNextUpgradeSteelCost('storage', storageLevel);
+			const investmentCost = nextSteelCost * steelPrice;
+			const totalInvested = calculateTotalSteelInvested('storage', storageLevel);
+
+			return {
+				currentMax,
+				nextMax,
+				extraCapacity,
+				hoursToFillCurrent,
+				hoursToFillNext,
+				isBlocked,
+				blockedHoursPerDay,
+				blockedUnitsPerDay,
+				stillBlockedAfter,
+				blockedUnitsAfter,
+				nextSteelCost,
+				investmentCost,
+				totalInvested
+			};
+		})()
+	);
+
+	// --- UI helpers ---
+	function fmtCurrency(n: number) {
+		return n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+	}
+
+	function npvLabel(npv: number) {
+		if (npv > 0) return 'Profitable';
+		if (npv === 0) return 'Break-even';
+		return 'Underwater';
+	}
+
+	function npvVariant(npv: number): 'default' | 'destructive' | 'secondary' {
+		if (npv > 0) return 'default';
+		if (npv === 0) return 'secondary';
+		return 'destructive';
+	}
+
+	function paybackProgress(paybackDays: number | null, horizon: number): number {
+		if (paybackDays === null) return 0;
+		return Math.max(2, Math.min(100, ((horizon - paybackDays) / horizon) * 100));
+	}
+
+	const engineUpgradeEntry = $derived({
+		name: 'Engine',
+		level: engineLevel,
+		dcf: engineDcf,
+		subtitle: `+${fmtCurrency(engineDcf.prodDelta)} units/day`,
+		detail: `${fmtCurrency(engineDcf.currentDailyProd)} → ${fmtCurrency(engineDcf.nextDailyProd)} effective daily prod${totalBonus > 0 ? ` (+${totalBonus}% bonus)` : ''}`,
+		extraDetails: [
+			{ label: 'Margin/unit', value: fmtCurrency(netMarginPerUnit) },
+			{
+				label: 'Input cost/unit',
+				value:
+					inputPrice > 0
+						? `${fmtCurrency(inputPrice)} × ${productionPoints} = ${fmtCurrency(inputPrice * productionPoints)}`
+						: 'None'
+			},
+			{ label: 'Daily gain at next level', value: fmtCurrency(engineDcf.marginalDailyFlow) }
+		]
 	});
-
-	const engineStats = $derived(calculateUpgradeStats(engineUpgrade, steelPrice));
-	const storageStats = $derived(calculateUpgradeStats(storageUpgrade, steelPrice));
-
-	function getRoi(stats: UpgradeStats): number {
-		if (stats.totalSteelInvested === 0) return 0;
-		return ((stats.steelValue - stats.totalSteelInvested) / stats.totalSteelInvested) * 100;
-	}
-
-	function getNextUpgradeProgress(stats: UpgradeStats): number {
-		if (stats.nextSteelCost === 0) return 100;
-		// How much of the next steel cost has been "earned" via current value
-		return Math.min((stats.steelValue / stats.nextSteelCost) * 100, 100);
-	}
-
-	const upgrades = $derived([
-		{
-			name: 'Engine',
-			level: engineLevel,
-			stats: engineStats,
-			roi: getRoi(engineStats),
-			progress: getNextUpgradeProgress(engineStats)
-		},
-		{
-			name: 'Storage',
-			level: storageLevel,
-			stats: storageStats,
-			roi: getRoi(storageStats),
-			progress: getNextUpgradeProgress(storageStats)
-		}
-	]);
 </script>
 
 <Card.Root class="col-span-2 xl:col-span-1">
 	<Card.Header class="pb-3">
 		<div class="flex items-center justify-between">
-			<Card.Title class="flex items-center gap-1.5 text-base">
-				<IconUpgrade class="h-4 w-4" />
-				Upgrades
-			</Card.Title>
-			<!-- Level pills always visible -->
-			<div class="flex items-center gap-1.5">
+			<div>
+				<Card.Title class="flex items-center gap-1.5 text-base">
+					<!-- <IconUpgrade class="h-4 w-4" /> -->
+					Engine upgrade
+				</Card.Title>
+				<Card.Description>DCF Model</Card.Description>
+			</div>
+			<div class="flex flex-wrap items-center gap-1.5">
 				<Badge variant="outline" class="rounded px-2 py-0.5 text-xs font-medium">
 					Engine Lv.{engineLevel}
 				</Badge>
-				<Badge variant="outline" class="rounded px-2 py-0.5 text-xs font-medium">
-					Storage Lv.{storageLevel}
-				</Badge>
-				{#if breakRoomLevel !== undefined}
-					<Badge variant="outline" class="rounded px-2 py-0.5 text-xs font-medium">
-						Rooms Lv.{breakRoomLevel}
-					</Badge>
-				{/if}
+			</div>
+		</div>
+
+		<!-- Discount rate + margin/unit + horizon toggle -->
+		<div class="mt-2 flex items-center justify-between gap-2 rounded-md bg-muted/50 px-3 py-1.5">
+			<div class="flex flex-col">
+				<span class="text-xs text-muted-foreground">Discount rate</span>
+				<span class="text-xs font-semibold">{(discountRate * 100).toFixed(1)}% / day</span>
+			</div>
+			<div class="flex flex-col items-center">
+				<span class="text-xs text-muted-foreground">Margin / unit</span>
+				<span class="text-xs font-semibold">{fmtCurrency(netMarginPerUnit)}</span>
+			</div>
+			{#if totalBonus > 0}
+				<div class="flex flex-col items-center">
+					<span class="text-xs text-muted-foreground">Prod. bonus</span>
+					<span class="text-xs font-semibold text-green-600">+{totalBonus}%</span>
+				</div>
+			{/if}
+			<div class="flex items-center gap-0.5 rounded-md border bg-background p-0.5">
+				{#each horizons as h}
+					<button
+						class="rounded px-2 py-0.5 text-xs font-medium transition-colors"
+						class:bg-primary={selectedHorizon === h.days}
+						class:text-primary-foreground={selectedHorizon === h.days}
+						class:text-muted-foreground={selectedHorizon !== h.days}
+						onclick={() => (selectedHorizon = h.days)}
+					>
+						{h.label}
+					</button>
+				{/each}
 			</div>
 		</div>
 	</Card.Header>
 
-	<Card.Content class="flex flex-col gap-4 pt-0">
-		{#each upgrades as upgrade, i}
-			{#if i > 0}
-				<Separator />
-			{/if}
+	<Card.Content class="flex w-full flex-col gap-10 pt-0 sm:flex-row">
+		{@const result = engineUpgradeEntry.dcf.byHorizon[selectedHorizon]}
+		{@const progress = paybackProgress(result.paybackDays, selectedHorizon)}
 
-			<div class="flex flex-col gap-3">
-				<!-- Upgrade title row -->
-				<div class="flex items-center justify-between">
-					<span class="text-sm font-semibold">{upgrade.name} Upgrade</span>
-					<!-- ROI badge -->
-					<Badge
-						variant={upgrade.roi >= 0 ? 'default' : 'destructive'}
-						class="rounded px-2 py-0.5 text-xs font-semibold"
+		<div class="flex flex-1 flex-col gap-3">
+			<!-- Title row -->
+			<div class="flex items-center justify-between">
+				<div class="flex flex-col">
+					<span class="text-sm font-semibold">{engineUpgradeEntry.name} Upgrade</span>
+					<span class="text-xs text-muted-foreground">{engineUpgradeEntry.subtitle}</span>
+				</div>
+				<Badge variant={npvVariant(result.npv)} class="rounded px-2 py-0.5 text-xs font-semibold">
+					{npvLabel(result.npv)}
+				</Badge>
+			</div>
+
+			<!-- Context detail -->
+			<p class="text-xs text-muted-foreground">{engineUpgradeEntry.detail}</p>
+
+			<!-- Extra details -->
+			<div class="flex flex-wrap gap-x-4 gap-y-1">
+				{#each engineUpgradeEntry.extraDetails as item}
+					<p class="text-xs text-muted-foreground">
+						<span class="font-medium text-foreground">{item.label}:</span>
+						{item.value}
+					</p>
+				{/each}
+			</div>
+
+			<!-- Stats grid -->
+			<div class="grid grid-cols-2 gap-2">
+				<div class="rounded-md bg-muted/50 px-3 py-2">
+					<p class="text-xs text-muted-foreground">Upgrade Cost</p>
+					<p class="text-sm font-bold">{engineUpgradeEntry.dcf.nextSteelCost} steel</p>
+					<p class="text-xs text-muted-foreground">
+						≈ <span class="font-medium text-foreground">
+							{fmtCurrency(engineUpgradeEntry.dcf.investmentCost)}
+						</span>
+					</p>
+				</div>
+
+				<div class="rounded-md bg-muted/50 px-3 py-2">
+					<p class="text-xs text-muted-foreground">
+						NPV
+						<span class="font-medium text-foreground">
+							({horizons.find((h) => h.days === selectedHorizon)?.label})
+						</span>
+					</p>
+					<p
+						class="text-sm font-bold"
+						class:text-green-600={result.npv > 0}
+						class:text-destructive={result.npv < 0}
 					>
-						ROI {upgrade.roi >= 0 ? '+' : ''}{upgrade.roi.toFixed(1)}%
-					</Badge>
-				</div>
-
-				<!-- Main stats grid -->
-				<div class="grid grid-cols-2 gap-3">
-					<!-- Steel invested vs value -->
-					<div class="rounded-md bg-muted/50 px-3 py-2">
-						<p class="text-xs text-muted-foreground">Steel Invested</p>
-						<p class="text-base font-bold">{upgrade.stats.totalSteelInvested}</p>
-						<p class="text-xs text-muted-foreground">
-							Value:
-							<span class="font-medium text-foreground">
-								{upgrade.stats.steelValue.toFixed(2)}
-							</span>
-						</p>
-					</div>
-
-					<!-- Next upgrade cost -->
-					<div class="rounded-md bg-muted/50 px-3 py-2">
-						<p class="text-xs text-muted-foreground">Next Upgrade</p>
-						<p class="text-base font-bold">{upgrade.stats.nextSteelCost} steel</p>
-						<p class="text-xs text-muted-foreground">
-							Est. cost:
-							<span class="font-medium text-foreground">
-								{upgrade.stats.upgradeCost.toFixed(2)}
-							</span>
-						</p>
-					</div>
-				</div>
-
-				<!-- Progress toward next upgrade -->
-				<div class="flex flex-col gap-1">
-					<div class="flex justify-between text-xs text-muted-foreground">
-						<span>Progress to next upgrade</span>
-						<span>{upgrade.progress.toFixed(0)}%</span>
-					</div>
-					<div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-						<div
-							class="h-full rounded-full transition-all"
-							class:bg-primary={upgrade.progress < 100}
-							class:bg-green-500={upgrade.progress >= 100}
-							style="width: {upgrade.progress}%"
-						></div>
-					</div>
+						{result.npv > 0 ? '+' : ''}{fmtCurrency(result.npv)}
+					</p>
+					<p class="text-xs text-muted-foreground">
+						Daily CF: <span class="font-medium text-foreground">
+							{fmtCurrency(engineUpgradeEntry.dcf.marginalDailyFlow)}
+						</span>
+					</p>
 				</div>
 			</div>
-		{/each}
+
+			<!-- Payback progress -->
+			<div class="flex flex-col gap-1.5">
+				<div class="flex items-center justify-between text-xs">
+					<span class="text-muted-foreground">Payback period</span>
+					<span class="font-semibold">
+						{#if result.paybackDays !== null}
+							{result.paybackDays} days
+						{:else}
+							&gt; {selectedHorizon} days
+						{/if}
+					</span>
+				</div>
+				<div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+					<div
+						class="h-full rounded-full transition-all duration-500"
+						class:bg-primary={result.paybackDays !== null && progress < 80}
+						class:bg-green-500={result.paybackDays !== null && progress >= 80}
+						class:bg-muted-foreground={result.paybackDays === null}
+						style="width: {progress}%"
+					></div>
+				</div>
+				<p class="text-xs text-muted-foreground">
+					Total invested: <span class="font-medium text-foreground">
+						{engineUpgradeEntry.dcf.totalSteelInvested} steel
+					</span>
+				</p>
+			</div>
+		</div>
+
+		<!-- <Separator
+			decorative={true}
+			class="sm:min-h-full sm:w-px sm:data-[orientation=horizontal]:h-px sm:data-[orientation=horizontal]:w-px"
+		/> -->
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="col-span-2 xl:col-span-1">
+	<Card.Header class="pb-3">
+		<div class="flex items-center justify-between">
+			<div>
+				<Card.Title class="flex items-center gap-1.5 text-base">
+					<!-- <IconUpgrade class="h-4 w-4" /> -->
+					Storage upgrade
+				</Card.Title>
+				<Card.Description>Storage capacity</Card.Description>
+			</div>
+			<div class="flex flex-wrap items-center gap-1.5">
+				<Badge variant="outline" class="rounded px-2 py-0.5 text-xs font-medium">
+					Storage Lv.{storageLevel}
+				</Badge>
+			</div>
+		</div>
+	</Card.Header>
+
+	<Card.Content class="flex w-full flex-col gap-10 pt-0 sm:flex-row">
+		{@const s = storageStats}
+
+		<div class="flex flex-1 flex-col gap-3">
+			<!-- Title row -->
+			<div class="flex items-center justify-between">
+				<div class="flex flex-col">
+					<span class="text-sm font-semibold">Storage Upgrade</span>
+					<span class="text-xs text-muted-foreground">+{s.extraCapacity} max capacity</span>
+				</div>
+				<Badge
+					variant={s.isBlocked ? 'destructive' : 'secondary'}
+					class="rounded px-2 py-0.5 text-xs font-semibold"
+				>
+					{s.isBlocked ? 'Engine blocked' : 'No blockage'}
+				</Badge>
+			</div>
+
+			<!-- Capacity stats -->
+			<div class="grid grid-cols-2 gap-2">
+				<div class="rounded-md bg-muted/50 px-3 py-2">
+					<p class="text-xs text-muted-foreground">Current capacity</p>
+					<p class="text-sm font-bold">{s.currentMax} units</p>
+					<p class="text-xs text-muted-foreground">
+						Fills in
+						<span class="font-medium text-foreground">
+							{s.hoursToFillCurrent === Infinity ? '∞' : `${s.hoursToFillCurrent.toFixed(1)}h`}
+						</span>
+					</p>
+				</div>
+
+				<div class="rounded-md bg-muted/50 px-3 py-2">
+					<p class="text-xs text-muted-foreground">Next capacity</p>
+					<p class="text-sm font-bold">{s.nextMax} units</p>
+					<p class="text-xs text-muted-foreground">
+						Fills in
+						<span class="font-medium text-foreground">
+							{s.hoursToFillNext === Infinity ? '∞' : `${s.hoursToFillNext.toFixed(1)}h`}
+						</span>
+					</p>
+				</div>
+			</div>
+
+			<!-- Blockage detail -->
+			{#if s.isBlocked}
+				<div class="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2">
+					<p class="text-xs font-medium text-destructive">Engine is being blocked</p>
+					<p class="text-xs text-muted-foreground">
+						<span class="font-medium text-foreground">{s.blockedHoursPerDay.toFixed(1)}h/day</span>
+						lost —
+						<span class="font-medium text-foreground"
+							>{fmtCurrency(s.blockedUnitsPerDay)} units/day</span
+						>
+						not produced
+					</p>
+					{#if s.stillBlockedAfter}
+						<p class="mt-1 text-xs text-muted-foreground">
+							After upgrade: still
+							<span class="font-medium text-foreground">{s.blockedHoursAfter.toFixed(1)}h/day</span>
+							blocked ({fmtCurrency(s.blockedUnitsAfter)} units/day)
+						</p>
+					{:else}
+						<p class="mt-1 text-xs text-green-600">Upgrade fully resolves the blockage ✓</p>
+					{/if}
+				</div>
+			{:else}
+				<p class="text-xs text-muted-foreground">
+					Engine produces freely — storage fills in
+					<span class="font-medium text-foreground">{s.hoursToFillCurrent.toFixed(1)}h</span>, no
+					blockage within a 24h cycle.
+				</p>
+			{/if}
+
+			<!-- Upgrade cost -->
+			<div class="rounded-md bg-muted/50 px-3 py-2">
+				<p class="text-xs text-muted-foreground">Upgrade Cost</p>
+				<p class="text-sm font-bold">{s.nextSteelCost} steel</p>
+				<p class="text-xs text-muted-foreground">
+					≈ <span class="font-medium text-foreground">{fmtCurrency(s.investmentCost)}</span>
+					<span class="ml-2">Total invested: {s.totalInvested} steel</span>
+				</p>
+			</div>
+		</div>
 	</Card.Content>
 </Card.Root>

@@ -129,6 +129,12 @@
 			breakRoomLevel={data.company.activeUpgradeLevels.breakRoom}
 			engineUpgrade={data.engineUpgrade}
 			storageUpgrade={data.storageUpgrade}
+			productionPoints={item.productionPoints}
+			{inputPrice}
+			totalBonus={data.activeProductionBonus.total}
+			outputBestBuyPrice={bestBuyPrice}
+			outputBestSellPrice={bestSellPrice}
+			outputMarketSpread={marketSpread}
 			{steelPrice}
 		/>
 

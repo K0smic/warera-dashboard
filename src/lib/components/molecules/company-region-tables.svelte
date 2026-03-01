@@ -31,7 +31,7 @@
 	);
 </script>
 
-<Card class="col-span-2 flex w-full min-w-0 flex-col">
+<!-- <Card class="col-span-2 flex w-full min-w-0 flex-col">
 	<CardHeader>
 		<CardTitle>Current region</CardTitle>
 	</CardHeader>
@@ -98,7 +98,7 @@
 			</Table.Body>
 		</Table.Root>
 	</CardContent>
-</Card>
+</Card> -->
 
 <Card class="col-span-2 container flex w-full min-w-0 flex-col">
 	<CardHeader>
@@ -121,6 +121,49 @@
 			</Table.Header>
 
 			<Table.Body>
+				<Table.Row title="Current region" class="bg-muted/50">
+					<Table.Cell class="font-medium whitespace-nowrap">
+						{getRegionName(countryRegion._id)}
+					</Table.Cell>
+
+					<Table.Cell class="font-medium whitespace-nowrap">
+						{getCountryName(countryRegion._id)}
+					</Table.Cell>
+
+					<Table.Cell class="text-right whitespace-nowrap">
+						<Badge variant="secondary">
+							{activeProductionBonus.total}%
+						</Badge>
+					</Table.Cell>
+
+					<Table.Cell class="text-right whitespace-nowrap">
+						{activeProductionBonus.strategicBonus}%
+					</Table.Cell>
+
+					<Table.Cell class="text-right whitespace-nowrap">
+						{activeProductionBonus.depositBonus}%
+					</Table.Cell>
+
+					<Table.Cell class="text-right whitespace-nowrap">
+						{activeProductionBonus.ethicDepositBonus ?? 0}%
+					</Table.Cell>
+
+					<Table.Cell class="text-right whitespace-nowrap">
+						{activeProductionBonus.ethicSpecializationBonus ?? 0}%
+					</Table.Cell>
+
+					<Table.Cell class="text-right whitespace-nowrap">
+						{countryTaxes}%
+					</Table.Cell>
+
+					<Table.Cell class="whitespace-nowrap">
+						{#if depositInfo}
+							{depositInfo.endsAt}
+						{:else}
+							<span class="text-muted-foreground">No end date</span>
+						{/if}
+					</Table.Cell>
+				</Table.Row>
 				{#each filteredBonuses as bonus}
 					<Table.Row>
 						<Table.Cell class="font-medium whitespace-nowrap">
