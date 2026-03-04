@@ -3,6 +3,7 @@
 	import { createGameConfigs } from '$lib/stores/configs.svelte';
 	import { camelCaseToNormalText } from '$lib/utils';
 	import { createCountries } from '$lib/stores/countries.svelte';
+	import { setContext } from 'svelte';
 
 	import {
 		CompanyHeader,
@@ -15,6 +16,9 @@
 	import WorkersWidget from '$lib/components/organisms/company-workers-widget.svelte';
 
 	let { data }: PageProps = $props();
+
+	let workersInfos = $state({ totalEnergy: 0 as number, totalProd: 0 as number });
+	setContext('workersInfos', workersInfos);
 
 	//DEBUG:
 	$inspect(data);

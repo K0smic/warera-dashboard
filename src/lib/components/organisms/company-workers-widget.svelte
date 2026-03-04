@@ -3,10 +3,8 @@
 	import { CompanyWage, CompanyWorkers } from '$lib/components/molecules';
 
 	let breakEvenWage = $state({
-		// wage: 0,
 		getByFidelity: null as null | ((fidelity: number) => number)
 	});
-
 	setContext('breakEvenWage', breakEvenWage);
 
 	let { marketPrice, inputPrice, productionPoints, totalBonus, workers, tax } = $props();

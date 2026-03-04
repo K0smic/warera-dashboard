@@ -5,8 +5,11 @@
 	import IconUpgrade from '~icons/material-symbols/upgrade';
 
 	import { createGameConfigs } from '$lib/stores/configs.svelte';
+	import { getContext } from 'svelte';
 
 	const configsState = createGameConfigs();
+
+	let workersInfos = getContext('workersInfos');
 
 	interface Props {
 		engineLevel: number;
@@ -151,21 +154,51 @@
 
 			const rawDailyProd = getLevel('automatedEngine', engineLevel)?.stats?.dailyProd ?? 0;
 			const effectiveDailyProd = applyBonus(rawDailyProd);
-			const hourlyProd = effectiveDailyProd / 24;
+			const engineHourlyProd = effectiveDailyProd / 24;
 
-			// Hours until storage fills at current production rate
-			const hoursToFillCurrent = hourlyProd > 0 ? currentMax / hourlyProd : Infinity;
-			const hoursToFillNext = hourlyProd > 0 ? nextMax / hourlyProd : Infinity;
+			// Worker energy model:
+			// recharge/hr = totalEnergy × 10% → actions/hr = recharge / 10 cost
+			// actionsPerDay = totalEnergy × 0.24, workerDailyProd = actionsPerDay × totalProd
+			const workerActionsPerDay = (workersInfos.totalEnergy ?? 0) * 0.24;
+			const workerDailyProd = workerActionsPerDay * (workersInfos.totalProd ?? 0);
+			const workerHourlyProd = workerDailyProd / 24;
 
-			// Is the engine being blocked today?
-			const isBlocked = hoursToFillCurrent < 24;
-			const blockedHoursPerDay = isBlocked ? Math.max(0, 24 - hoursToFillCurrent) : 0;
-			const blockedUnitsPerDay = hourlyProd * blockedHoursPerDay;
+			const combinedHourlyProd = engineHourlyProd + workerHourlyProd;
 
-			// Would it still be blocked after upgrade?
-			const stillBlockedAfter = hoursToFillNext < 24;
-			const blockedHoursAfter = stillBlockedAfter ? Math.max(0, 24 - hoursToFillNext) : 0;
-			const blockedUnitsAfter = hourlyProd * blockedHoursAfter;
+			function hoursToFill(maxProd: number, hourly: number): number {
+				return hourly > 0 ? maxProd / hourly : Infinity;
+			}
+
+			// Engine only (baseline)
+			const hoursToFillCurrentEngine = hoursToFill(currentMax, engineHourlyProd);
+			const hoursToFillNextEngine = hoursToFill(nextMax, engineHourlyProd);
+
+			// Engine + workers (worst-case fill rate scenario)
+			const hoursToFillCurrentCombined = hoursToFill(currentMax, combinedHourlyProd);
+			const hoursToFillNextCombined = hoursToFill(nextMax, combinedHourlyProd);
+
+			const isBlockedEngine = hoursToFillCurrentEngine < 24;
+			const isBlockedCombined = hoursToFillCurrentCombined < 24;
+
+			const blockedHoursEngine = isBlockedEngine ? Math.max(0, 24 - hoursToFillCurrentEngine) : 0;
+			const blockedUnitsPerdayEngine = engineHourlyProd * blockedHoursEngine;
+
+			const blockedHoursCombined = isBlockedCombined
+				? Math.max(0, 24 - hoursToFillCurrentCombined)
+				: 0;
+			const blockedUnitsPerDayCombined = combinedHourlyProd * blockedHoursCombined;
+
+			const stillBlockedAfterEngine = hoursToFillNextEngine < 24;
+			const blockedHoursAfterEngine = stillBlockedAfterEngine
+				? Math.max(0, 24 - hoursToFillNextEngine)
+				: 0;
+			const blockedUnitsAfterEngine = engineHourlyProd * blockedHoursAfterEngine;
+
+			const stillBlockedAfterCombined = hoursToFillNextCombined < 24;
+			const blockedHoursAfterCombined = stillBlockedAfterCombined
+				? Math.max(0, 24 - hoursToFillNextCombined)
+				: 0;
+			const blockedUnitsAfterCombined = combinedHourlyProd * blockedHoursAfterCombined;
 
 			const nextSteelCost = getNextUpgradeSteelCost('storage', storageLevel);
 			const investmentCost = nextSteelCost * steelPrice;
@@ -175,13 +208,32 @@
 				currentMax,
 				nextMax,
 				extraCapacity,
-				hoursToFillCurrent,
-				hoursToFillNext,
-				isBlocked,
-				blockedHoursPerDay,
-				blockedUnitsPerDay,
-				stillBlockedAfter,
-				blockedUnitsAfter,
+				// Engine only
+				engineHourlyProd,
+				effectiveDailyProd,
+				hoursToFillCurrentEngine,
+				hoursToFillNextEngine,
+				isBlockedEngine,
+				blockedHoursEngine,
+				blockedUnitsPerdayEngine,
+				stillBlockedAfterEngine,
+				blockedHoursAfterEngine,
+				blockedUnitsAfterEngine,
+				// Workers
+				workerDailyProd,
+				workerHourlyProd,
+				workerActionsPerDay,
+				// Combined
+				combinedHourlyProd,
+				hoursToFillCurrentCombined,
+				hoursToFillNextCombined,
+				isBlockedCombined,
+				blockedHoursCombined,
+				blockedUnitsPerDayCombined,
+				stillBlockedAfterCombined,
+				blockedHoursAfterCombined,
+				blockedUnitsAfterCombined,
+				// Cost
 				nextSteelCost,
 				investmentCost,
 				totalInvested
@@ -237,7 +289,7 @@
 			<div>
 				<Card.Title class="flex items-center gap-1.5 text-base">
 					<!-- <IconUpgrade class="h-4 w-4" /> -->
-					Engine upgrade
+					Engine upgrade WIP
 				</Card.Title>
 				<Card.Description>DCF Model</Card.Description>
 			</div>
@@ -385,7 +437,7 @@
 			<div>
 				<Card.Title class="flex items-center gap-1.5 text-base">
 					<!-- <IconUpgrade class="h-4 w-4" /> -->
-					Storage upgrade
+					Storage upgrade WIP
 				</Card.Title>
 				<Card.Description>Storage capacity</Card.Description>
 			</div>
@@ -408,65 +460,157 @@
 					<span class="text-xs text-muted-foreground">+{s.extraCapacity} max capacity</span>
 				</div>
 				<Badge
-					variant={s.isBlocked ? 'destructive' : 'secondary'}
+					variant={s.isBlockedCombined
+						? 'destructive'
+						: s.isBlockedEngine
+							? 'secondary'
+							: 'outline'}
 					class="rounded px-2 py-0.5 text-xs font-semibold"
 				>
-					{s.isBlocked ? 'Engine blocked' : 'No blockage'}
+					{s.isBlockedCombined
+						? 'Blocked w/ workers'
+						: s.isBlockedEngine
+							? 'Blocked (engine only)'
+							: 'No blockage'}
 				</Badge>
 			</div>
 
-			<!-- Capacity stats -->
+			<!-- Capacity grid -->
 			<div class="grid grid-cols-2 gap-2">
 				<div class="rounded-md bg-muted/50 px-3 py-2">
 					<p class="text-xs text-muted-foreground">Current capacity</p>
 					<p class="text-sm font-bold">{s.currentMax} units</p>
 					<p class="text-xs text-muted-foreground">
-						Fills in
-						<span class="font-medium text-foreground">
-							{s.hoursToFillCurrent === Infinity ? '∞' : `${s.hoursToFillCurrent.toFixed(1)}h`}
+						Engine fills in <span class="font-medium text-foreground">
+							{s.hoursToFillCurrentEngine === Infinity
+								? '∞'
+								: `${s.hoursToFillCurrentEngine.toFixed(1)}h`}
 						</span>
 					</p>
+					{#if s.workerDailyProd > 0}
+						<p class="text-xs text-muted-foreground">
+							Combined fills in <span class="font-medium text-foreground">
+								{s.hoursToFillCurrentCombined === Infinity
+									? '∞'
+									: `${s.hoursToFillCurrentCombined.toFixed(1)}h`}
+							</span>
+						</p>
+					{/if}
 				</div>
 
 				<div class="rounded-md bg-muted/50 px-3 py-2">
 					<p class="text-xs text-muted-foreground">Next capacity</p>
 					<p class="text-sm font-bold">{s.nextMax} units</p>
 					<p class="text-xs text-muted-foreground">
-						Fills in
-						<span class="font-medium text-foreground">
-							{s.hoursToFillNext === Infinity ? '∞' : `${s.hoursToFillNext.toFixed(1)}h`}
+						Engine fills in <span class="font-medium text-foreground">
+							{s.hoursToFillNextEngine === Infinity
+								? '∞'
+								: `${s.hoursToFillNextEngine.toFixed(1)}h`}
 						</span>
 					</p>
+					{#if s.workerDailyProd > 0}
+						<p class="text-xs text-muted-foreground">
+							Combined fills in <span class="font-medium text-foreground">
+								{s.hoursToFillNextCombined === Infinity
+									? '∞'
+									: `${s.hoursToFillNextCombined.toFixed(1)}h`}
+							</span>
+						</p>
+					{/if}
 				</div>
 			</div>
 
-			<!-- Blockage detail -->
-			{#if s.isBlocked}
+			<!-- Worker contribution row -->
+			{#if s.workerDailyProd > 0}
+				<div class="rounded-md bg-muted/50 px-3 py-2">
+					<p class="mb-1 text-xs font-medium text-foreground">Worker contribution</p>
+					<div class="flex flex-wrap gap-x-4 gap-y-0.5">
+						<p class="text-xs text-muted-foreground">
+							Daily prod: <span class="font-medium text-foreground"
+								>{fmtCurrency(s.workerDailyProd)} units</span
+							>
+						</p>
+						<p class="text-xs text-muted-foreground">
+							Actions/day: <span class="font-medium text-foreground"
+								>{fmtCurrency(s.workerActionsPerDay)}</span
+							>
+						</p>
+						<p class="text-xs text-muted-foreground">
+							Engine: <span class="font-medium text-foreground"
+								>{fmtCurrency(s.effectiveDailyProd)}/day</span
+							>
+						</p>
+						<p class="text-xs text-muted-foreground">
+							Combined: <span class="font-medium text-foreground"
+								>{fmtCurrency(s.effectiveDailyProd + s.workerDailyProd)}/day</span
+							>
+						</p>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Blockage detail — engine only -->
+			{#if s.isBlockedEngine}
 				<div class="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2">
-					<p class="text-xs font-medium text-destructive">Engine is being blocked</p>
+					<p class="text-xs font-medium text-destructive">Engine blockage (without workers)</p>
 					<p class="text-xs text-muted-foreground">
-						<span class="font-medium text-foreground">{s.blockedHoursPerDay.toFixed(1)}h/day</span>
+						<span class="font-medium text-foreground">{s.blockedHoursEngine.toFixed(1)}h/day</span>
 						lost —
 						<span class="font-medium text-foreground"
-							>{fmtCurrency(s.blockedUnitsPerDay)} units/day</span
-						>
-						not produced
+							>{fmtCurrency(s.blockedUnitsPerdayEngine)} units/day</span
+						> not produced
 					</p>
-					{#if s.stillBlockedAfter}
+					{#if s.stillBlockedAfterEngine}
 						<p class="mt-1 text-xs text-muted-foreground">
-							After upgrade: still
-							<span class="font-medium text-foreground">{s.blockedHoursAfter.toFixed(1)}h/day</span>
-							blocked ({fmtCurrency(s.blockedUnitsAfter)} units/day)
+							After upgrade: still <span class="font-medium text-foreground"
+								>{s.blockedHoursAfterEngine.toFixed(1)}h/day</span
+							>
+							blocked ({fmtCurrency(s.blockedUnitsAfterEngine)} units/day)
 						</p>
 					{:else}
-						<p class="mt-1 text-xs text-green-600">Upgrade fully resolves the blockage ✓</p>
+						<p class="mt-1 text-xs text-green-600">Upgrade fully resolves engine blockage ✓</p>
 					{/if}
 				</div>
-			{:else}
+			{/if}
+
+			<!-- Blockage detail — combined -->
+			{#if s.workerDailyProd > 0 && s.isBlockedCombined}
+				<div class="rounded-md border border-orange-500/30 bg-orange-500/5 px-3 py-2">
+					<p class="text-xs font-medium text-orange-600">Combined blockage (engine + workers)</p>
+					<p class="text-xs text-muted-foreground">
+						<span class="font-medium text-foreground">{s.blockedHoursCombined.toFixed(1)}h/day</span
+						>
+						lost —
+						<span class="font-medium text-foreground"
+							>{fmtCurrency(s.blockedUnitsPerDayCombined)} units/day</span
+						> not produced
+					</p>
+					{#if s.stillBlockedAfterCombined}
+						<p class="mt-1 text-xs text-muted-foreground">
+							After upgrade: still <span class="font-medium text-foreground"
+								>{s.blockedHoursAfterCombined.toFixed(1)}h/day</span
+							>
+							blocked ({fmtCurrency(s.blockedUnitsAfterCombined)} units/day)
+						</p>
+					{:else}
+						<p class="mt-1 text-xs text-green-600">Upgrade fully resolves combined blockage ✓</p>
+					{/if}
+				</div>
+			{:else if s.workerDailyProd > 0 && !s.isBlockedCombined && s.isBlockedEngine}
+				<p class="text-xs text-muted-foreground">
+					Workers fill storage faster but don't cause additional blockage within 24h with next
+					upgrade.
+				</p>
+			{:else if !s.isBlockedEngine}
 				<p class="text-xs text-muted-foreground">
 					Engine produces freely — storage fills in
-					<span class="font-medium text-foreground">{s.hoursToFillCurrent.toFixed(1)}h</span>, no
-					blockage within a 24h cycle.
+					<span class="font-medium text-foreground">{s.hoursToFillCurrentEngine.toFixed(1)}h</span>
+					{#if s.workerDailyProd > 0}
+						(<span class="font-medium text-foreground"
+							>{s.hoursToFillCurrentCombined.toFixed(1)}h</span
+						> combined with workers)
+					{/if}
+					— no blockage within a 24h cycle.
 				</p>
 			{/if}
 

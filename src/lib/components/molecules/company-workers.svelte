@@ -15,6 +15,9 @@
 	}
 
 	let breakEvenWage = getContext('breakEvenWage');
+
+	let workersInfos = getContext('workersInfos');
+
 	let { workers, tax }: Props = $props();
 
 	const totalEnergy = $derived(workers.reduce((acc, w) => w.userData.skills.energy.total + acc, 0));
@@ -24,6 +27,11 @@
 	const totalWage = $derived(workers.reduce((acc, w) => w.wage + acc, 0));
 	const dailyWork = $derived(totalEnergy * 0.24);
 	const estimatedDailyWage = $derived((totalWage * totalProd * dailyWork).toFixed(2));
+
+	$effect(() => {
+		workersInfos.totalEnergy = totalEnergy;
+		workersInfos.totalProd = totalProd;
+	});
 </script>
 
 <Card.Root class="col-span-2 flex flex-col overflow-hidden xl:col-span-1">
