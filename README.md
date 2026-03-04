@@ -1,42 +1,63 @@
-# sv
+# WIP
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+### Naming convention
+#### Branch Naming Convention WIP
 
-## Creating a project
+This project uses a structured branch naming system to keep the repository clean and readable.
 
-If you're seeing this, you've probably already done this step. Congrats!
+---
 
-```sh
-# create a new project
-npx sv create my-app
+##### Main Branches
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Primary source code (development) |
+| `gh-pages` | Static build automatically deployed by GitHub Pages |
+
+> GitHub Pages can publish from `main`, from `gh-pages`, or from the `/docs` folder on `main`. The most common pattern with Svelte/Vite is to keep the source on `main` and the build on `gh-pages`, managed via CI (e.g. `peaceiris/actions-gh-pages`).
+
+---
+
+##### Development Branches
+
+Use a **prefix** describing the **type of work**, followed by a short identifier in `kebab-case`:
+
+```
+feat/feature-name        → new features
+fix/bug-description      → bug fixes
+chore/task-description   → maintenance, config, dependencies
+refactor/component-name  → refactoring without new features
+style/component-name     → CSS/UI-only changes
+docs/section-name        → documentation updates
+perf/target-name         → performance improvements
 ```
 
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv create --template minimal --types ts --add tailwindcss="plugins:none" mcp="ide:vscode+setup:local" --install npm warera-dashboard
+**Concrete examples:**
+```
+feat/hero-section
+feat/dark-mode-toggle
+fix/mobile-nav-overflow
+chore/update-svelte5-rc
+refactor/store-management
+style/typography-system
 ```
 
-## Developing
+---
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+##### General Rules
 
-```sh
-npm run dev
+- Always use **lowercase**
+- Use **hyphens** (`-`) as separators — no underscores or spaces
+- Keep names **short but descriptive** (3–4 words max)
+- Avoid special characters, multiple slashes, or dots
+- If using an issue tracker, optionally prefix with the issue number: `feat/42-contact-form`
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+---
+
+##### Recommended Flow
+
 ```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
+feat/new-section
+      ↓ PR
+    main  ──→  CI build  ──→  gh-pages  (artifact only — do not edit manually)
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
