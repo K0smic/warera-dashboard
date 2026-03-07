@@ -17,36 +17,23 @@
 		userId = userState.user._id;
 	}
 
-	const sideNav = [
-		{
-			title: 'Market',
-			url: '#',
-			icon: MdiCartVariant,
-			isActive: true,
-			items: [
-				{
-					title: 'Home',
-					url: '#'
-				}
-			]
-		},
-		{
-			title: 'Companies',
-			url: '#',
-			icon: MdiIndustrial,
-			isActive: true,
-			items: [
-				{
-					title: 'Overview',
-					url: '/companies/' + userId
-				},
-				{
-					title: 'Wages',
-					url: '#'
-				}
-			]
-		}
-	];
+	const sideNav = $derived(
+		[
+			{
+				title: 'Companies',
+				url: '#',
+				icon: MdiIndustrial,
+				isActive: true,
+				requiresUser: true,
+				items: [
+					{
+						title: 'Overview',
+						url: '/companies/' + (userState.user?._id ?? '')
+					}
+				]
+			}
+		].filter((item) => !item.requiresUser || userState.user)
+	);
 
 	let {
 		ref = $bindable(null),

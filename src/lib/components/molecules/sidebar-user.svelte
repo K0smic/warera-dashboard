@@ -61,9 +61,7 @@
 				<span class="truncate font-medium"
 					>{userState.user ? userState.user.username : 'Welcome'}</span
 				>
-				<span class="truncate text-xs"
-					>{userState.user ? userState.user.leveling.level : 'Search your username'}</span
-				>
+				<span class="truncate text-xs">{userState.user ? '' : 'Search your username'}</span>
 			</div>
 		</Sidebar.MenuButton>
 		{#if userState.user}
