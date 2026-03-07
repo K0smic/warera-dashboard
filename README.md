@@ -1,4 +1,5 @@
-# WIP
+# WarEra Dashboard
+
 
 ### Naming convention
 #### Branch Naming Convention WIP
@@ -14,7 +15,7 @@ This project uses a structured branch naming system to keep the repository clean
 | `main` | Primary source code (development) |
 | `gh-pages` | Static build automatically deployed by GitHub Pages |
 
-> GitHub Pages can publish from `main`, from `gh-pages`, or from the `/docs` folder on `main`. The most common pattern with Svelte/Vite is to keep the source on `main` and the build on `gh-pages`, managed via CI (e.g. `peaceiris/actions-gh-pages`).
+> GitHub Pages can publish from `main`, from `gh-pages`, or from the `/docs` folder on `main`. The most common pattern with Svelte/Vite is to keep the source on `main` and the build on `gh-pages`.
 
 ---
 
