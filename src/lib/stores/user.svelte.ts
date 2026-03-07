@@ -1,37 +1,34 @@
 import { getUserLite } from '$lib/services/api/user.api';
 
+function getUserFromStorage() {
+	if (typeof localStorage === 'undefined') return null;
+	const stored = localStorage.getItem('user');
+	if (!stored) return null;
+	try {
+		return JSON.parse(stored);
+	} catch {
+		localStorage.removeItem('user');
+		return null;
+	}
+}
+
+// Created once, shared across all components
+const state = $state({
+	user: getUserFromStorage(),
+	loading: false,
+	error: null as string | null
+});
+
 export function createUserState() {
 	const STORAGE_KEY = 'user';
-
-	function getUserFromStorage() {
-		if (typeof localStorage === 'undefined') return null;
-
-		const stored = localStorage.getItem(STORAGE_KEY);
-		if (!stored) return null;
-
-		try {
-			return JSON.parse(stored);
-		} catch {
-			localStorage.removeItem(STORAGE_KEY);
-			return null;
-		}
-	}
-
-	let state = $state({
-		user: getUserFromStorage(),
-		loading: false,
-		error: null as string | null
-	});
 
 	async function loadUser(userId: string) {
 		if (!userId.trim()) {
 			state.error = 'userId required';
 			return;
 		}
-
 		state.loading = true;
 		state.error = null;
-
 		try {
 			const fetchedUser = await getUserLite({ userId });
 			state.user = fetchedUser;
