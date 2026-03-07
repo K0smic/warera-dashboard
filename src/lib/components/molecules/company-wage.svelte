@@ -57,9 +57,6 @@
 	// 		(((productionPoints / (1 + fidelity / 100)) * (1 + margin / 100)) / (1 + totalBonus / 100))
 	// );
 
-	// Input costs
-	let totalInputCost = $derived(productionPoints * inputPrice);
-
 	// Production without global production bonuses
 	let baseProductionOutput = $derived(productionPoints / (1 + totalBonus / 100));
 
@@ -81,21 +78,19 @@
 	}
 
 	// Base break-even wage
-	let breakEvenWage = $derived(calculateBreakEvenWage(totalInputCost, baseProductionOutput));
+	let breakEvenWage = $derived(calculateBreakEvenWage(inputPrice, baseProductionOutput));
 
 	// Break-even wage adjusted by fidelity
 	let breakEvenWageWithFidelity = $derived(
-		calculateBreakEvenWage(totalInputCost, productionAdjustedByFidelity)
+		calculateBreakEvenWage(inputPrice, productionAdjustedByFidelity)
 	);
 
 	// Break-even wage adjusted by margin
-	let breakEvenWageWithMargin = $derived(
-		calculateBreakEvenWage(totalInputCost, productionWithMargin)
-	);
+	let breakEvenWageWithMargin = $derived(calculateBreakEvenWage(inputPrice, productionWithMargin));
 
 	// Final break-even wage adjusted by both fidelity and margin
 	let breakEvenWageWithFidelityAndMargin = $derived(
-		calculateBreakEvenWage(totalInputCost, productionWithFidelityAndMargin)
+		calculateBreakEvenWage(inputPrice, productionWithFidelityAndMargin)
 	);
 
 	// $effect(() => {
@@ -105,7 +100,7 @@
 	breakEvenWageConnector.getByFidelity = (fidelity: number) => {
 		const productionAdjustedByFidelity = baseProductionOutput / (1 + fidelity / 100);
 
-		return calculateBreakEvenWage(totalInputCost, productionAdjustedByFidelity);
+		return calculateBreakEvenWage(inputPrice, productionAdjustedByFidelity);
 	};
 
 	function handleReset() {

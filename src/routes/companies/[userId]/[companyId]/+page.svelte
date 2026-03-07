@@ -17,9 +17,6 @@
 
 	let { data }: PageProps = $props();
 
-	let workersInfos = $state({ totalEnergy: 0 as number, totalProd: 0 as number });
-	setContext('workersInfos', workersInfos);
-
 	//DEBUG:
 	$inspect(data);
 
@@ -27,7 +24,10 @@
 	const countriesState = createCountries();
 
 	const item = $derived(configsState.configs.items[data.company.itemCode]);
-	const inputPrice = $derived(data.productionNeeds.reduce((input, obj) => obj.sell + input, 0));
+	// Total price of all inputs
+	const inputPrice = $derived(
+		data.productionNeeds.reduce((input, obj) => obj.sell * obj.quantity + input, 0)
+	);
 
 	// ===== HELPER FUNCTIONS =====
 	const getOrderPrice = (orders: any[], orderType: 'buy' | 'sell') => orders[0]?.price ?? 0;
@@ -83,6 +83,28 @@
 		{ label: 'Total production bonus', value: data.activeProductionBonus.total }
 	]);
 
+	let workersInfos = $state({
+		totalEnergy: 0 as number,
+		totalProd: 0 as number,
+		dailyWork: 0 as number,
+		totalWages: 0 as number
+	});
+	setContext('workersInfos', workersInfos);
+
+	const engineDailyProd = $derived(
+		configsState.configs.upgradesConfig['automatedEngine']?.levels[
+			data.company.activeUpgradeLevels.automatedEngine
+		].stats.dailyProd
+	);
+
+	const expenses = $derived(workersInfos.totalWages + inputPrice);
+	const revenue = $derived(
+		((workersInfos.totalProd * workersInfos.dailyWork + engineDailyProd) / item.productionPoints) *
+			(1 + data.activeProductionBonus.total / 100) *
+			bestSellPrice
+	);
+	const netValue = $derived(revenue - expenses);
+
 	// ===== HELPER FUNCTIONS FOR TABLE =====
 	const getCountryName = (regionId: string) =>
 		countriesState.getCountryById(countriesState.regions[regionId].country).name;
@@ -111,6 +133,9 @@
 		workerCount={data.company.workerCount}
 		concreteInvested={data.company.concreteInvested}
 		{concreteValue}
+		{expenses}
+		{revenue}
+		{netValue}
 	/>
 
 	<!-- PERFORMANCE & UPGRADES -->

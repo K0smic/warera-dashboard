@@ -24,13 +24,15 @@
 	const totalProd = $derived(
 		workers.reduce((acc, w) => w.userData.skills.production.total + acc, 0)
 	);
-	const totalWage = $derived(workers.reduce((acc, w) => w.wage + acc, 0));
+	const totalWages = $derived(workers.reduce((acc, w) => w.wage + acc, 0));
 	const dailyWork = $derived(totalEnergy * 0.24);
-	const estimatedDailyWage = $derived((totalWage * totalProd * dailyWork).toFixed(2));
+	const estimatedDailyWage = $derived(totalWages * totalProd * dailyWork);
 
 	$effect(() => {
 		workersInfos.totalEnergy = totalEnergy;
 		workersInfos.totalProd = totalProd;
+		workersInfos.dailyWork = dailyWork;
+		workersInfos.totalWages = estimatedDailyWage;
 	});
 </script>
 
@@ -51,7 +53,7 @@
 
 		<!-- Summary stats row -->
 		<div class="grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
-			{#each [{ label: 'Total Wage', value: totalWage.toFixed(2) }, { label: 'Total Prod.', value: totalProd }, { label: 'Daily Work', value: dailyWork.toFixed(2) }, { label: 'Daily wages', value: estimatedDailyWage }] as stat}
+			{#each [{ label: 'Total Wage', value: totalWages.toFixed(3) }, { label: 'Total Prod.', value: totalProd }, { label: 'Daily Work', value: dailyWork.toFixed(2) }, { label: 'Daily wages', value: estimatedDailyWage.toFixed(3) }] as stat}
 				<div class="rounded-md bg-muted px-2 py-1.5">
 					<p class="text-xs text-muted-foreground">{stat.label}</p>
 					<p class="text-sm font-semibold">{stat.value}</p>

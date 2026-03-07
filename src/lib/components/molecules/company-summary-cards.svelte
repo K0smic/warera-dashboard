@@ -2,12 +2,14 @@
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/atoms/card';
 	import { Badge } from '$lib/components/atoms/badge';
 	import { Progress } from '$lib/components/atoms/progress';
-	import IconFactory from '~icons/mdi/factory';
-	import IconChart from '~icons/mdi/chart-line';
-	import MdiInformationBox from '~icons/mdi/information-box';
-	import MdiBitcoin from '~icons/mdi/bitcoin';
 	import { camelCaseToNormalText } from '$lib/utils';
 	import Separator from '../atoms/separator/separator.svelte';
+
+	import IconFactory from '~icons/mdi/factory';
+	import MdiPickaxe from '~icons/mdi/pickaxe';
+	import MdiBitcoin from '~icons/mdi/bitcoin';
+	import MdiInformationBox from '~icons/mdi/information-box';
+	import IconChart from '~icons/mdi/chart-line';
 
 	interface Props {
 		production: number;
@@ -20,6 +22,9 @@
 		workerCount: number;
 		concreteInvested: number;
 		concreteValue: number;
+		revenue: number;
+		expenses: number;
+		netValue: number;
 	}
 
 	let {
@@ -32,7 +37,10 @@
 		marketSpread,
 		workerCount,
 		concreteInvested,
-		concreteValue
+		concreteValue,
+		revenue = 0,
+		expenses = 0,
+		netValue = 0
 	}: Props = $props();
 </script>
 
@@ -47,14 +55,98 @@
 			</CardTitle>
 		</CardHeader>
 		<CardContent>
-			<div class="text-2xl font-bold">
-				{production.toFixed(2)}
+			<div class="flex justify-between">
+				<div class="flex items-center" title="Current production">
+					<span class="text-2xl font-bold"> {production.toFixed(2)}</span>
+					<MdiPickaxe class="mt-1 ml-1" />
+				</div>
+				<div class="flex items-center" title="Production value">
+					<span class="sr-only">Production value</span>
+					<span>{productionValue.toFixed(3)}</span>
+					<MdiBitcoin class="ml-1" />
+				</div>
 			</div>
 			<Progress value={productionCapacity} class="mt-2" />
-			<div class="flex items-center">
-				<span>Market value: {productionValue.toFixed(3)}</span>
-				<MdiBitcoin class="ml-1" />
+		</CardContent>
+	</Card>
+
+	<Card>
+		<CardHeader>
+			<CardTitle class="item-center flex gap-2">
+				<IconFactory class="h-5 w-5" />
+				Daily flow
+			</CardTitle>
+		</CardHeader>
+		<CardContent>
+			<div class="grid grid-cols-1 gap-2">
+				<div class="rounded-md bg-muted px-2 py-1.5 text-center text-sm">
+					<p class="text-xs font-semibold text-muted-foreground">Profit/Loss</p>
+					<div class="flex items-center justify-center">
+						<p class="text-sm font-bold {netValue > 0 ? 'text-green-600' : 'text-destructive'}">
+							{netValue > 0 ? '+' : ''}{netValue.toFixed(3)}
+						</p>
+						<span><MdiBitcoin class="ml-1" /></span>
+					</div>
+				</div>
+				<div class="grid grid-cols-2 gap-2 text-center sm:grid-cols-2">
+					<div
+						class="rounded-md bg-muted px-2 py-1.5 text-sm"
+						title="Estimated workers and engine daily production in money"
+					>
+						<p class="text-xs text-muted-foreground">Revenue</p>
+						<div class="flex items-center justify-center">
+							<p class="text-sm font-semibold text-green-600">+{revenue.toFixed(3)}</p>
+							<span><MdiBitcoin class="ml-1" /></span>
+						</div>
+					</div>
+					<div
+						class="rounded-md bg-muted px-2 py-1.5 text-sm"
+						title="Estimated worker wages and input goods cost"
+					>
+						<p class="text-xs text-muted-foreground">Expenses</p>
+						<div class="flex items-center justify-center">
+							<p class="text-sm font-semibold text-destructive">-{expenses.toFixed(3)}</p>
+							<span><MdiBitcoin class="ml-1" /></span>
+						</div>
+					</div>
+				</div>
 			</div>
+		</CardContent>
+	</Card>
+
+	<Card>
+		<CardHeader>
+			<CardTitle class="item-center flex gap-2">
+				<IconChart class="h-5 w-5" />
+				{camelCaseToNormalText(item.code)} market
+			</CardTitle>
+		</CardHeader>
+		<CardContent class="space-y-1 text-sm">
+			<dl class="mx-auto grid max-w-2xs grid-cols-2">
+				<dt>Best Buy:</dt>
+				<dd class="text-right slashed-zero tabular-nums">
+					{bestBuyPrice}
+				</dd>
+				<dt>Best Sell:</dt>
+				<dd class="text-right slashed-zero tabular-nums">
+					{bestSellPrice}
+				</dd>
+				<dt>Spread:</dt>
+				<dd
+					class="text-right slashed-zero tabular-nums {marketSpread >= 0
+						? 'text-green-600'
+						: 'text-red-600'}"
+				>
+					{marketSpread.toFixed(3)}
+				</dd>
+			</dl>
+			<Separator />
+			<dl class="mx-auto grid max-w-2xs grid-cols-2">
+				<dt>Concrete invested:</dt>
+				<dd class="text-right slashed-zero tabular-nums">{concreteInvested}</dd>
+				<dt>Estimated value:</dt>
+				<dd class="text-right slashed-zero tabular-nums">{concreteValue.toFixed(3)}</dd>
+			</dl>
 		</CardContent>
 	</Card>
 
@@ -95,42 +187,6 @@
 						</dd>
 					{/each}
 				{/if}
-			</dl>
-		</CardContent>
-	</Card>
-
-	<Card>
-		<CardHeader>
-			<CardTitle class="item-center flex gap-2">
-				<IconChart class="h-5 w-5" />
-				{camelCaseToNormalText(item.code)} market
-			</CardTitle>
-		</CardHeader>
-		<CardContent class="space-y-1 text-sm">
-			<dl class="mx-auto grid max-w-2xs grid-cols-2">
-				<dt>Best Buy:</dt>
-				<dd class="text-right slashed-zero tabular-nums">
-					{bestBuyPrice}
-				</dd>
-				<dt>Best Sell:</dt>
-				<dd class="text-right slashed-zero tabular-nums">
-					{bestSellPrice}
-				</dd>
-				<dt>Spread:</dt>
-				<dd
-					class="text-right slashed-zero tabular-nums {marketSpread >= 0
-						? 'text-green-600'
-						: 'text-red-600'}"
-				>
-					{marketSpread.toFixed(3)}
-				</dd>
-			</dl>
-			<Separator />
-			<dl class="mx-auto grid max-w-2xs grid-cols-2">
-				<dt>Concrete invested:</dt>
-				<dd class="text-right slashed-zero tabular-nums">{concreteInvested}</dd>
-				<dt>Estimated value:</dt>
-				<dd class="text-right slashed-zero tabular-nums">{concreteValue.toFixed(3)}</dd>
 			</dl>
 		</CardContent>
 	</Card>

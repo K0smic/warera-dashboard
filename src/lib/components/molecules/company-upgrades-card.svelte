@@ -1,8 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/atoms/card';
 	import { Badge } from '$lib/components/atoms/badge';
-	import { Separator } from '$lib/components/atoms/separator';
-	import IconUpgrade from '~icons/material-symbols/upgrade';
 
 	import { createGameConfigs } from '$lib/stores/configs.svelte';
 	import { getContext } from 'svelte';
@@ -159,8 +157,7 @@
 			// Worker energy model:
 			// recharge/hr = totalEnergy × 10% → actions/hr = recharge / 10 cost
 			// actionsPerDay = totalEnergy × 0.24, workerDailyProd = actionsPerDay × totalProd
-			const workerActionsPerDay = (workersInfos.totalEnergy ?? 0) * 0.24;
-			const workerDailyProd = workerActionsPerDay * (workersInfos.totalProd ?? 0);
+			const workerDailyProd = workersInfos.dailyWork * (workersInfos.totalProd ?? 0);
 			const workerHourlyProd = workerDailyProd / 24;
 
 			const combinedHourlyProd = engineHourlyProd + workerHourlyProd;
@@ -222,7 +219,6 @@
 				// Workers
 				workerDailyProd,
 				workerHourlyProd,
-				workerActionsPerDay,
 				// Combined
 				combinedHourlyProd,
 				hoursToFillCurrentCombined,
@@ -532,7 +528,7 @@
 						</p>
 						<p class="text-xs text-muted-foreground">
 							Actions/day: <span class="font-medium text-foreground"
-								>{fmtCurrency(s.workerActionsPerDay)}</span
+								>{fmtCurrency(workersInfos.dailyWork)}</span
 							>
 						</p>
 						<p class="text-xs text-muted-foreground">
