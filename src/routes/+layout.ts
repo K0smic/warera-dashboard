@@ -1,4 +1,8 @@
 import type { PageLoad } from './$types';
+
+export const prerender = true;
+export const ssr = false;
+
 import { createGameConfigs } from '$lib/stores/configs.svelte';
 import { createCountries } from '$lib/stores/countries.svelte';
 
