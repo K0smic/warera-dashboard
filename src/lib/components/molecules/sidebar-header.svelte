@@ -1,20 +1,15 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
-	import Button from '$lib/components/atoms/button/button.svelte';
 	import { toggleMode } from 'mode-watcher';
 	import IconWorld from 'virtual:icons/mdi/world';
 	import MdiWhiteBalanceSunny from '~icons/mdi/white-balance-sunny';
 	import MdiMoonAndStars from '~icons/mdi/moon-and-stars';
-
-	import SunIcon from '@lucide/svelte/icons/sun';
-	import MoonIcon from '@lucide/svelte/icons/moon';
-	// This should be `Component` after @lucide/svelte updates types
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	import { resolve } from '$app/paths';
 </script>
 
 <Sidebar.Menu>
 	<Sidebar.MenuItem>
-		<a href="/">
+		<a href={resolve('/')}>
 			<Sidebar.MenuButton
 				size="lg"
 				class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
