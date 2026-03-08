@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
 	import SideHeader from '$lib/components/molecules/sidebar-header.svelte';
 	import NavUser from '$lib/components/molecules/sidebar-user.svelte';
@@ -28,7 +30,7 @@
 				items: [
 					{
 						title: 'Overview',
-						url: '/companies/' + (userState.user?._id ?? '')
+						url: userState.user ? resolve(`/companies/${userState.user._id}`) : resolve('/')
 					}
 				]
 			}
