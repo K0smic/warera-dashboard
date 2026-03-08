@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import * as Collapsible from '$lib/components/atoms/collapsible/index.js';
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+
 	let {
 		items
 	}: {
@@ -46,7 +48,14 @@
 									<Sidebar.MenuSubItem>
 										<Sidebar.MenuSubButton>
 											{#snippet child({ props })}
-												<a href={subItem.url} {...props}>
+												<a
+													href={subItem.url}
+													{...props}
+													onclick={(e) => {
+														e.preventDefault();
+														goto(subItem.url);
+													}}
+												>
 													<span>{subItem.title}</span>
 												</a>
 											{/snippet}
