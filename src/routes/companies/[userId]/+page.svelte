@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import CompaniesCards from '$lib/components/molecules/companies-cards.svelte';
 	import type { PageProps } from './$types';
 
@@ -14,7 +15,7 @@
 			href="/companies/{company.user}/{company._id}"
 			onclick={(e) => {
 				e.preventDefault();
-				goto(`/companies/${company.user}/${company._id}`);
+				goto(resolve(`/companies/${company.user}/${company._id}`));
 			}}
 		>
 			<CompaniesCards {...company} />

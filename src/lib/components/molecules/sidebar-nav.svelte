@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import * as Collapsible from '$lib/components/atoms/collapsible/index.js';
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
@@ -53,7 +54,7 @@
 													{...props}
 													onclick={(e) => {
 														e.preventDefault();
-														goto(subItem.url);
+														goto(resolve(subItem.url));
 													}}
 												>
 													<span>{subItem.title}</span>
