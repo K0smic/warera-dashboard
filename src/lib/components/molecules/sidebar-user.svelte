@@ -8,7 +8,7 @@
 	import MdiUserSearch from '~icons/mdi/user-search';
 	import MdiSearch from '~icons/mdi/search';
 	import { createUserState } from '$lib/stores/user.svelte.js';
-	import Button from '../atoms/button/button.svelte';
+	import Button from '$lib/components/atoms/button/button.svelte';
 
 	const userState = createUserState();
 	let userId = $state('');
@@ -52,6 +52,7 @@
 		>
 			<Avatar.Root class="size-8 rounded-lg">
 				<Avatar.Image
+					loading="lazy"
 					src={userState.user ? userState.user.avatarUrl : ''}
 					alt={userState.user ? userState.user.username : ''}
 				/>

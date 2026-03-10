@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import { createGameConfigs } from '$lib/stores/configs.svelte';
-	import { camelCaseToNormalText } from '$lib/utils';
 	import { createCountries } from '$lib/stores/countries.svelte';
 	import { setContext } from 'svelte';
 
@@ -9,9 +8,7 @@
 		CompanyHeader,
 		SummaryCards,
 		UpgradesCard,
-		BestRegionsTable,
-		CompanyWage,
-		CompanyWorkers
+		BestRegionsTable
 	} from '$lib/components/molecules';
 	import WorkersWidget from '$lib/components/organisms/company-workers-widget.svelte';
 
@@ -85,9 +82,9 @@
 
 	let workersInfos = $state({
 		totalEnergy: 0 as number,
-		totalProd: 0 as number,
 		dailyWork: 0 as number,
-		totalWages: 0 as number
+		totalWages: 0 as number,
+		totalDailyProduction: 0 as number
 	});
 	setContext('workersInfos', workersInfos);
 
@@ -97,12 +94,29 @@
 		].stats.dailyProd
 	);
 
-	const expenses = $derived(workersInfos.totalWages + inputPrice);
+	/** Units of output produced per day (workers + engine, with bonus applied) */
+	const dailyUnits = $derived(
+		((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
+			(1 + data.activeProductionBonus.total / 100)
+	);
+
+	/** Total daily expenses: worker wages + raw material cost for all units produced */
+	const expenses = $derived(workersInfos.totalWages + inputPrice * dailyUnits);
+
+	/**
+	 * Estimated daily revenue from production output.
+	 *   totalDailyProduction = Σ(dailyActions_i × production_i)
+	 *   engineDailyProd      = flat daily production from engine/machinery
+	 *   productionPoints     = units of production required per output item
+	 *   activeProductionBonus = percentage bonus applied to total output
+	 */
 	const revenue = $derived(
-		((workersInfos.totalProd * workersInfos.dailyWork + engineDailyProd) / item.productionPoints) *
+		((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
 			(1 + data.activeProductionBonus.total / 100) *
 			bestSellPrice
 	);
+
+	/** Net daily profit: revenue minus all operational expenses. */
 	const netValue = $derived(revenue - expenses);
 
 	// ===== HELPER FUNCTIONS FOR TABLE =====
@@ -124,6 +138,7 @@
 	<!-- SUMMARY CARDS -->
 	<SummaryCards
 		production={data.company.production}
+		{dailyUnits}
 		{productionCapacity}
 		{productionValue}
 		{item}
