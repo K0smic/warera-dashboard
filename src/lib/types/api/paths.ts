@@ -1,4 +1,4 @@
-import type { operations } from './ops.types';
+import type { operations } from './operations';
 
 // Premium required:
 // work.getStatsByWorkerAndCompany

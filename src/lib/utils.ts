@@ -13,9 +13,9 @@ export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 
 /**
- * Converte una stringa da lowerCamelCase a testo normale con la prima lettera maiuscola
- * @param text - Il testo in formato lowerCamelCase
- * @returns Il testo convertito (es: "firstName" -> "First name")
+ * Converts a string from lowerCamelCase to normal text with the first letter capitalized
+ * @param text - The text in lowerCamelCase format
+ * @returns The converted text (e.g., "firstName" -> "First name")
  */
 export function camelCaseToNormalText(text: string): string {
 	if (!text) return '';
