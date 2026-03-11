@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { Badge } from '$lib/components/atoms/badge';
+	// import { Badge } from '$lib/components/atoms/badge';
 	import { camelCaseToNormalText } from '$lib/utils';
 
-	import MdiBitcoin from '~icons/mdi/bitcoin';
+	// import MdiBitcoin from '~icons/mdi/bitcoin';
 
 	interface Props {
 		companyName: string;
 		itemCode: string;
 		regionName: string;
-		estimatedValue: number;
+		estimatedValue?: number;
 	}
 
 	let { companyName, itemCode, regionName, estimatedValue }: Props = $props();

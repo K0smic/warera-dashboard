@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
+	import { BREAK_EVEN_WAGE_CTX, type BreakEvenWageContext } from '$lib/types';
+
 	import { CompanyWage, CompanyWorkers } from '$lib/components/molecules';
 
-	let breakEvenWage = $state({
-		getByFidelity: null as null | ((fidelity: number) => number)
+	setContext<BreakEvenWageContext>(BREAK_EVEN_WAGE_CTX, {
+		wage: 0,
+		getByFidelity: null
 	});
-	setContext('breakEvenWage', breakEvenWage);
 
 	let { marketPrice, inputPrice, productionPoints, totalBonus, workers, tax } = $props();
 </script>

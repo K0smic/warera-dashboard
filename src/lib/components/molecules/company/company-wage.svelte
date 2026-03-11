@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import { BREAK_EVEN_WAGE_CTX, type BreakEvenWageContext } from '$lib/types';
+
 	import * as Card from '$lib/components/atoms/card';
 	import * as InputGroup from '$lib/components/atoms/input-group/index.js';
 	import Button from '$lib/components/atoms/button/button.svelte';
@@ -18,10 +20,7 @@
 
 	const props: Props = $props();
 
-	const breakEvenWageConnector = getContext<{
-		wage: number;
-		getByFidelity: (fidelity: number) => number;
-	}>('breakEvenWage');
+	const breakEvenWageConnector = getContext<BreakEvenWageContext>(BREAK_EVEN_WAGE_CTX);
 
 	let marketPrice = $derived(props.marketPrice ?? 0);
 	let inputPrice = $derived(props.inputPrice ?? 0);

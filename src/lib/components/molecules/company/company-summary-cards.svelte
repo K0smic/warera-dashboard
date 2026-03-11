@@ -116,7 +116,9 @@
 					>
 						<p class="text-xs text-muted-foreground">Expenses</p>
 						<div class="flex items-center justify-center">
-							<p class="text-sm font-semibold text-destructive">-{expenses.toFixed(3)}</p>
+							<p class="text-sm font-semibold text-destructive">
+								{expenses ? '-' + expenses.toFixed(3) : 0}
+							</p>
 							<span><MdiBitcoin class="ml-1" /></span>
 						</div>
 					</div>

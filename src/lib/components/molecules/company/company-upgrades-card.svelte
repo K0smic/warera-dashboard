@@ -1,13 +1,15 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
+	import { WORKER_INFO_CTX, type WorkerInfoContext } from '$lib/types';
+
 	import * as Card from '$lib/components/atoms/card';
 	import { Badge } from '$lib/components/atoms/badge';
 
 	import { createGameConfigs } from '$lib/stores/configs.svelte';
-	import { getContext } from 'svelte';
 
 	const configsState = createGameConfigs();
 
-	let workersInfos = getContext('workersInfos');
+	let workersInfos = getContext<WorkerInfoContext>(WORKER_INFO_CTX);
 
 	interface Props {
 		engineLevel: number;

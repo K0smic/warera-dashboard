@@ -1,4 +1,4 @@
-import type { responses } from './res.types';
+import type { responses } from './responses';
 
 export interface operations {
 	'company.getById': {

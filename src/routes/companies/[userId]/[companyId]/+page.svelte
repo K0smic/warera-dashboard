@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
+	import { WORKER_INFO_CTX, type WorkerInfoContext } from '$lib/types';
+
 	import { createGameConfigs } from '$lib/stores/configs.svelte';
 	import { createCountries } from '$lib/stores/countries.svelte';
 	import { setContext } from 'svelte';
@@ -81,12 +83,10 @@
 	]);
 
 	let workersInfos = $state({
-		totalEnergy: 0 as number,
-		dailyWork: 0 as number,
-		totalWages: 0 as number,
-		totalDailyProduction: 0 as number
+		totalDailyProduction: 0,
+		totalWages: 0
 	});
-	setContext('workersInfos', workersInfos);
+	setContext<WorkerInfoContext>(WORKER_INFO_CTX, workersInfos);
 
 	const engineDailyProd = $derived(
 		configsState.configs.upgradesConfig['automatedEngine']?.levels[
@@ -183,7 +183,7 @@
 		/>
 
 		<BestRegionsTable
-			bonuses={data.availableProductionBonuses as any}
+			bonuses={data.availableProductionBonuses}
 			activeProductionBonus={data.activeProductionBonus}
 			currentRegion={data.company.region}
 			{countryRegion}
