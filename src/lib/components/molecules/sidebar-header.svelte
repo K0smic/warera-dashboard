@@ -1,5 +1,7 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
+	import logo from '$lib/assets/logo.png';
+
 	import { toggleMode } from 'mode-watcher';
 	import IconWorld from 'virtual:icons/mdi/world';
 	import MdiWhiteBalanceSunny from '~icons/mdi/white-balance-sunny';
@@ -16,9 +18,9 @@
 				tabindex={-1}
 			>
 				<div
-					class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+					class="flex aspect-square max-w-1/5 items-center justify-center rounded-lg text-sidebar-primary-foreground"
 				>
-					<IconWorld class="size-7" />
+					<img src={logo} alt="Logo" class="aspect-square rounded-xl bg-muted" loading="lazy" />
 				</div>
 				<div class="grid flex-1 text-start text-sm leading-tight">
 					<h1 class="truncate font-medium">War Era</h1>
