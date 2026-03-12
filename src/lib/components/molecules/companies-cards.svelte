@@ -3,7 +3,7 @@
 	import { Badge } from '$lib/components/atoms/badge';
 	import { camelCaseToNormalText } from '$lib/utils';
 
-	import type { responses } from '$lib/services/index';
+	import type { responses } from '$lib/types';
 	import MdiBitcoin from '~icons/mdi/bitcoin';
 
 	//     {
@@ -28,7 +28,7 @@
 	// }
 
 	let company: responses['schemas']['CompanyResponse'] = $props();
-	$inspect(company);
+	// $inspect(company);
 </script>
 
 <Card.Root class="@container/card">

@@ -1,4 +1,4 @@
-import type { paths, responses } from '$lib/services/index';
+import type { paths, responses } from '$lib/types';
 import { trpcFetch } from './client';
 /* =======================
  * Helpers
@@ -16,9 +16,8 @@ export function getGameConfig(
 	input: RequestBody<'/gameConfig.getGameConfig'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<RequestBody<'/gameConfig.getGameConfig'>, responses['responses']>(
-		'gameConfig.getGameConfig',
-		input,
-		fetchFn
-	);
+	return trpcFetch<
+		RequestBody<'/gameConfig.getGameConfig'>,
+		responses['schemas']['GameConfigResponse']
+	>('gameConfig.getGameConfig', input, fetchFn);
 }

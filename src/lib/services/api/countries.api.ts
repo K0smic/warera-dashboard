@@ -1,4 +1,4 @@
-import type { paths, responses } from '$lib/services/index';
+import type { paths, responses } from '$lib/types';
 import { trpcFetch } from './client';
 /* =======================
  * Helpers
@@ -16,22 +16,20 @@ export function getCountries(
 	input: RequestBody<'/country.getAllCountries'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<RequestBody<'/country.getAllCountries'>, responses['responses']>(
-		'country.getAllCountries',
-		input,
-		fetchFn
-	);
+	return trpcFetch<
+		RequestBody<'/country.getAllCountries'>,
+		responses['schemas']['AllCountriesResponse']
+	>('country.getAllCountries', input, fetchFn);
 }
 
 export function getRegions(
 	input: RequestBody<'/region.getRegionsObject'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<RequestBody<'/region.getRegionsObject'>, responses['responses']>(
-		'region.getRegionsObject',
-		input,
-		fetchFn
-	);
+	return trpcFetch<
+		RequestBody<'/region.getRegionsObject'>,
+		responses['schemas']['AllRegionsResponse']
+	>('region.getRegionsObject', input, fetchFn);
 }
 
 export function getCountry(

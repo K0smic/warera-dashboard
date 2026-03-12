@@ -1,4 +1,4 @@
-import type { paths, responses } from '$lib/services/index';
+import type { paths, responses } from '$lib/types';
 import { trpcFetch } from './client';
 /* =======================
  * Helpers
@@ -37,7 +37,7 @@ export function getProductionBonus(
 ) {
 	return trpcFetch<
 		RequestBody<'/company.getProductionBonus'>,
-		responses['schemas']['ProductionBonus']
+		responses['schemas']['ProductionBonusResponse']
 	>('company.getProductionBonus', input, fetchFn);
 }
 
@@ -45,11 +45,10 @@ export function getWageStats(
 	input: RequestBody<'/workOffer.getWageStats'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<RequestBody<'/workOffer.getWageStats'>, responses['schemas']['WageStats']>(
-		'workOffer.getWageStats',
-		input,
-		fetchFn
-	);
+	return trpcFetch<
+		RequestBody<'/workOffer.getWageStats'>,
+		responses['schemas']['WageStatsResponse']
+	>('workOffer.getWageStats', input, fetchFn);
 }
 
 export function getUpgradeByTypeAndEntity(
@@ -78,6 +77,6 @@ export function getWorkers(
 ) {
 	return trpcFetch<
 		RequestBody<'/worker.getWorkers'>,
-		responses['schemas']['WorkersByCompany'] | responses['schemas']['WorkersByUser']
+		responses['schemas']['WorkersByCompanyResponse'] | responses['schemas']['WorkersByUserResponse']
 	>('worker.getWorkers', input, fetchFn);
 }

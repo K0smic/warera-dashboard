@@ -23,7 +23,7 @@
 		outputBestBuyPrice: number;
 		outputMarketSpread?: number;
 		steelPrice: number;
-		baselineSteelPrice: number;
+		baselineSteelPrice?: number;
 		totalBonus?: number;
 	}
 
@@ -39,7 +39,7 @@
 		outputBestBuyPrice,
 		outputMarketSpread,
 		steelPrice,
-		baselineSteelPrice,
+		baselineSteelPrice = 0,
 		totalBonus = 0
 	}: Props = $props();
 

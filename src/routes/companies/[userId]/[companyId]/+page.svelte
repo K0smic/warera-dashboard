@@ -17,7 +17,7 @@
 	let { data }: PageProps = $props();
 
 	//DEBUG:
-	$inspect(data);
+	// $inspect(data);
 
 	const configsState = createGameConfigs();
 	const countriesState = createCountries();
