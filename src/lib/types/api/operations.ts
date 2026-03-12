@@ -48,7 +48,7 @@ export interface operations {
 					[name: string]: unknown;
 				};
 				content: {
-					'application/json': responses['responses'];
+					'application/json': responses['schemas']['RecommendedRegionIdsByItemCodeResponse'];
 				};
 			};
 		};
@@ -74,7 +74,7 @@ export interface operations {
 					[name: string]: unknown;
 				};
 				content: {
-					'application/json': responses['schemas']['ProductionBonus'];
+					'application/json': responses['schemas']['ProductionBonusResponse'];
 				};
 			};
 		};
@@ -201,7 +201,7 @@ export interface operations {
 		};
 		requestBody?: {
 			content: {
-				'application/json': Record<string, never>;
+				'application/json': responses['schemas']['AllCountriesResponse'];
 			};
 		};
 		responses: {
@@ -327,7 +327,7 @@ export interface operations {
 		};
 		requestBody?: {
 			content: {
-				'application/json': Record<string, never>;
+				'application/json': responses['schemas']['AllRegionsResponse'];
 			};
 		};
 		responses: {
@@ -573,7 +573,7 @@ export interface operations {
 				headers: {
 					[name: string]: unknown;
 				};
-				content?: never;
+				content: { 'application/json': responses['schemas']['TopOrdersResponse'] };
 			};
 		};
 	};
@@ -641,7 +641,7 @@ export interface operations {
 					[name: string]: unknown;
 				};
 				content: {
-					'application/json': responses['schemas']['WageStats'];
+					'application/json': responses['schemas']['WageStatsResponse'];
 				};
 			};
 		};
@@ -806,7 +806,7 @@ export interface operations {
 		};
 		requestBody?: {
 			content: {
-				'application/json': Record<string, never>;
+				'application/json': responses['schemas']['GameConfigResponse'];
 			};
 		};
 		responses: {
@@ -839,7 +839,7 @@ export interface operations {
 					[name: string]: unknown;
 				};
 				content: {
-					'application/json': responses['schemas']['UserLite'];
+					'application/json': responses['schemas']['UserLiteResponse'];
 				};
 			};
 		};
@@ -1135,8 +1135,8 @@ export interface operations {
 				};
 				content: {
 					'application/json':
-						| responses['schemas']['WorkersByCompany']
-						| responses['schemas']['WorkersByUser'];
+						| responses['schemas']['WorkersByCompanyResponse']
+						| responses['schemas']['WorkersByUserResponse'];
 				};
 			};
 		};

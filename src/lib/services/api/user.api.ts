@@ -1,5 +1,5 @@
 // src/lib/api/user.api.ts
-import type { paths, responses } from '$lib/services/index';
+import type { paths, responses } from '$lib/types';
 import { trpcFetch } from './client';
 
 /* =======================
@@ -31,6 +31,6 @@ export function getUsersByCountry(
 ) {
 	return trpcFetch<
 		RequestBody<'/user.getUsersByCountry'>,
-		paths['/user.getUsersByCountry']['post']['responses']['200']
+		paths['/user.getUsersByCountry']['get']['responses']['200']
 	>('user.getUsersByCountry', input, fetchFn);
 }

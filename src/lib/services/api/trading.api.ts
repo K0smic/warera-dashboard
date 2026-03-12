@@ -1,5 +1,5 @@
 // src/lib/api/user.api.ts
-import type { paths, responses } from '$lib/services/index';
+import type { paths, responses } from '$lib/types';
 import { trpcFetch } from './client';
 
 /* =======================
@@ -18,9 +18,8 @@ export function getTopOrders(
 	input: RequestBody<'/tradingOrder.getTopOrders'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<RequestBody<'/tradingOrder.getTopOrders'>, responses['responses']>(
-		'tradingOrder.getTopOrders',
-		input,
-		fetchFn
-	);
+	return trpcFetch<
+		RequestBody<'/tradingOrder.getTopOrders'>,
+		responses['schemas']['TopOrdersResponse']
+	>('tradingOrder.getTopOrders', input, fetchFn);
 }
