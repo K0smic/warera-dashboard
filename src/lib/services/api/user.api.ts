@@ -18,13 +18,14 @@ export function getUserLite(
 	input: RequestBody<'/user.getUserLite'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<RequestBody<'/user.getUserLite'>, responses['schemas']['UserLite']>(
+	return trpcFetch<RequestBody<'/user.getUserLite'>, responses['schemas']['UserLiteResponse']>(
 		'user.getUserLite',
 		input,
 		fetchFn
 	);
 }
 
+//TODO: add responses['schemas']['UsersByCountryResponse'] type, now is not used
 export function getUsersByCountry(
 	input: RequestBody<'/user.getUsersByCountry'>,
 	fetchFn: typeof fetch = fetch

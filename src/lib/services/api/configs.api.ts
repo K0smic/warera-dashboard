@@ -16,9 +16,8 @@ export function getGameConfig(
 	input: RequestBody<'/gameConfig.getGameConfig'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<RequestBody<'/gameConfig.getGameConfig'>, responses['schemas']['GameConfig']>(
-		'gameConfig.getGameConfig',
-		input,
-		fetchFn
-	);
+	return trpcFetch<
+		RequestBody<'/gameConfig.getGameConfig'>,
+		responses['schemas']['GameConfigResponse']
+	>('gameConfig.getGameConfig', input, fetchFn);
 }
