@@ -1,13 +1,39 @@
 import type { PageLoad } from './$types';
+import type { EndpointInput } from '$lib/types/api/registry';
+import type { UserLiteResponse } from '$lib/types/api/schemas';
+import type { TopOrdersResponse } from '$lib/types/api/schemas';
+import { error } from '@sveltejs/kit';
 import { createGameConfigs } from '$lib/stores/configs.svelte';
 import { batchFetch } from '$lib/services';
 
-const configsState = createGameConfigs();
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const CONCRETE = 'concrete';
+const STEEL = 'steel';
+const TOP_ORDERS_LIMIT = 5;
+
+// ---------------------------------------------------------------------------
+// Local types
+// ---------------------------------------------------------------------------
+
+type TopOrdersRequest = {
+	path: 'tradingOrder.getTopOrders';
+	input: EndpointInput<'tradingOrder.getTopOrders'>;
+};
+
+type UserLiteRequest = {
+	path: 'user.getUserLite';
+	input: EndpointInput<'user.getUserLite'>;
+};
+
+// ---------------------------------------------------------------------------
+// Load
+// ---------------------------------------------------------------------------
 
 export const load: PageLoad = async ({ fetch, params }) => {
-	const concreteCode: string = 'concrete';
-	const steelCode: string = 'steel';
-	const limit: number = 5;
+	const { companyId } = params;
 
 	const [
 		company,
@@ -20,53 +46,49 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		steelOrders
 	] = await batchFetch(
 		[
-			{ path: 'company.getById', input: { companyId: params.companyId } },
-			{ path: 'worker.getWorkers', input: { companyId: params.companyId } },
-			{ path: 'company.getProductionBonus', input: { companyId: params.companyId } },
+			{ path: 'company.getById', input: { companyId } },
+			{ path: 'worker.getWorkers', input: { companyId } },
+			{ path: 'company.getProductionBonus', input: { companyId } },
+			{ path: 'upgrade.getUpgradeByTypeAndEntity', input: { upgradeType: 'storage', companyId } },
 			{
 				path: 'upgrade.getUpgradeByTypeAndEntity',
-				input: { upgradeType: 'storage', companyId: params.companyId }
-			},
-			{
-				path: 'upgrade.getUpgradeByTypeAndEntity',
-				input: { upgradeType: 'automatedEngine', companyId: params.companyId }
+				input: { upgradeType: 'automatedEngine', companyId }
 			},
 			{ path: 'workOffer.getWageStats', input: {} },
-			{
-				path: 'tradingOrder.getTopOrders',
-				input: { itemCode: concreteCode, limit }
-			},
-			{
-				path: 'tradingOrder.getTopOrders',
-				input: { itemCode: steelCode, limit }
-			}
-		],
+			{ path: 'tradingOrder.getTopOrders', input: { itemCode: CONCRETE, limit: TOP_ORDERS_LIMIT } },
+			{ path: 'tradingOrder.getTopOrders', input: { itemCode: STEEL, limit: TOP_ORDERS_LIMIT } }
+		] as const,
 		fetch
 	);
 
-	const workerUserRequests = workers.workers.map((user) => ({
+	if (workers.type !== 'company') {
+		error(500, 'Unexpected workers response type');
+	}
+
+	// --- Production needs ---
+
+	const configsState = createGameConfigs();
+	const productionNeedsConfig = configsState.configs.items[company.itemCode]?.productionNeeds ?? {};
+	const productionNeedsKeys = Object.keys(productionNeedsConfig);
+
+	// --- Second batch: per-worker users + per-production-need orders ---
+
+	const workerUserRequests: UserLiteRequest[] = workers.workers.map(({ user }) => ({
 		path: 'user.getUserLite',
-		input: { userId: user.user }
+		input: { userId: user }
 	}));
 
-	const productionNeedsConfig = configsState.configs.items[company.itemCode].productionNeeds;
-
-	// Get production needs item codes and prepare batch requests
-	const productionNeedsKeys = productionNeedsConfig ? Object.keys(productionNeedsConfig) : [];
-	const productionNeedsRequests = productionNeedsKeys.map((itemCode) => ({
+	const productionNeedsRequests: TopOrdersRequest[] = productionNeedsKeys.map((itemCode) => ({
 		path: 'tradingOrder.getTopOrders',
-		input: { itemCode, limit }
+		input: { itemCode, limit: TOP_ORDERS_LIMIT }
 	}));
 
 	const [availableProductionBonuses, companyOrders, ...rest] = await batchFetch(
 		[
-			{
-				path: 'company.getRecommendedRegionIdsByItemCode',
-				input: { itemCode: company.itemCode }
-			},
+			{ path: 'company.getRecommendedRegionIdsByItemCode', input: { itemCode: company.itemCode } },
 			{
 				path: 'tradingOrder.getTopOrders',
-				input: { itemCode: company.itemCode, limit }
+				input: { itemCode: company.itemCode, limit: TOP_ORDERS_LIMIT }
 			},
 			...workerUserRequests,
 			...productionNeedsRequests
@@ -74,19 +96,20 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		fetch
 	);
 
-	const workerData = rest.slice(0, workerUserRequests.length);
-	const workersWithData = workers.workers.map((worker, index) => ({
+	// `rest` layout: [workerUsers..., productionNeedsOrders...]
+	const workerUsers = rest.slice(0, workerUserRequests.length) as UserLiteResponse[];
+	const productionNeedsOrders = rest.slice(workerUserRequests.length) as TopOrdersResponse[];
+
+	const workersWithData = workers.workers.map((worker, i) => ({
 		...worker,
-		userData: workerData[index]
+		userData: workerUsers[i]
 	}));
 
-	const productionNeedsOrders = rest.slice(workerUserRequests.length);
-	// Build production needs data with cost and quantity
-	const productionNeeds = productionNeedsKeys.map((itemCode, index) => ({
+	const productionNeeds = productionNeedsKeys.map((itemCode, i) => ({
 		itemCode,
-		buy: productionNeedsOrders[index]?.buyOrders[0]?.price ?? 0,
-		sell: productionNeedsOrders[index]?.sellOrders[0]?.price ?? 0,
-		quantity: productionNeedsConfig[itemCode]
+		quantity: productionNeedsConfig[itemCode],
+		buy: productionNeedsOrders[i]?.buyOrders[0]?.price ?? 0,
+		sell: productionNeedsOrders[i]?.sellOrders[0]?.price ?? 0
 	}));
 
 	return {

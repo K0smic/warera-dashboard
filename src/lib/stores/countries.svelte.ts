@@ -1,4 +1,5 @@
 import { getCountries, getRegions } from '$lib/services';
+import type { CountryResponse } from '$lib/types/api/schemas';
 
 export function createCountries() {
 	const COUNTRIES_KEY = 'countries';
@@ -74,7 +75,7 @@ export function createCountries() {
 	}
 
 	function getCountryById(id: string) {
-		return state.countries?.find((country) => country._id === id);
+		return state.countries?.find((country: CountryResponse) => country._id === id);
 	}
 	function resetCountries() {
 		state.error = null;
