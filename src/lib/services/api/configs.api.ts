@@ -1,23 +1,13 @@
-import type { paths, responses } from '$lib/types';
 import { trpcFetch } from './client';
-/* =======================
- * Helpers
- * ======================= */
-
-type RequestBody<P extends keyof paths> = NonNullable<
-	paths[P]['get']['requestBody']
->['content']['application/json'];
+import type { EndpointInput } from '$lib/types/api/registry';
 
 /* =======================
- * User endpoints
+ * Game config endpoints
  * ======================= */
 
 export function getGameConfig(
-	input: RequestBody<'/gameConfig.getGameConfig'>,
+	input: EndpointInput<'gameConfig.getGameConfig'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<
-		RequestBody<'/gameConfig.getGameConfig'>,
-		responses['schemas']['GameConfigResponse']
-	>('gameConfig.getGameConfig', input, fetchFn);
+	return trpcFetch('gameConfig.getGameConfig', input, fetchFn);
 }

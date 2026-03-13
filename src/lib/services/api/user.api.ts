@@ -1,37 +1,21 @@
-// src/lib/api/user.api.ts
-import type { paths, responses } from '$lib/types';
 import { trpcFetch } from './client';
-
-/* =======================
- * Helpers
- * ======================= */
-
-type RequestBody<P extends keyof paths> = NonNullable<
-	paths[P]['get']['requestBody']
->['content']['application/json'];
+import type { EndpointInput } from '$lib/types/api/registry';
 
 /* =======================
  * User endpoints
  * ======================= */
 
 export function getUserLite(
-	input: RequestBody<'/user.getUserLite'>,
+	input: EndpointInput<'user.getUserLite'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<RequestBody<'/user.getUserLite'>, responses['schemas']['UserLiteResponse']>(
-		'user.getUserLite',
-		input,
-		fetchFn
-	);
+	return trpcFetch('user.getUserLite', input, fetchFn);
 }
 
-//TODO: add responses['schemas']['UsersByCountryResponse'] type, now is not used
+//TODO: add responses['UsersByCountryResponse'] type, now is not used
 export function getUsersByCountry(
-	input: RequestBody<'/user.getUsersByCountry'>,
+	input: EndpointInput<'user.getUsersByCountry'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<
-		RequestBody<'/user.getUsersByCountry'>,
-		paths['/user.getUsersByCountry']['get']['responses']['200']
-	>('user.getUsersByCountry', input, fetchFn);
+	return trpcFetch('user.getUsersByCountry', input, fetchFn);
 }

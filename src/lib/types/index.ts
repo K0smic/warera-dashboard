@@ -1,5 +1,4 @@
-export type * from './api/paths';
-export type * from './api/responses';
-export type * from './api/operations';
+export type * from './api/registry';
+export * as schemas from './api/schemas';
 
 export * from './components/contexts';

@@ -1,19 +1,35 @@
+import type {
+	EndpointPath,
+	EndpointInput,
+	EndpointOutput,
+	BatchOutput
+} from '$lib/types/api/registry';
+
 const BASE_URL = 'https://api2.warera.io/trpc';
 
-export async function trpcFetch<TInput, TOutput>(
-	path: string,
-	input: TInput,
-	fetchFn: typeof fetch = fetch
-): Promise<TOutput> {
-	const url = new URL(`${BASE_URL}/${path}`);
+// ---------------------------------------------------------------------------
+// Single fetch — fully typed via registry
+// ---------------------------------------------------------------------------
 
+/**
+ * Typed tRPC GET fetch.
+ * Input and output types are inferred automatically from the registry.
+ *
+ * @example
+ * const company = await trpcFetch('company.getById', { companyId: '123' });
+ * //    ^? CompanyResponse  ← IDE shows full shape on hover
+ */
+export async function trpcFetch<P extends EndpointPath>(
+	path: P,
+	input: EndpointInput<P>,
+	fetchFn: typeof fetch = fetch
+): Promise<EndpointOutput<P>> {
+	const url = new URL(`${BASE_URL}/${path}`);
 	url.searchParams.set('input', JSON.stringify(input));
 
 	const res = await fetchFn(url.toString(), {
 		method: 'GET',
-		headers: {
-			accept: 'application/json'
-		}
+		headers: { accept: 'application/json' }
 	});
 
 	if (!res.ok) {
@@ -21,31 +37,49 @@ export async function trpcFetch<TInput, TOutput>(
 	}
 
 	const json = await res.json();
-
-	// tRPC-style response
 	return json.result?.data ?? json;
 }
 
-export async function trpcBatchFetch<T extends Array<{ path: string; input: unknown }>>(
-	requests: T,
+// ---------------------------------------------------------------------------
+// Batch fetch — tuple output inferred from path array
+// ---------------------------------------------------------------------------
+
+type BatchRequest<P extends EndpointPath> = {
+	path: P;
+	input: EndpointInput<P>;
+};
+
+/**
+ * Typed tRPC batch fetch.
+ * Pass a `const` array of requests and get back a typed tuple.
+ *
+ * @example
+ * const [company, region] = await trpcBatchFetch([
+ *   { path: 'company.getById',  input: { companyId: '123' } },
+ *   { path: 'region.getById',   input: { regionId: '456' } },
+ * ] as const);
+ * //  company ^? CompanyResponse
+ * //  region  ^? RegionResponse
+ */
+export async function trpcBatchFetch<
+	const Requests extends ReadonlyArray<BatchRequest<EndpointPath>>
+>(
+	requests: Requests,
 	fetchFn: typeof fetch = fetch
-): Promise<Array<unknown>> {
-	const paths = requests.map((req) => req.path).join(',');
+): Promise<BatchOutput<{ [K in keyof Requests]: Requests[K]['path'] }>> {
+	const paths = requests.map((r) => r.path).join(',');
 	const url = new URL(`${BASE_URL}/${paths}`);
 	url.searchParams.set('batch', '1');
 
 	const batchInput: Record<string, unknown> = {};
-	requests.forEach((req, index) => {
-		batchInput[index.toString()] = req.input;
+	requests.forEach((req, i) => {
+		batchInput[i.toString()] = req.input;
 	});
-
 	url.searchParams.set('input', JSON.stringify(batchInput));
 
 	const res = await fetchFn(url.toString(), {
 		method: 'GET',
-		headers: {
-			accept: 'application/json'
-		}
+		headers: { accept: 'application/json' }
 	});
 
 	if (!res.ok) {
@@ -53,10 +87,8 @@ export async function trpcBatchFetch<T extends Array<{ path: string; input: unkn
 	}
 
 	const json = await res.json();
-
-	if (Array.isArray(json)) {
-		return json.map((item: any) => item.result?.data ?? item);
-	}
-
-	return [json.result?.data ?? json];
+	const results = Array.isArray(json) ? json : [json];
+	return results.map(
+		(item: { result?: { data?: unknown } }) => item.result?.data ?? item
+	) as BatchOutput<{ [K in keyof Requests]: Requests[K]['path'] }>;
 }

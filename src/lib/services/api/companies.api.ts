@@ -1,82 +1,64 @@
-import type { paths, responses } from '$lib/types';
 import { trpcFetch } from './client';
-/* =======================
- * Helpers
- * ======================= */
-
-type RequestBody<P extends keyof paths> = NonNullable<
-	paths[P]['get']['requestBody']
->['content']['application/json'];
+import type { EndpointInput } from '$lib/types';
 
 /* =======================
- * User endpoints
+ * Company endpoints
  * ======================= */
 
 export function getCompaniesId(
-	input: RequestBody<'/company.getCompanies'>,
+	input: EndpointInput<'company.getCompanies'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<RequestBody<'/company.getCompanies'>, responses['schemas']['CompaniesResponse']>(
-		'company.getCompanies',
-		input,
-		fetchFn
-	);
+	return trpcFetch('company.getCompanies', input, fetchFn);
 }
 
-export function getCompany(input: RequestBody<'/company.getById'>, fetchFn: typeof fetch = fetch) {
-	return trpcFetch<RequestBody<'/company.getById'>, responses['schemas']['CompanyResponse']>(
-		'company.getById',
-		input,
-		fetchFn
-	);
+export function getCompany(input: EndpointInput<'company.getById'>, fetchFn: typeof fetch = fetch) {
+	return trpcFetch('company.getById', input, fetchFn);
 }
 
 export function getProductionBonus(
-	input: RequestBody<'/company.getProductionBonus'>,
+	input: EndpointInput<'company.getProductionBonus'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<
-		RequestBody<'/company.getProductionBonus'>,
-		responses['schemas']['ProductionBonusResponse']
-	>('company.getProductionBonus', input, fetchFn);
-}
-
-export function getWageStats(
-	input: RequestBody<'/workOffer.getWageStats'>,
-	fetchFn: typeof fetch = fetch
-) {
-	return trpcFetch<
-		RequestBody<'/workOffer.getWageStats'>,
-		responses['schemas']['WageStatsResponse']
-	>('workOffer.getWageStats', input, fetchFn);
-}
-
-export function getUpgradeByTypeAndEntity(
-	input: RequestBody<'/upgrade.getUpgradeByTypeAndEntity'>,
-	fetchFn: typeof fetch = fetch
-) {
-	return trpcFetch<
-		RequestBody<'/upgrade.getUpgradeByTypeAndEntity'>,
-		responses['schemas']['UpgradeByType']
-	>('upgrade.getUpgradeByTypeAndEntity', input, fetchFn);
+	return trpcFetch('company.getProductionBonus', input, fetchFn);
 }
 
 export function getRecommendedRegionIdsByItemCode(
-	input: RequestBody<'/company.getRecommendedRegionIdsByItemCode'>,
+	input: EndpointInput<'company.getRecommendedRegionIdsByItemCode'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<
-		RequestBody<'/company.getRecommendedRegionIdsByItemCode'>,
-		responses['schemas']['ProductionBonuses']
-	>('company.getRecommendedRegionIdsByItemCode', input, fetchFn);
+	return trpcFetch('company.getRecommendedRegionIdsByItemCode', input, fetchFn);
 }
 
-export function getWorkers(
-	input: RequestBody<'/worker.getWorkers'>,
+/* =======================
+ * Work offer endpoints
+ * ======================= */
+
+export function getWageStats(
+	input: EndpointInput<'workOffer.getWageStats'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<
-		RequestBody<'/worker.getWorkers'>,
-		responses['schemas']['WorkersByCompanyResponse'] | responses['schemas']['WorkersByUserResponse']
-	>('worker.getWorkers', input, fetchFn);
+	return trpcFetch('workOffer.getWageStats', input, fetchFn);
+}
+
+/* =======================
+ * Upgrade endpoints
+ * ======================= */
+
+export function getUpgradeByTypeAndEntity(
+	input: EndpointInput<'upgrade.getUpgradeByTypeAndEntity'>,
+	fetchFn: typeof fetch = fetch
+) {
+	return trpcFetch('upgrade.getUpgradeByTypeAndEntity', input, fetchFn);
+}
+
+/* =======================
+ * Worker endpoints
+ * ======================= */
+
+export function getWorkers(
+	input: EndpointInput<'worker.getWorkers'>,
+	fetchFn: typeof fetch = fetch
+) {
+	return trpcFetch('worker.getWorkers', input, fetchFn);
 }

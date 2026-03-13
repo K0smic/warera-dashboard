@@ -1,25 +1,13 @@
-// src/lib/api/user.api.ts
-import type { paths, responses } from '$lib/types';
 import { trpcFetch } from './client';
-
-/* =======================
- * Helpers
- * ======================= */
-
-type RequestBody<P extends keyof paths> = NonNullable<
-	paths[P]['get']['requestBody']
->['content']['application/json'];
+import type { EndpointInput } from '$lib/types/api/registry';
 
 /* =======================
  * User endpoints
  * ======================= */
 
 export function getTopOrders(
-	input: RequestBody<'/tradingOrder.getTopOrders'>,
+	input: EndpointInput<'tradingOrder.getTopOrders'>,
 	fetchFn: typeof fetch = fetch
 ) {
-	return trpcFetch<
-		RequestBody<'/tradingOrder.getTopOrders'>,
-		responses['schemas']['TopOrdersResponse']
-	>('tradingOrder.getTopOrders', input, fetchFn);
+	return trpcFetch('tradingOrder.getTopOrders', input, fetchFn);
 }

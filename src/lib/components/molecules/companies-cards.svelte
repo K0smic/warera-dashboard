@@ -3,7 +3,7 @@
 	import { Badge } from '$lib/components/atoms/badge';
 	import { camelCaseToNormalText } from '$lib/utils';
 
-	import type { responses } from '$lib/types';
+	import type { CompanyResponse } from '$lib/types/api/schemas';
 	import MdiBitcoin from '~icons/mdi/bitcoin';
 
 	//     {
@@ -27,7 +27,7 @@
 	//   "estimatedValue": 681.7804922650128
 	// }
 
-	let company: responses['schemas']['CompanyResponse'] = $props();
+	let company: CompanyResponse = $props();
 	// $inspect(company);
 </script>
 
