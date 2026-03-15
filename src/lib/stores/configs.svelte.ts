@@ -1,3 +1,4 @@
+import { getGameConfig } from '$lib/services/api/configs.api';
 import type { GameConfigResponse } from '$lib/types/api/schemas';
 
 const STORAGE_KEY = 'gameConfigs';

@@ -3,7 +3,7 @@
 
 	import { WORKER_INFO_CTX, type WorkerInfoContext } from '$lib/types';
 	import { configsState } from '$lib/stores/configs.svelte';
-	import { createCountries } from '$lib/stores/countries.svelte';
+	import { countriesState } from '$lib/stores/countries.svelte';
 
 	import {
 		CompanyHeader,
@@ -24,12 +24,6 @@
 	}
 
 	let { data }: Props = $props();
-
-	// ---------------------------------------------------------------------------
-	// Global stores
-	// ---------------------------------------------------------------------------
-
-	const countriesState = createCountries();
 
 	// ---------------------------------------------------------------------------
 	// Item config
