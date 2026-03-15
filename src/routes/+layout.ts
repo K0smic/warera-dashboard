@@ -9,7 +9,7 @@ import { createCountries } from '$lib/stores/countries.svelte';
 const configsState = createGameConfigs();
 const countriesState = createCountries();
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageLoad = async ({ fetch }: { fetch: typeof globalThis.fetch }) => {
 	if (!configsState.configs) {
 		configsState.loadConfigs(fetch);
 		return;

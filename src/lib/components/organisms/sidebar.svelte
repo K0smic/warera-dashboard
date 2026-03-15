@@ -23,16 +23,16 @@
 		[
 			{
 				title: 'Companies',
-				url: '#',
+				url: userState.user ? resolve(`/companies/${userState.user._id}`) : resolve('/'),
 				icon: MdiIndustrial,
 				isActive: true,
-				requiresUser: true,
-				items: [
-					{
-						title: 'Overview',
-						url: userState.user ? resolve(`/companies/${userState.user._id}`) : resolve('/')
-					}
-				]
+				requiresUser: true
+				// items: [
+				// 	{
+				// 		title: 'Overview',
+				// 		url: '#'
+				// 	}
+				// ]
 			}
 		].filter((item) => !item.requiresUser || userState.user)
 	);

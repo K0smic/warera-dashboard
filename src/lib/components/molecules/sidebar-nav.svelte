@@ -34,7 +34,9 @@
 									{#if item.icon}
 										<item.icon />
 									{/if}
-									<span>{item.title}</span>
+									<a href={item.url} {...props}>
+										<span>{item.title}</span>
+									</a>
 									<ChevronRightIcon
 										class="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
 									/>
