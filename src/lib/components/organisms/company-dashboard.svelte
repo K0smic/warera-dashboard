@@ -3,7 +3,7 @@
 
 	import { WORKER_INFO_CTX, type WorkerInfoContext } from '$lib/types';
 	import { configsState } from '$lib/stores/configs.svelte';
-	import { countriesState } from '$lib/stores/countries.svelte';
+	import { countriesState, regionsState } from '$lib/stores/countries.svelte';
 
 	import {
 		CompanyHeader,
@@ -79,7 +79,7 @@
 	// Deposit info
 	// ---------------------------------------------------------------------------
 
-	const currentDeposit = $derived(countriesState.regions[data.company.region].deposit);
+	const currentDeposit = $derived(regionsState.regions[data.company.region].deposit);
 
 	const depositInfo = $derived(
 		currentDeposit && currentDeposit.type === data.company.itemCode
@@ -96,7 +96,7 @@
 	// Region & country
 	// ---------------------------------------------------------------------------
 
-	const countryRegion = $derived(countriesState.regions[data.company.region]);
+	const countryRegion = $derived(regionsState.regions[data.company.region]);
 	const countryTaxes = $derived(countriesState.getCountryById(countryRegion.country).taxes.income);
 
 	// ---------------------------------------------------------------------------
@@ -157,9 +157,9 @@
 	// ---------------------------------------------------------------------------
 
 	const getCountryName = (regionId: string) =>
-		countriesState.getCountryById(countriesState.regions[regionId].country).name;
+		countriesState.getCountryById(regionsState.regions[regionId].country).name;
 
-	const getRegionName = (regionId: string) => countriesState.regions[regionId].name;
+	const getRegionName = (regionId: string) => regionsState.regions[regionId].name;
 </script>
 
 <div class="grid gap-6">
@@ -167,7 +167,7 @@
 	<CompanyHeader
 		companyName={data.company.name}
 		itemCode={item.code}
-		regionName={countriesState.regions[data.company.region].name}
+		regionName={regionsState.regions[data.company.region].name}
 		estimatedValue={data.company.estimatedValue}
 	/>
 
