@@ -2,23 +2,9 @@
 	import * as Collapsible from '$lib/components/atoms/collapsible/index.js';
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+	import type { NavItem } from '$lib/types/common/navigation';
 
-	let {
-		items
-	}: {
-		items: {
-			title: string;
-			url: string;
-			// this should be `Component` after @lucide/svelte updates types
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			icon?: any;
-			isActive?: boolean;
-			items?: {
-				title: string;
-				url: string;
-			}[];
-		}[];
-	} = $props();
+	let { items }: { items: NavItem[] } = $props();
 </script>
 
 <Sidebar.Group>

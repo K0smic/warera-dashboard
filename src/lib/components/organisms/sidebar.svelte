@@ -1,40 +1,24 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
 	import SideHeader from '$lib/components/molecules/sidebar-header.svelte';
 	import NavUser from '$lib/components/molecules/sidebar-user.svelte';
 	import SideNav from '$lib/components/molecules/sidebar-nav.svelte';
 	import { createUserState } from '$lib/stores/user.svelte';
+	import { navItems } from '$lib/config/navigation';
 	import type { ComponentProps } from 'svelte';
 
-	import MdiCartVariant from '~icons/mdi/cart-variant';
-	import MdiIndustrial from '~icons/mdi/industrial';
-
-	// Sample data
-
 	const userState = createUserState();
-	let userId: string = '';
-	if (userState.user) {
-		userId = userState.user._id;
-	}
 
 	const sideNav = $derived(
-		[
-			{
-				title: 'Companies',
-				url: userState.user ? resolve(`/companies/${userState.user._id}`) : resolve('/'),
-				icon: MdiIndustrial,
-				isActive: true,
-				requiresUser: true
-				// items: [
-				// 	{
-				// 		title: 'Overview',
-				// 		url: '#'
-				// 	}
-				// ]
-			}
-		].filter((item) => !item.requiresUser || userState.user)
+		navItems
+			.filter((item) => !item.requiresUser || userState.user)
+			.map((item) => ({
+				title: item.title,
+				icon: item.icon,
+				isActive: item.isActive,
+				items: item.items,
+				url: item.buildUrl(userState.user?._id)
+			}))
 	);
 
 	let {
