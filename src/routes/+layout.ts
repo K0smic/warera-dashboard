@@ -11,15 +11,14 @@ const countriesState = createCountries();
 
 export const load: PageLoad = async ({ fetch }: { fetch: typeof globalThis.fetch }) => {
 	if (!configsState.configs) {
-		configsState.loadConfigs(fetch);
-		return;
+		await configsState.loadConfigs(fetch);
 	}
 	if (!countriesState.countries) {
-		countriesState.loadCountries(fetch);
-		return;
+		await countriesState.loadCountries(fetch);
 	}
 	if (!countriesState.regions) {
-		countriesState.loadRegions(fetch);
-		return;
+		await countriesState.loadRegions(fetch);
 	}
+
+	return;
 };
