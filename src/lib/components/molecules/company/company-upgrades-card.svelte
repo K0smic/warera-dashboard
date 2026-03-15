@@ -5,9 +5,7 @@
 	import * as Card from '$lib/components/atoms/card';
 	import { Badge } from '$lib/components/atoms/badge';
 
-	import { createGameConfigs } from '$lib/stores/configs.svelte';
-
-	const configsState = createGameConfigs();
+	import { configsState } from '$lib/stores/configs.svelte';
 
 	let workersInfos = getContext<WorkerInfoContext>(WORKER_INFO_CTX);
 

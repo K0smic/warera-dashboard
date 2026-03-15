@@ -3,7 +3,7 @@ import type { EndpointInput } from '$lib/types/api/registry';
 import type { UserLiteResponse } from '$lib/types/api/schemas';
 import type { TopOrdersResponse } from '$lib/types/api/schemas';
 import { error } from '@sveltejs/kit';
-import { createGameConfigs } from '$lib/stores/configs.svelte';
+import { configsState } from '$lib/stores/configs.svelte';
 import { batchFetch } from '$lib/services';
 
 // ---------------------------------------------------------------------------
@@ -67,7 +67,6 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
 	// --- Production needs ---
 
-	const configsState = createGameConfigs();
 	const productionNeedsConfig = configsState.configs.items[company.itemCode]?.productionNeeds ?? {};
 	const productionNeedsKeys = Object.keys(productionNeedsConfig);
 

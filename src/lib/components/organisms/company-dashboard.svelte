@@ -2,7 +2,7 @@
 	import { setContext } from 'svelte';
 
 	import { WORKER_INFO_CTX, type WorkerInfoContext } from '$lib/types';
-	import { createGameConfigs } from '$lib/stores/configs.svelte';
+	import { configsState } from '$lib/stores/configs.svelte';
 	import { createCountries } from '$lib/stores/countries.svelte';
 
 	import {
@@ -29,7 +29,6 @@
 	// Global stores
 	// ---------------------------------------------------------------------------
 
-	const configsState = createGameConfigs();
 	const countriesState = createCountries();
 
 	// ---------------------------------------------------------------------------
