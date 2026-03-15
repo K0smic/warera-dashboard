@@ -6,11 +6,7 @@ import type {
 	WageStatsResponse
 } from './schemas/company';
 
-import type {
-	RegionResponse,
-	AllRegionsResponse,
-	RecommendedRegionIdsByItemCodeResponse
-} from './schemas/region';
+import type { RegionResponse, AllRegionsResponse, RegionData } from './schemas/region';
 
 import type { WorkersByCompanyResponse, WorkersByUserResponse } from './schemas/worker';
 import type { CountryResponse, AllCountriesResponse } from './schemas/country';
@@ -25,7 +21,6 @@ import type { RankingEntry } from './schemas/ranking';
 // ---------------------------------------------------------------------------
 
 type Cursor = string;
-type ISODate = string;
 
 type PaginatedInput = {
 	cursor?: Cursor;
@@ -67,7 +62,11 @@ export interface ApiRegistry {
 	};
 	'company.getRecommendedRegionIdsByItemCode': {
 		input: { itemCode: string };
-		output: RecommendedRegionIdsByItemCodeResponse;
+		/**
+		 * tRPC unwraps the response envelope — the actual value is the array,
+		 * not the `{ data: RegionData[] }` wrapper.
+		 */
+		output: RegionData[];
 	};
 
 	// --- Region ---
@@ -107,7 +106,7 @@ export interface ApiRegistry {
 	};
 	'workOffer.getWorkOfferByCompanyId': {
 		input: { companyId: string };
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 	'workOffer.getWorkOffersPaginated': {
 		input: {
@@ -117,7 +116,7 @@ export interface ApiRegistry {
 			production?: number;
 			citizenship?: string;
 		} & PaginatedInput;
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 
 	// --- Workers ---
@@ -137,7 +136,7 @@ export interface ApiRegistry {
 	};
 	'itemTrading.getPrices': {
 		input: Record<string, never>;
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 
 	// --- Ranking ---
@@ -177,7 +176,7 @@ export interface ApiRegistry {
 	// --- Battle ---
 	'battle.getById': {
 		input: { battleId: string };
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 	'battle.getBattles': {
 		input: {
@@ -188,11 +187,11 @@ export interface ApiRegistry {
 			warId?: string;
 			countryId?: string;
 		} & PaginatedInput;
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 	'battle.getLiveBattleData': {
 		input: { battleId: string; roundNumber?: number };
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 
 	// --- Game config ---
@@ -202,7 +201,7 @@ export interface ApiRegistry {
 	};
 	'gameConfig.getDates': {
 		input: Record<string, never>;
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 
 	// --- Events ---
@@ -233,13 +232,13 @@ export interface ApiRegistry {
 				| 'financedRevolt'
 			>;
 		} & PaginatedInput;
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 
 	// --- Articles ---
 	'article.getArticleById': {
 		input: { articleId: string };
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 	'article.getArticlesPaginated': {
 		input: {
@@ -248,13 +247,13 @@ export interface ApiRegistry {
 			categories?: string[];
 			languages?: string[];
 		} & PaginatedInput;
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 
 	// --- Search ---
 	'search.searchAnything': {
 		input: { searchText: string };
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 
 	// --- Upgrade ---
@@ -279,7 +278,7 @@ export interface ApiRegistry {
 	// --- Military units ---
 	'mu.getById': {
 		input: { muId: string };
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 	'mu.getManyPaginated': {
 		input: {
@@ -288,7 +287,7 @@ export interface ApiRegistry {
 			orgId?: string;
 			search?: string;
 		} & PaginatedInput;
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 
 	// --- Transactions ---
@@ -299,52 +298,19 @@ export interface ApiRegistry {
 			countryId?: string;
 			partyId?: string;
 			itemCode?: string;
-			transactionType?:
-				| 'applicationFee'
-				| 'trading'
-				| 'itemMarket'
-				| 'wage'
-				| 'donation'
-				| 'articleTip'
-				| 'openCase'
-				| 'craftItem'
-				| 'dismantleItem'
-				| Array<
-						| 'applicationFee'
-						| 'trading'
-						| 'itemMarket'
-						| 'wage'
-						| 'donation'
-						| 'articleTip'
-						| 'openCase'
-						| 'craftItem'
-						| 'dismantleItem'
-				  >;
 		} & PaginatedInput;
-		output: unknown; // expand when schema is available
+		output: unknown;
 	};
 }
 
 // ---------------------------------------------------------------------------
-// Utility types (use these everywhere in services/)
+// Utility types
 // ---------------------------------------------------------------------------
 
-/** All valid endpoint paths */
 export type EndpointPath = keyof ApiRegistry;
-
-/** Input type for a given endpoint */
 export type EndpointInput<P extends EndpointPath> = ApiRegistry[P]['input'];
-
-/** Output type for a given endpoint */
 export type EndpointOutput<P extends EndpointPath> = ApiRegistry[P]['output'];
 
-/**
- * Infers the output tuple for a batchFetch call from an array of endpoint paths.
- *
- * @example
- * type Result = BatchOutput<['company.getById', 'region.getById']>
- * // → [CompanyResponse, RegionResponse]
- */
-export type BatchOutput<Paths extends readonly EndpointPath[]> = {
+export type BatchOutput<Paths extends ReadonlyArray<EndpointPath>> = {
 	[K in keyof Paths]: Paths[K] extends EndpointPath ? EndpointOutput<Paths[K]> : never;
 };

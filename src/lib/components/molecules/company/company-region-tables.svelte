@@ -3,14 +3,18 @@
 	import * as Table from '$lib/components/atoms/table';
 	import { Badge } from '$lib/components/atoms/badge';
 
+	import type { RegionData, RegionResponse } from '$lib/types/api/schemas/region';
+	import type { ProductionBonusResponse } from '$lib/types/api/schemas/company';
+	import type { DepositInfo } from '$lib/types';
+
 	interface Props {
-		bonuses: any[];
-		activeProductionBonus: any;
+		bonuses: RegionData[];
+		activeProductionBonus: ProductionBonusResponse;
 		currentRegion: string;
 		countryTaxes: number;
-		countryRegion: any;
-		depositInfo: any;
-		getCountryName: (countryId: string) => string;
+		countryRegion: RegionResponse;
+		depositInfo: DepositInfo | null;
+		getCountryName: (regionId: string) => string;
 		getRegionName: (regionId: string) => string;
 	}
 
@@ -94,7 +98,8 @@
 						{/if}
 					</Table.Cell>
 				</Table.Row>
-				{#each filteredBonuses as bonus}
+
+				{#each filteredBonuses as bonus (bonus.regionId)}
 					<Table.Row>
 						<Table.Cell class="font-medium whitespace-nowrap">
 							{getRegionName(bonus.regionId)}
@@ -131,11 +136,7 @@
 						</Table.Cell>
 
 						<Table.Cell class="whitespace-nowrap">
-							{#if bonus.depositEndAt}
-								{new Date(bonus.depositEndAt).toLocaleString()}
-							{:else}
-								<span class="text-muted-foreground">No end date</span>
-							{/if}
+							<span class="text-muted-foreground">No end date</span>
 						</Table.Cell>
 					</Table.Row>
 				{/each}

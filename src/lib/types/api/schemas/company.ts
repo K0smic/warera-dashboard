@@ -10,7 +10,11 @@ export interface CompanyResponse {
 	concreteInvested: number;
 	production: number;
 
-	activeUpgradeLevels: Record<string, number | undefined>;
+	activeUpgradeLevels: {
+		storage: number;
+		automatedEngine: number;
+		breakRoom: number;
+	};
 
 	workerCount: number;
 	estimatedValue: number;

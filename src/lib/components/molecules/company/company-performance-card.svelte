@@ -1,15 +1,6 @@
 <script lang="ts">
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/atoms/card';
-
-	interface DepositInfo {
-		startsAt: string | null;
-		endsAt: string | null;
-	}
-
-	interface BonusLabel {
-		label: string;
-		value: number;
-	}
+	import type { BonusLabel, DepositInfo } from '$lib/types';
 
 	interface Props {
 		bonusLabels: BonusLabel[];

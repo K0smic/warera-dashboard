@@ -138,7 +138,7 @@ export interface RegionData {
 }
 
 export interface RecommendedRegionIdsByItemCodeResponse {
-	data: RegionData;
+	data: RegionData[];
 }
 
 export type AllRegionsResponse = Record<string, RegionResponse>;
