@@ -2,6 +2,7 @@
 	import { setContext } from 'svelte';
 
 	import { WORKER_INFO_CTX, type WorkerInfoContext } from '$lib/types';
+	import { isProductibleItem } from '$lib/types/api/schemas';
 	import { configsState } from '$lib/stores/configs.svelte';
 	import { countriesState, regionsState } from '$lib/stores/countries.svelte';
 
@@ -29,7 +30,7 @@
 	// Item config
 	// ---------------------------------------------------------------------------
 
-	const item = $derived(configsState.configs.items[data.company.itemCode]);
+	const item = $derived(configsState.configs?.items[data.company.itemCode]);
 
 	// ---------------------------------------------------------------------------
 	// Input cost
@@ -57,8 +58,8 @@
 	// ---------------------------------------------------------------------------
 
 	const maxProduction = $derived(
-		configsState.configs.upgradesConfig['storage'].levels[data.company.activeUpgradeLevels.storage]
-			.stats.maxProduction
+		configsState.configs?.upgradesConfig['storage'].levels[data.company.activeUpgradeLevels.storage]
+			.stats.maxProduction ?? 200
 	);
 
 	const productionCapacity = $derived(
@@ -66,7 +67,9 @@
 	);
 
 	const productionValue = $derived(
-		(data.company.production / item.productionPoints) * bestSellPrice
+		item && isProductibleItem(item)
+			? (data.company.production / item.productionPoints) * bestSellPrice
+			: 0
 	);
 
 	// ---------------------------------------------------------------------------
@@ -79,7 +82,7 @@
 	// Deposit info
 	// ---------------------------------------------------------------------------
 
-	const currentDeposit = $derived(regionsState.regions[data.company.region].deposit);
+	const currentDeposit = $derived(regionsState.regions?.[data.company.region]?.deposit ?? null);
 
 	const depositInfo = $derived(
 		currentDeposit && currentDeposit.type === data.company.itemCode
@@ -96,8 +99,10 @@
 	// Region & country
 	// ---------------------------------------------------------------------------
 
-	const countryRegion = $derived(regionsState.regions[data.company.region]);
-	const countryTaxes = $derived(countriesState.getCountryById(countryRegion.country).taxes.income);
+	const countryRegion = $derived(regionsState.regions?.[data.company.region]);
+	const countryTaxes = $derived(
+		countriesState.getCountryById(countryRegion?.country)?.taxes.income
+	);
 
 	// ---------------------------------------------------------------------------
 	// Worker context
@@ -116,7 +121,7 @@
 	// ---------------------------------------------------------------------------
 
 	const engineDailyProd = $derived(
-		configsState.configs.upgradesConfig['automatedEngine']?.levels[
+		configsState.configs?.upgradesConfig['automatedEngine']?.levels[
 			data.company.activeUpgradeLevels.automatedEngine
 		]?.stats.dailyProd ?? 0
 	);
@@ -129,8 +134,10 @@
 
 	/** Units of output produced per day (workers + engine, with bonus applied). */
 	const dailyUnits = $derived(
-		((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
-			(1 + data.activeProductionBonus.total / 100)
+		item && isProductibleItem(item)
+			? ((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
+					(1 + data.activeProductionBonus.total / 100)
+			: 0
 	);
 
 	/** Total daily expenses: worker wages + raw material cost for all units produced. */
@@ -144,9 +151,11 @@
 	 *   activeProductionBonus = percentage bonus applied to total output
 	 */
 	const revenue = $derived(
-		((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
-			(1 + data.activeProductionBonus.total / 100) *
-			bestSellPrice
+		item && isProductibleItem(item)
+			? ((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
+					(1 + data.activeProductionBonus.total / 100) *
+					bestSellPrice
+			: 0
 	);
 
 	/** Net daily profit: revenue minus all operational expenses. */
@@ -156,18 +165,23 @@
 	// Table helpers
 	// ---------------------------------------------------------------------------
 
-	const getCountryName = (regionId: string) =>
-		countriesState.getCountryById(regionsState.regions[regionId].country).name;
+	const getCountryName = (regionId: string | undefined) => {
+		if (!regionId) return '';
+		return countriesState.getCountryById(regionsState.regions?.[regionId].country)?.name ?? '';
+	};
 
-	const getRegionName = (regionId: string) => regionsState.regions[regionId].name;
+	const getRegionName = (regionId: string | undefined) => {
+		if (!regionId) return '';
+		return regionsState.regions?.[regionId].name ?? '';
+	};
 </script>
 
 <div class="grid gap-6">
 	<!-- HEADER -->
 	<CompanyHeader
 		companyName={data.company.name}
-		itemCode={item.code}
-		regionName={regionsState.regions[data.company.region].name}
+		itemCode={item?.code ?? ''}
+		regionName={regionsState.regions?.[data.company.region].name ?? ''}
 		estimatedValue={data.company.estimatedValue}
 	/>
 
@@ -196,7 +210,7 @@
 		<WorkersWidget
 			marketPrice={bestSellPrice}
 			{inputPrice}
-			productionPoints={item.productionPoints}
+			productionPoints={item && isProductibleItem(item) ? item.productionPoints : 0}
 			totalBonus={data.activeProductionBonus.total}
 			workers={data.workers}
 			tax={countryTaxes}
@@ -208,7 +222,7 @@
 			breakRoomLevel={data.company.activeUpgradeLevels.breakRoom}
 			engineUpgrade={data.engineUpgrade}
 			storageUpgrade={data.storageUpgrade}
-			productionPoints={item.productionPoints}
+			productionPoints={item && isProductibleItem(item) ? item.productionPoints : 0}
 			{inputPrice}
 			totalBonus={data.activeProductionBonus.total}
 			outputBestBuyPrice={bestBuyPrice}
@@ -221,8 +235,8 @@
 			bonuses={data.availableProductionBonuses}
 			activeProductionBonus={data.activeProductionBonus}
 			currentRegion={data.company.region}
-			{countryRegion}
-			{countryTaxes}
+			countryRegion={countryRegion ?? null}
+			countryTaxes={countryTaxes ?? null}
 			{depositInfo}
 			{getCountryName}
 			{getRegionName}

@@ -2,7 +2,25 @@ export interface CompanyResponse {
 	_id: string;
 	user: string;
 	region: string;
-	itemCode: string;
+	itemCode:
+		| 'limestone'
+		| 'grain'
+		| 'livestock'
+		| 'fish'
+		| 'iron'
+		| 'coca'
+		| 'lead'
+		| 'petroleum'
+		| 'concrete'
+		| 'steel'
+		| 'bread'
+		| 'steak'
+		| 'cookedFish'
+		| 'lightAmmo'
+		| 'ammo'
+		| 'cocain'
+		| 'oil'
+		| 'heavyAmmo';
 
 	name: string;
 	isFull: boolean;

@@ -55,14 +55,19 @@
 	let selectedHorizon = $state<HorizonDays>(365);
 
 	// --- Config helpers ---
-	const getLevel = (upgradeKey: string, level: number) =>
-		configsState.configs.upgradesConfig[upgradeKey]?.levels[level];
+	const getLevel = (upgradeKey: 'storage' | 'automatedEngine', level: number) =>
+		configsState.configs?.upgradesConfig[upgradeKey].levels[level];
 
-	const getNextUpgradeSteelCost = (upgradeKey: string, currentLevel: number): number =>
-		getLevel(upgradeKey, currentLevel + 1)?.steelCost ?? 0;
+	const getNextUpgradeSteelCost = (
+		upgradeKey: 'storage' | 'automatedEngine',
+		currentLevel: number
+	): number => getLevel(upgradeKey, currentLevel + 1)?.steelCost ?? 0;
 
-	const calculateTotalSteelInvested = (upgradeKey: string, currentLevel: number): number => {
-		const levels = configsState.configs.upgradesConfig[upgradeKey]?.levels ?? {};
+	const calculateTotalSteelInvested = (
+		upgradeKey: 'storage' | 'automatedEngine',
+		currentLevel: number
+	): number => {
+		const levels = configsState.configs?.upgradesConfig[upgradeKey].levels ?? {};
 		return Object.entries(levels)
 			.filter(([l]) => Number(l) <= currentLevel)
 			.reduce((total, [, cfg]) => total + ((cfg as any).steelCost ?? 0), 0);

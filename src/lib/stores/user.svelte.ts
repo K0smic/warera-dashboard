@@ -1,4 +1,5 @@
 import { getUserLite } from '$lib/services/api/user.api';
+import type { UserLiteResponse } from '$lib/types/api/schemas';
 
 function getUserFromStorage() {
 	if (typeof localStorage === 'undefined') return null;
@@ -14,7 +15,7 @@ function getUserFromStorage() {
 
 // Created once, shared across all components
 const state = $state({
-	user: getUserFromStorage(),
+	user: getUserFromStorage() as UserLiteResponse | null,
 	loading: false,
 	error: null as string | null
 });

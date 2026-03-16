@@ -11,11 +11,11 @@
 		bonuses: RegionData[];
 		activeProductionBonus: ProductionBonusResponse;
 		currentRegion: string;
-		countryTaxes: number;
-		countryRegion: RegionResponse;
+		countryTaxes: number | null;
+		countryRegion: RegionResponse | null;
 		depositInfo: DepositInfo | null;
-		getCountryName: (regionId: string) => string;
-		getRegionName: (regionId: string) => string;
+		getCountryName: (regionId: string | undefined) => string;
+		getRegionName: (regionId: string | undefined) => string;
 	}
 
 	let {
@@ -57,11 +57,11 @@
 			<Table.Body>
 				<Table.Row title="Current region" class="bg-muted/50">
 					<Table.Cell class="font-medium whitespace-nowrap">
-						{getRegionName(countryRegion._id)}
+						{getRegionName(countryRegion?._id)}
 					</Table.Cell>
 
 					<Table.Cell class="font-medium whitespace-nowrap">
-						{getCountryName(countryRegion._id)}
+						{getCountryName(countryRegion?._id)}
 					</Table.Cell>
 
 					<Table.Cell class="text-right whitespace-nowrap">

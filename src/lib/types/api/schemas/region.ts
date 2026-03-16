@@ -141,4 +141,4 @@ export interface RecommendedRegionIdsByItemCodeResponse {
 	data: RegionData[];
 }
 
-export type AllRegionsResponse = Record<string, RegionResponse>;
+export type AllRegionsResponse = { [key: string]: RegionResponse };

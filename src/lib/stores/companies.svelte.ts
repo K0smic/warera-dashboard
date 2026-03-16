@@ -1,4 +1,5 @@
 import { getCompaniesId } from '$lib/services/api/companies.api';
+import type { CompaniesResponse } from '$lib/types/api/schemas';
 
 const STORAGE_KEY = 'companies';
 
@@ -17,7 +18,7 @@ function getCompaniesFromStorage() {
 }
 
 let state = $state({
-	companies: getCompaniesFromStorage(),
+	companies: getCompaniesFromStorage() as CompaniesResponse | null,
 	loading: false,
 	error: null as string | null
 });

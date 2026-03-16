@@ -34,9 +34,15 @@ export interface GameConfigItemFlatStats {
 	debuffDurationHours?: number;
 }
 
+export type GameConfigProductibleItem = GameConfigRawItem | GameConfigProductItem;
+
+export function isProductibleItem(item: GameConfigItem): item is GameConfigProductibleItem {
+	return item.type === 'raw' || item.type === 'product';
+}
+
 export interface GameConfigRawItem {
 	type: 'raw';
-	code: string;
+	code: 'limestone' | 'grain' | 'livestock' | 'fish' | 'iron' | 'coca' | 'lead' | 'petroleum';
 	rarity: Rarity;
 	productionPoints: number;
 	isDeposit: boolean;
@@ -47,7 +53,17 @@ export interface GameConfigRawItem {
 
 export interface GameConfigProductItem {
 	type: 'product';
-	code: string;
+	code:
+		| 'concrete'
+		| 'steel'
+		| 'bread'
+		| 'steak'
+		| 'cookedFish'
+		| 'lightAmmo'
+		| 'ammo'
+		| 'cocain'
+		| 'oil'
+		| 'heavyAmmo';
 	rarity: Rarity;
 	productionPoints: number;
 	productionNeeds?: Record<string, number>;
@@ -61,7 +77,7 @@ export interface GameConfigProductItem {
 
 export interface GameConfigWeaponItem {
 	type: 'weapon';
-	code: string;
+	code: 'knife' | 'gun' | 'rifle' | 'sniper' | 'tank' | 'jet';
 	usage: 'weapon';
 	skinSlot: string;
 	rarity: Rarity;
@@ -74,7 +90,37 @@ export interface GameConfigWeaponItem {
 
 export interface GameConfigEquipmentItem {
 	type: 'equipment';
-	code: string;
+	code:
+		| 'helmet1'
+		| 'helmet2'
+		| 'helmet3'
+		| 'helmet4'
+		| 'helmet5'
+		| 'helmet6'
+		| 'chest1'
+		| 'chest2'
+		| 'chest3'
+		| 'chest4'
+		| 'chest5'
+		| 'chest6'
+		| 'boots1'
+		| 'boots2'
+		| 'boots3'
+		| 'boots4'
+		| 'boots5'
+		| 'boots6'
+		| 'gloves1'
+		| 'gloves2'
+		| 'gloves3'
+		| 'gloves4'
+		| 'gloves5'
+		| 'gloves6'
+		| 'pants1'
+		| 'pants2'
+		| 'pants3'
+		| 'pants4'
+		| 'pants5'
+		| 'pants6';
 	usage: 'helmet' | 'chest' | 'pants' | 'boots' | 'gloves';
 	skinSlot: string;
 	rarity: Rarity;
@@ -128,7 +174,7 @@ export interface GameConfigUpgradeType {
 	pendingDurationHours?: number;
 	canDowngrade?: boolean;
 	canBeDestroyed?: boolean;
-	levels: Record<string, GameConfigUpgradeLevel>;
+	levels: { [key: number]: GameConfigUpgradeLevel };
 }
 
 export interface GameConfigUpgradesConfig {
@@ -274,7 +320,7 @@ export interface GameConfigResponse {
 		refundPercent: number;
 	};
 
-	items: Record<string, GameConfigItem>;
+	items: { [key: string]: GameConfigItem };
 
 	referral: {
 		levelNeededForBadge: number;

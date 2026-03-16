@@ -70,14 +70,8 @@ async function loadRegions(fetchFn: typeof fetch = fetch) {
 	}
 }
 
-const state = $state({
-	countries: getCountriesFromStorage() as AllCountriesResponse | null,
-	regions: getRegionsFromStorage() as AllRegionsResponse | null,
-	loading: false,
-	error: null as string | null
-});
-
-function getCountryById(id: string) {
+function getCountryById(id: string | undefined) {
+	if (!id) return undefined;
 	return state.countries?.find((country: CountryResponse) => country._id === id);
 }
 function resetCountries() {
@@ -90,6 +84,13 @@ function resetRegions() {
 	state.countries = null;
 	localStorage.removeItem(REGIONS_KEY);
 }
+
+const state = $state({
+	countries: getCountriesFromStorage() as AllCountriesResponse | null,
+	regions: getRegionsFromStorage() as AllRegionsResponse | null,
+	loading: false,
+	error: null as string | null
+});
 
 export const countriesState = {
 	get countries() {
