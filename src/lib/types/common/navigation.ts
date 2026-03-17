@@ -16,15 +16,19 @@ export interface NavItem {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	icon?: any;
 	isActive?: boolean;
-	items?: NavSubItem[];
+	items?: NavSubItem[] | [];
 }
 
-/**
- * Raw nav item definition stored in the config.
- * `buildUrl` is resolved at runtime with the current user id (if any).
- * `requiresUser` gates visibility when no user is logged in.
- */
-export interface NavItemDef extends Omit<NavItem, 'url'> {
+export interface NavSubItemDef {
+	title: string;
+	buildUrl: (userId?: string, companyId?: string) => string;
+}
+
+export interface NavItemDef {
+	title: string;
+	icon?: any;
+	isActive?: boolean;
 	requiresUser?: boolean;
-	buildUrl: (userId?: string) => string;
+	buildUrl: (userId?: string, companyId?: string) => string;
+	items?: NavSubItemDef[];
 }

@@ -216,7 +216,7 @@
 			tax={countryTaxes}
 		/>
 
-		<UpgradesCard
+		<!-- <UpgradesCard
 			engineLevel={data.company.activeUpgradeLevels.automatedEngine}
 			storageLevel={data.company.activeUpgradeLevels.storage}
 			breakRoomLevel={data.company.activeUpgradeLevels.breakRoom}
@@ -229,7 +229,7 @@
 			outputBestSellPrice={bestSellPrice}
 			outputMarketSpread={marketSpread}
 			{steelPrice}
-		/>
+		/> -->
 
 		<BestRegionsTable
 			bonuses={data.availableProductionBonuses}

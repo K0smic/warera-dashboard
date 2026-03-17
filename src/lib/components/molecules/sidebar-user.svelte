@@ -1,16 +1,16 @@
 <script lang="ts">
-	import * as InputGroup from '$lib/components/atoms/input-group/index.js';
-	import * as Avatar from '$lib/components/atoms/avatar/index.js';
-	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
-	import * as Collapsible from '$lib/components/atoms/collapsible/index.js';
-	import * as Card from '$lib/components/atoms/card/index.js';
+	import * as InputGroup from '$lib/components/atoms/input-group/index';
+	import * as Avatar from '$lib/components/atoms/avatar/index';
+	import * as Sidebar from '$lib/components/atoms/sidebar/index';
+	import * as Collapsible from '$lib/components/atoms/collapsible/index';
+	import * as Card from '$lib/components/atoms/card/index';
 	import MdiExitRun from '~icons/mdi/exit-run';
 	import MdiUserSearch from '~icons/mdi/user-search';
 	import MdiSearch from '~icons/mdi/search';
-	import { createUserState } from '$lib/stores/user.svelte.js';
+	import { userState } from '$lib/stores/user.svelte';
+	import { companiesState } from '$lib/stores/companies.svelte';
 	import Button from '$lib/components/atoms/button/button.svelte';
 
-	const userState = createUserState();
 	let userId = $state('');
 	let isOpen = $state(false);
 </script>
@@ -37,6 +37,7 @@
 							class="w-full"
 							onclick={() => {
 								userState.loadUser(userId);
+								companiesState.fetchCompanies(userId);
 								isOpen = false;
 							}}>Login</Button
 						>

@@ -1,5 +1,5 @@
-import { getCompaniesId } from '$lib/services/api/companies.api';
-import type { CompaniesResponse } from '$lib/types/api/schemas';
+import { getCompaniesId, batchFetch } from '$lib/services';
+import type { CompanyResponse } from '$lib/types/api/schemas';
 
 const STORAGE_KEY = 'companies';
 
@@ -18,12 +18,12 @@ function getCompaniesFromStorage() {
 }
 
 let state = $state({
-	companies: getCompaniesFromStorage() as CompaniesResponse | null,
+	companies: getCompaniesFromStorage() as CompanyResponse[] | null,
 	loading: false,
 	error: null as string | null
 });
 
-async function loadCompanies(userId: string) {
+async function fetchCompanies(userId: string) {
 	if (!userId.trim()) {
 		state.error = 'userId required';
 		return;
@@ -34,8 +34,35 @@ async function loadCompanies(userId: string) {
 
 	try {
 		const fetchedCompanies = await getCompaniesId({ userId });
-		state.companies = fetchedCompanies;
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(fetchedCompanies));
+		const companies = await batchFetch(
+			fetchedCompanies.items.map((companyId: string) => ({
+				path: 'company.getById',
+				input: { companyId }
+			}))
+		);
+		state.companies = companies;
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(companies));
+	} catch (e) {
+		state.error = e instanceof Error ? e.message : 'Unknown error';
+		state.companies = null;
+		localStorage.removeItem(STORAGE_KEY);
+	} finally {
+		state.loading = false;
+	}
+}
+
+async function loadCompanies(companies: CompanyResponse[]) {
+	if (!companies) {
+		state.error = 'Companies array required';
+		return;
+	}
+
+	state.loading = true;
+	state.error = null;
+
+	try {
+		state.companies = companies;
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(companies));
 	} catch (e) {
 		state.error = e instanceof Error ? e.message : 'Unknown error';
 		state.companies = null;
@@ -61,6 +88,7 @@ export const companiesState = {
 	get error() {
 		return state.error;
 	},
+	fetchCompanies,
 	loadCompanies,
 	reset
 };

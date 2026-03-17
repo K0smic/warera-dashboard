@@ -40,6 +40,14 @@ export function isProductibleItem(item: GameConfigItem): item is GameConfigProdu
 	return item.type === 'raw' || item.type === 'product';
 }
 
+export function isRawItem(item: GameConfigItem): item is GameConfigRawItem {
+	return item.type === 'raw';
+}
+
+export function isProductItem(item: GameConfigItem): item is GameConfigProductItem {
+	return item.type === 'product';
+}
+
 export interface GameConfigRawItem {
 	type: 'raw';
 	code: 'limestone' | 'grain' | 'livestock' | 'fish' | 'iron' | 'coca' | 'lead' | 'petroleum';
@@ -66,7 +74,7 @@ export interface GameConfigProductItem {
 		| 'heavyAmmo';
 	rarity: Rarity;
 	productionPoints: number;
-	productionNeeds?: Record<string, number>;
+	productionNeeds?: { [key: string]: number };
 	flatStats?: GameConfigItemFlatStats;
 	isConsumable?: boolean;
 	isTradable: boolean;

@@ -2,6 +2,7 @@ import type { PageLoad } from './$types';
 import type { EndpointInput } from '$lib/types/api/registry';
 import type { UserLiteResponse } from '$lib/types/api/schemas';
 import type { TopOrdersResponse } from '$lib/types/api/schemas';
+import { isProductItem } from '$lib/types/api/schemas';
 import { error } from '@sveltejs/kit';
 import { configsState } from '$lib/stores/configs.svelte';
 import { batchFetch } from '$lib/services';
@@ -67,8 +68,10 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
 	// --- Production needs ---
 
-	const productionNeedsConfig = configsState.configs.items[company.itemCode]?.productionNeeds ?? {};
-	const productionNeedsKeys = Object.keys(productionNeedsConfig);
+	const item = configsState.configs?.items[company.itemCode];
+
+	const productionNeedsConfig = item && isProductItem(item) ? item.productionNeeds : {};
+	const productionNeedsKeys = productionNeedsConfig ? Object.keys(productionNeedsConfig) : [];
 
 	// --- Second batch: per-worker users + per-production-need orders ---
 
@@ -106,7 +109,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
 	const productionNeeds = productionNeedsKeys.map((itemCode, i) => ({
 		itemCode,
-		quantity: productionNeedsConfig[itemCode],
+		quantity: productionNeedsConfig ? productionNeedsConfig[itemCode] : {},
 		buy: productionNeedsOrders[i]?.buyOrders[0]?.price ?? 0,
 		sell: productionNeedsOrders[i]?.sellOrders[0]?.price ?? 0
 	}));
