@@ -23,7 +23,7 @@
 	const breakEvenWageConnector = getContext<BreakEvenWageContext>(BREAK_EVEN_WAGE_CTX);
 
 	let marketPrice = $derived(props.marketPrice ?? 0);
-	let inputPrice = $derived(props.inputPrice ?? 0);
+	let inputPrice = $derived(Number(props.inputPrice?.toFixed(3)) ?? 0);
 	let productionPoints = $derived(props.productionPoints ?? 1);
 	let totalBonus = $derived(props.totalBonus ?? 0);
 	let fidelity = $derived(props.fidelity ?? 1);

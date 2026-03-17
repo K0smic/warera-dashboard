@@ -23,9 +23,11 @@
 									<a href={item.url} {...props}>
 										<span>{item.title}</span>
 									</a>
-									<ChevronRightIcon
-										class="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
-									/>
+									{#if item.items}
+										<ChevronRightIcon
+											class="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+										/>
+									{/if}
 								</Sidebar.MenuButton>
 							{/snippet}
 						</Collapsible.Trigger>

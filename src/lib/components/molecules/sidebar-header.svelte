@@ -18,7 +18,7 @@
 				tabindex={-1}
 			>
 				<div
-					class="flex aspect-square max-w-1/5 items-center justify-center rounded-lg text-sidebar-primary-foreground"
+					class="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground"
 				>
 					<img src={logo} alt="Logo" class="aspect-square rounded-xl bg-muted" loading="lazy" />
 				</div>

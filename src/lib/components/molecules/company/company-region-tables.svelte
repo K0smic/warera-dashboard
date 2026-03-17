@@ -34,7 +34,7 @@
 	);
 </script>
 
-<Card class="col-span-2 container flex w-full min-w-0 flex-col">
+<Card class="col-span-2 container flex w-full min-w-full flex-col">
 	<CardHeader>
 		<CardTitle>Possible regions</CardTitle>
 	</CardHeader>

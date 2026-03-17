@@ -135,7 +135,7 @@
 			</CardTitle>
 		</CardHeader>
 		<CardContent class="space-y-1 text-sm">
-			<dl class="mx-auto grid max-w-2xs grid-cols-2">
+			<dl class="mx-auto grid w-full grid-cols-2">
 				<dt>Best Buy:</dt>
 				<dd class="text-right slashed-zero tabular-nums">
 					{bestBuyPrice}
@@ -154,7 +154,7 @@
 				</dd>
 			</dl>
 			<Separator />
-			<dl class="mx-auto grid max-w-2xs grid-cols-2">
+			<dl class="mx-auto grid w-full grid-cols-2">
 				<dt>Concrete invested:</dt>
 				<dd class="text-right slashed-zero tabular-nums">{concreteInvested}</dd>
 				<dt>Estimated value:</dt>
@@ -173,8 +173,8 @@
 				>
 			</CardTitle>
 		</CardHeader>
-		<CardContent class="space-y-1 text-sm">
-			<dl class="x-auto grid max-w-2xs grid-cols-2 text-nowrap">
+		<CardContent class="w-full space-y-1 text-sm">
+			<dl class="x-auto grid w-full grid-cols-2 text-nowrap">
 				<dt>Type:</dt>
 				<dd class="text-right slashed-zero tabular-nums">{camelCaseToNormalText(item.type)}</dd>
 

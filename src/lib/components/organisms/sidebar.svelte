@@ -51,11 +51,12 @@
 	let {
 		ref = $bindable(null),
 		collapsible = 'icon',
+		variant = 'sidebar',
 		...restProps
 	}: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
 
-<Sidebar.Root {collapsible} {...restProps}>
+<Sidebar.Root {collapsible} {variant} {...restProps}>
 	<Sidebar.Header>
 		<SideHeader />
 	</Sidebar.Header>
