@@ -1,9 +1,8 @@
 import { resolve } from '$app/paths';
-import MdiIndustrial from '~icons/mdi/industrial';
 import type { NavItemDef } from '$lib/types/common/navigation';
-import { companiesState } from '$lib/stores/companies.svelte';
-import type { CompanyResponse } from '$lib/types/api/schemas';
 
+import MdiIndustrial from '~icons/mdi/industrial';
+import MdiUser from '~icons/mdi/user';
 /**
  * Central definition of every sidebar navigation item.
  *
@@ -20,16 +19,18 @@ import type { CompanyResponse } from '$lib/types/api/schemas';
  */
 export const navItems: NavItemDef[] = [
 	{
+		title: 'Profile',
+		icon: MdiUser,
+		isActive: false,
+		requiresUser: true,
+		buildUrl: (userId?: string) => (userId ? resolve(`/user/${userId}`) : resolve('/'))
+		// items: []
+	},
+	{
 		title: 'Companies',
 		icon: MdiIndustrial,
 		isActive: true,
 		requiresUser: true,
-		buildUrl: (userId?: string, companyId?: string) => {
-			if (!companyId) {
-				return userId ? resolve(`/companies/${userId}`) : resolve('/');
-			}
-			return userId && companyId ? resolve(`/companies/${userId}/${companyId}`) : resolve('/');
-		}
-		// items: []
+		buildUrl: (userId?: string) => (userId ? resolve(`/companies/${userId}`) : resolve('/'))
 	}
 ];

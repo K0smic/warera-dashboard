@@ -31,21 +31,23 @@
 								</Sidebar.MenuButton>
 							{/snippet}
 						</Collapsible.Trigger>
-						<Collapsible.Content>
-							<Sidebar.MenuSub>
-								{#each item.items ?? [] as subItem (subItem.id)}
-									<Sidebar.MenuSubItem>
-										<Sidebar.MenuSubButton>
-											{#snippet child({ props })}
-												<a href={subItem.url} {...props}>
-													<span>{subItem.title}</span>
-												</a>
-											{/snippet}
-										</Sidebar.MenuSubButton>
-									</Sidebar.MenuSubItem>
-								{/each}
-							</Sidebar.MenuSub>
-						</Collapsible.Content>
+						{#if item.items}
+							<Collapsible.Content>
+								<Sidebar.MenuSub>
+									{#each item.items ?? [] as subItem (subItem.id)}
+										<Sidebar.MenuSubItem>
+											<Sidebar.MenuSubButton>
+												{#snippet child({ props })}
+													<a href={subItem.url} {...props}>
+														<span>{subItem.title}</span>
+													</a>
+												{/snippet}
+											</Sidebar.MenuSubButton>
+										</Sidebar.MenuSubItem>
+									{/each}
+								</Sidebar.MenuSub>
+							</Collapsible.Content>
+						{/if}
 					</Sidebar.MenuItem>
 				{/snippet}
 			</Collapsible.Root>
