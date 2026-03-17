@@ -31,7 +31,7 @@
 						</Collapsible.Trigger>
 						<Collapsible.Content>
 							<Sidebar.MenuSub>
-								{#each item.items ?? [] as subItem (subItem.title)}
+								{#each item.items ?? [] as subItem (subItem.id)}
 									<Sidebar.MenuSubItem>
 										<Sidebar.MenuSubButton>
 											{#snippet child({ props })}

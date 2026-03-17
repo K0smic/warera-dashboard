@@ -2,6 +2,7 @@
  * A resolved sub-item used at render time.
  */
 export interface NavSubItem {
+	id: string;
 	title: string;
 	url: string;
 }
@@ -20,6 +21,7 @@ export interface NavItem {
 }
 
 export interface NavSubItemDef {
+	id: string;
 	title: string;
 	buildUrl: (userId?: string, companyId?: string) => string;
 }

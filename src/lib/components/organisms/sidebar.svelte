@@ -30,6 +30,7 @@
 					return {
 						...base,
 						items: companyItems.map((company) => ({
+							id: company.companyId,
 							title: company.title,
 							url: item.buildUrl(userState.user?._id, company.companyId)
 						}))
@@ -39,6 +40,7 @@
 				return {
 					...base,
 					items: item.items?.map((sub) => ({
+						id: sub.id,
 						title: sub.title,
 						url: sub.buildUrl(userState.user?._id)
 					}))
