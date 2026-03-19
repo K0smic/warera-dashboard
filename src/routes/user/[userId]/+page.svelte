@@ -6,9 +6,6 @@
 	import { Badge } from '$lib/components/atoms/badge/index';
 	import { Separator } from '$lib/components/atoms/separator/index';
 	import { Progress } from '$lib/components/atoms/progress';
-	import MdiSwordCross from '~icons/mdi/sword-cross';
-	import MdiFactory from '~icons/mdi/factory';
-	import MdiTrophy from '~icons/mdi/trophy';
 	import MdiEarth from '~icons/mdi/earth';
 	import type { GameConfigSkills, GameConfigSkillTable } from '$lib/types/api/schemas';
 	import type { RankingTier } from '$lib/types/api/schemas';
@@ -343,7 +340,7 @@
 							<div class="flex flex-col gap-1.5">
 								<div class="flex items-center justify-end">
 									<span class="text-xs text-muted-foreground tabular-nums">
-										{bar.current} / {bar.max}
+										{bar.current}/{bar.max}
 									</span>
 								</div>
 								<div class="h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -370,7 +367,7 @@
 					<Card.Title
 						class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
 					>
-						<MdiSwordCross class="h-4 w-4" /> Combat
+						Combat
 					</Card.Title>
 				</Card.Header>
 				<Card.Content class="flex flex-col gap-1">
@@ -389,7 +386,7 @@
 					<Card.Title
 						class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
 					>
-						<MdiFactory class="h-4 w-4" /> Economy
+						Economy
 					</Card.Title>
 				</Card.Header>
 				<Card.Content class="flex flex-col gap-1">
@@ -408,7 +405,7 @@
 					<Card.Title
 						class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
 					>
-						<MdiTrophy class="h-4 w-4" /> Rankings
+						Rankings
 					</Card.Title>
 				</Card.Header>
 				<Card.Content class="flex flex-col">

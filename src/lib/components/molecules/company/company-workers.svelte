@@ -11,6 +11,7 @@
 	import MdiPickaxe from '~icons/mdi/pickaxe';
 	import MdiLightningBolt from '~icons/mdi/lightning-bolt';
 	import MdiBitcoin from '~icons/mdi/bitcoin';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		workers: [any];
@@ -108,66 +109,68 @@
 			{@const isOverBreakEven = worker.wage >= breakEvenWithFidelity}
 			{@const taxedWage = (worker.wage - (worker.wage * tax) / 100).toFixed(3)}
 
-			<article
-				class="flex items-center gap-3 rounded-lg bg-card p-3 transition-colors hover:bg-muted/40 {isOverBreakEven
-					? 'border border-destructive'
-					: 'border'}"
-			>
-				<Avatar.Root class="size-9 shrink-0 rounded-lg">
-					<Avatar.Image
-						src={worker.userData.avatarUrl}
-						alt={`Avatar of ${worker.userData.username}`}
-						loading="lazy"
-					/>
-					<Avatar.Fallback class="rounded-lg text-xs">
-						{worker.userData.username?.[0]?.toUpperCase() ?? 'U'}
-					</Avatar.Fallback>
-				</Avatar.Root>
+			<a href={resolve(`/user/${worker.user}`)}>
+				<article
+					class="flex items-center gap-3 rounded-lg bg-card p-3 transition-colors hover:bg-muted/40 {isOverBreakEven
+						? 'border border-destructive'
+						: 'border'}"
+				>
+					<Avatar.Root class="size-9 shrink-0 rounded-lg">
+						<Avatar.Image
+							src={worker.userData.avatarUrl}
+							alt={`Avatar of ${worker.userData.username}`}
+							loading="lazy"
+						/>
+						<Avatar.Fallback class="rounded-lg text-xs">
+							{worker.userData.username?.[0]?.toUpperCase() ?? 'U'}
+						</Avatar.Fallback>
+					</Avatar.Root>
 
-				<div class="flex min-w-0 flex-1 flex-col gap-1.5">
-					<!-- Top row: name + wage badges -->
-					<div class="flex flex-wrap items-center justify-between gap-1">
-						<h3 class="truncate text-sm font-semibold">
-							{worker.userData.username}
-						</h3>
-						<div class="flex shrink-0 gap-1">
+					<div class="flex min-w-0 flex-1 flex-col gap-1.5">
+						<!-- Top row: name + wage badges -->
+						<div class="flex flex-wrap items-center justify-between gap-1">
+							<h3 class="truncate text-sm font-semibold">
+								{worker.userData.username}
+							</h3>
+							<div class="flex shrink-0 gap-1">
+								<Badge
+									variant={isOverBreakEven ? 'destructive' : 'outline'}
+									class="rounded px-1.5 py-0 text-xs"
+									title="Wage"
+								>
+									{worker.wage.toFixed(3)}<MdiBitcoin />
+								</Badge>
+								<Badge variant="secondary" class="rounded px-1.5 py-0 text-xs" title="Net wage">
+									-{tax}% → {taxedWage}<MdiBitcoin />
+								</Badge>
+							</div>
+						</div>
+
+						<!-- Bottom row: stats -->
+						<div class="flex flex-row gap-2 align-middle text-xs text-muted-foreground sm:w-1/2">
 							<Badge
-								variant={isOverBreakEven ? 'destructive' : 'outline'}
-								class="rounded px-1.5 py-0 text-xs"
-								title="Wage"
+								variant="outline"
+								class="flex w-1/4 grow gap-1 rounded-sm font-medium text-foreground"
+								title="Fidelity"><MdiHeart class="size-4" /> {worker.fidelity}%</Badge
 							>
-								{worker.wage.toFixed(3)}<MdiBitcoin />
-							</Badge>
-							<Badge variant="secondary" class="rounded px-1.5 py-0 text-xs" title="Net wage">
-								-{tax}% → {taxedWage}<MdiBitcoin />
-							</Badge>
+
+							<Badge
+								variant="outline"
+								class="flex w-1/4 grow gap-1 rounded-sm font-medium text-foreground"
+								title="Production"
+								><MdiPickaxe class="size-4" /> {worker.userData.skills.production.total}</Badge
+							>
+
+							<Badge
+								variant="outline"
+								class="flex w-1/4 grow rounded-sm font-medium text-foreground"
+								title="Energy"
+								><MdiLightningBolt class="size-4" /> {worker.userData.skills.energy.total}</Badge
+							>
 						</div>
 					</div>
-
-					<!-- Bottom row: stats -->
-					<div class="flex flex-row gap-2 align-middle text-xs text-muted-foreground sm:w-1/2">
-						<Badge
-							variant="outline"
-							class="flex w-1/4 grow gap-1 rounded-sm font-medium text-foreground"
-							title="Fidelity"><MdiHeart class="size-4" /> {worker.fidelity}%</Badge
-						>
-
-						<Badge
-							variant="outline"
-							class="flex w-1/4 grow gap-1 rounded-sm font-medium text-foreground"
-							title="Production"
-							><MdiPickaxe class="size-4" /> {worker.userData.skills.production.total}</Badge
-						>
-
-						<Badge
-							variant="outline"
-							class="flex w-1/4 grow rounded-sm font-medium text-foreground"
-							title="Energy"
-							><MdiLightningBolt class="size-4" /> {worker.userData.skills.energy.total}</Badge
-						>
-					</div>
-				</div>
-			</article>
+				</article>
+			</a>
 		{/each}
 	</Card.Content>
 </Card.Root>

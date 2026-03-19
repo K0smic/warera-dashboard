@@ -8,33 +8,38 @@
 </script>
 
 <Sidebar.Group>
-	<!-- <Sidebar.GroupLabel>Tools</Sidebar.GroupLabel> -->
 	<Sidebar.Menu>
 		{#each items as item (item.title)}
 			<Collapsible.Root open={item.isActive} class="group/collapsible">
 				{#snippet child({ props })}
 					<Sidebar.MenuItem {...props}>
-						<Collapsible.Trigger>
+						<!-- Navigation link: standalone, does NOT trigger collapse -->
+						<Sidebar.MenuButton tooltipContent={item.title}>
 							{#snippet child({ props })}
-								<Sidebar.MenuButton {...props} tooltipContent={item.title}>
+								<a href={item.url} {...props}>
 									{#if item.icon}
 										<item.icon />
 									{/if}
-									<a href={item.url} {...props}>
-										<span>{item.title}</span>
-									</a>
-									{#if item.items}
-										<ChevronRightIcon
-											class="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
-										/>
-									{/if}
-								</Sidebar.MenuButton>
+									<span>{item.title}</span>
+								</a>
 							{/snippet}
-						</Collapsible.Trigger>
+						</Sidebar.MenuButton>
+
+						<!-- Chevron: the ONLY collapse trigger -->
 						{#if item.items}
+							<Collapsible.Trigger>
+								{#snippet child({ props })}
+									<Sidebar.MenuAction {...props}>
+										<ChevronRightIcon
+											class="transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+										/>
+									</Sidebar.MenuAction>
+								{/snippet}
+							</Collapsible.Trigger>
+
 							<Collapsible.Content>
 								<Sidebar.MenuSub>
-									{#each item.items ?? [] as subItem (subItem.id)}
+									{#each item.items as subItem (subItem.id)}
 										<Sidebar.MenuSubItem>
 											<Sidebar.MenuSubButton>
 												{#snippet child({ props })}
