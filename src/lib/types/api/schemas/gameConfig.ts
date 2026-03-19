@@ -8,7 +8,9 @@ export interface GameConfigSkillLevel {
 	unlockAtLevel: number;
 }
 
-export type GameConfigSkillTable = Record<string, GameConfigSkillLevel>;
+export interface GameConfigSkillTable {
+	levels: { [key: number]: GameConfigSkillLevel };
+}
 
 export interface GameConfigSkills {
 	energy: GameConfigSkillTable;
@@ -227,7 +229,7 @@ export interface GameConfigResponse {
 		chatMinLevel: number;
 	};
 
-	skills: GameConfigSkills;
+	skills: { [key: string]: GameConfigSkills };
 
 	battle: {
 		roundsToWin: number;

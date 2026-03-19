@@ -48,6 +48,7 @@ export interface UserSkills {
 
 export interface UserRankings {
 	userDamages: RankingEntry;
+	weeklyUserDamages: RankingEntry;
 	userWealth: RankingEntry;
 	userLevel: RankingEntry;
 	userReferrals: RankingEntry;

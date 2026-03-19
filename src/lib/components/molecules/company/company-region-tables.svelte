@@ -136,7 +136,11 @@
 						</Table.Cell>
 
 						<Table.Cell class="whitespace-nowrap">
-							<span class="text-muted-foreground">No end date</span>
+							{#if bonus.depositEndAt}
+								{new Date(bonus.depositEndAt).toLocaleString()}
+							{:else}
+								<span class="text-muted-foreground">No end date</span>
+							{/if}
 						</Table.Cell>
 					</Table.Row>
 				{/each}

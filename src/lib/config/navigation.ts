@@ -31,6 +31,11 @@ export const navItems: NavItemDef[] = [
 		icon: MdiIndustrial,
 		isActive: true,
 		requiresUser: true,
-		buildUrl: (userId?: string) => (userId ? resolve(`/companies/${userId}`) : resolve('/'))
+		buildUrl: (userId?: string, companyId?: string) => {
+			if (!companyId) {
+				return userId ? resolve(`/companies/${userId}`) : resolve('/');
+			}
+			return userId && companyId ? resolve(`/companies/${userId}/${companyId}`) : resolve('/');
+		}
 	}
 ];

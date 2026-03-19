@@ -130,6 +130,8 @@ export interface RegionResponse {
 export interface RegionData {
 	regionId: string;
 	bonus: number;
+	depositEndAt?: string;
+	itemCode: string;
 	depositBonus: number;
 	ethicDepositBonus: number;
 	strategicBonus: number;
