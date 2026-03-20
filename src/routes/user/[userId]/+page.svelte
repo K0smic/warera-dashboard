@@ -269,43 +269,47 @@
 		<!-- ── Profile header ───────────────────────────────────────────────────── -->
 		<Card.Root class="overflow-hidden">
 			<Card.Content class="">
-				<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-					<!-- Avatar -->
-					<div class="relative shrink-0">
-						<img
-							src={user.avatarUrl}
-							alt={user.username}
-							loading="lazy"
-							class="h-20 w-20 rounded-xl border-2 border-border object-cover shadow-sm"
-						/>
-						{#if user.isActive}
-							<span
-								class="absolute right-1 bottom-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500"
-								title="Active"
-							></span>
-						{/if}
-					</div>
-
-					<!-- Identity -->
-					<div class="flex min-w-0 flex-1 flex-col gap-2">
-						<div class="flex flex-wrap items-center gap-2">
-							<h1 class="truncate text-xl font-semibold text-foreground">{user.username}</h1>
-							<Badge variant="default" class="shrink-0 rounded-sm font-bold">Lv. {lv.level}</Badge>
-							<Badge variant="secondary" class="shrink-0 rounded-sm"
-								>Rank #{user.militaryRank}</Badge
-							>
+				<div class="flex flex-col gap-4 sm:items-start sm:gap-6 xl:flex-row">
+					<div class="flex flex-1 flex-row gap-4">
+						<!-- Avatar -->
+						<div class="relative shrink-0">
+							<img
+								src={user.avatarUrl}
+								alt={user.username}
+								loading="lazy"
+								class="h-20 w-20 rounded-xl border-2 border-border object-cover shadow-sm"
+							/>
+							{#if user.isActive}
+								<span
+									class="absolute right-1 bottom-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500"
+									title="Active"
+								></span>
+							{/if}
 						</div>
 
-						<p class="text-xs text-muted-foreground">Member since {fmtDate(user.createdAt)}</p>
-						{#if countryName}
-							<p class="flex items-center gap-1 text-sm text-muted-foreground">
-								<MdiEarth class="h-4 w-4 shrink-0" />{countryName}
-							</p>
-						{/if}
-					</div>
+						<!-- Identity -->
+						<div class="flex min-w-0 flex-1 flex-col gap-2">
+							<div class="flex flex-wrap items-center gap-2">
+								<h1 class="truncate text-xl font-semibold text-foreground">{user.username}</h1>
+								<Badge variant="default" class="shrink-0 rounded-sm font-bold">Lv. {lv.level}</Badge
+								>
+								<Badge variant="secondary" class="shrink-0 rounded-sm"
+									>Rank #{user.militaryRank}</Badge
+								>
+							</div>
 
+							<p class="text-xs text-muted-foreground">Member since {fmtDate(user.createdAt)}</p>
+							{#if countryName}
+								<p class="flex items-center gap-1 text-sm text-muted-foreground">
+									<MdiEarth class="h-4 w-4 shrink-0" />{countryName}
+								</p>
+							{/if}
+						</div>
+					</div>
 					<!-- Quick stats -->
-					<div class="grid-cols-auto grid gap-3 text-center sm:grid-cols-1 md:grid-cols-4">
+					<div
+						class="grid-cols-auto grid w-full flex-1 items-center gap-3 text-center sm:grid-cols-4"
+					>
 						{#each [{ label: 'Total XP', value: lv.totalXp.toLocaleString() }, { label: 'Damages', value: fmt(user.stats.damagesCount) }, { label: 'Skill pts', value: lv.availableSkillPoints, maxValue: lv.totalSkillPoints }, { label: 'Daily XP left', value: lv.dailyXpLeft, maxValue: `${configsState.configs?.user?.dailyXp ?? '—'}` }] as stat}
 							<div class="rounded-lg bg-muted/50 px-3 py-2">
 								<p class="text-sm text-muted-foreground">
