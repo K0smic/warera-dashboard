@@ -11,8 +11,11 @@
 	import Header from '$lib/components/molecules/header.svelte';
 
 	import { ModeWatcher } from 'mode-watcher';
+	import { usePolling } from '$lib/services';
 
 	let { children } = $props();
+
+	usePolling(['layout:configs', 'layout:countries', 'layout:regions'], 5 * 60000);
 </script>
 
 <svelte:head>

@@ -1,12 +1,17 @@
 <script lang="ts">
+	import { page } from '$app/state';
+
 	import { userState } from '$lib/stores/user.svelte';
 	import { configsState } from '$lib/stores/configs.svelte';
 	import { countriesState } from '$lib/stores/countries.svelte';
+	import { usePolling } from '$lib/services';
+
 	import * as Card from '$lib/components/atoms/card/index';
 	import { Badge } from '$lib/components/atoms/badge/index';
 	import { Separator } from '$lib/components/atoms/separator/index';
 	import { Progress } from '$lib/components/atoms/progress';
 	import MdiEarth from '~icons/mdi/earth';
+
 	import type { GameConfigSkills, GameConfigSkillTable } from '$lib/types/api/schemas';
 	import type { RankingTier } from '$lib/types/api/schemas';
 	import type { SkillBarEntry, RankingEntry } from '$lib/types/components/user';
@@ -15,7 +20,16 @@
 
 	let { data }: PageProps = $props();
 
-	$inspect(data.user);
+	// ── Polling ────────────────────────────────────────────────────────────────
+	// Own profile is kept fresh by userState's internal polling — no extra
+	// interval needed. For other users' profiles we poll via the load function.
+	const isOwnProfile = $derived(page.params.userId === userState.user?._id);
+
+	$effect(() => {
+		if (!isOwnProfile) {
+			usePolling(() => `user-profile:${page.params.userId}`, 30_000);
+		}
+	});
 
 	// ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -48,8 +62,6 @@
 		silver: 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300',
 		bronze: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300'
 	};
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 
 	// ── Resource bars (regenerating skills with current fill) ──────────────────
 
@@ -274,8 +286,6 @@
 						<!-- Avatar -->
 						<div class="relative shrink-0">
 							{#if user.isActive}
-								<!-- Place this status on the opposite of your absolute position -->
-								<!-- For example: .bottom-1 if the span is before the img, .top-1 if after the img -->
 								<span
 									class="absolute right-1 bottom-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500"
 									title="Active"
@@ -287,12 +297,6 @@
 								loading="lazy"
 								class="h-20 w-20 rounded-xl border-2 border-border object-cover shadow-sm"
 							/>
-							<!-- Place this status on the opposite of your absolute position otherwise will break in different breakpoints -->
-							<!-- For example: .top-1 if the span is before the img, .bottom-1 if after the img -->
-							<!-- <span
-									class="absolute right-1 top-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500"
-									title="Active"
-								></span> -->
 						</div>
 
 						<!-- Identity -->
@@ -314,19 +318,18 @@
 							{/if}
 						</div>
 					</div>
+
 					<!-- Quick stats -->
 					<div
 						class="grid-cols-auto grid w-full flex-1 items-center gap-3 text-center sm:grid-cols-4"
 					>
 						{#each [{ label: 'Total XP', value: lv.totalXp.toLocaleString() }, { label: 'Damages', value: fmt(user.stats.damagesCount) }, { label: 'Skill pts', value: lv.availableSkillPoints, maxValue: lv.totalSkillPoints }, { label: 'Daily XP left', value: lv.dailyXpLeft, maxValue: `${configsState.configs?.user?.dailyXp ?? '—'}` }] as stat}
 							<div class="rounded-lg bg-muted/50 px-3 py-2">
-								<p class="text-sm text-muted-foreground">
-									{stat.label}
-								</p>
+								<p class="text-sm text-muted-foreground">{stat.label}</p>
 								<p class="mt-0.5 text-base font-bold text-foreground tabular-nums">
-									<span class="text-xl">{stat.value}</span>{#if stat.maxValue}<span class="text-xs"
-											>/{stat.maxValue}</span
-										>
+									<span class="text-xl">{stat.value}</span>
+									{#if stat.maxValue}
+										<span class="text-xs">/{stat.maxValue}</span>
 									{/if}
 								</p>
 							</div>
@@ -348,7 +351,7 @@
 						</Card.Title>
 					</Card.Header>
 					<Card.Content class="flex flex-col gap-1">
-						<div class=" gap-3 sm:grid-cols-4">
+						<div class="gap-3 sm:grid-cols-4">
 							<div class="flex flex-col gap-1.5">
 								<div class="flex items-center justify-end">
 									<span class="text-xs text-muted-foreground tabular-nums">
@@ -357,12 +360,6 @@
 								</div>
 								<div class="h-2 w-full overflow-hidden rounded-full bg-muted">
 									<Progress value={bar.current} max={bar.max} />
-									<!-- <div
-										class="h-full rounded-full transition-all duration-300"
-										style="width: {bar.max > 0
-											? Math.min(100, Math.round((bar.current / bar.max) * 100))
-											: 0}%; background-color: {bar.color};"
-									></div> -->
 								</div>
 							</div>
 						</div>
@@ -470,22 +467,11 @@
 				<span class="text-xs text-muted-foreground tabular-nums">
 					{skill.current}/{skill.max}
 				</span>
-				<!-- <span class="w-20 shrink-0 text-right text-xs font-medium text-foreground tabular-nums">
-				{skill.current}<span class="text-muted-foreground">/{skill.max}</span>
-			</span> -->
 				<span class="w-7 shrink-0 text-right text-[11px] text-muted-foreground">
 					Lv{skill.level}
 				</span>
 			</div>
 		</div>
-		<!-- <span class="w-24 shrink-0 text-xs text-muted-foreground">{skill.label}</span> -->
-		<Progress class="h-1.5 " value={skill.current} max={skill.max} />
-
-		<!-- <div
-				class="h-full rounded-full transition-all duration-300"
-				style="width: {skill.max > 0
-					? Math.min(100, Math.round((skill.current / skill.max) * 100))
-					: 0}%; background-color: {skill.color};"
-			></div> -->
+		<Progress class="h-1.5" value={skill.current} max={skill.max} />
 	</div>
 {/snippet}
