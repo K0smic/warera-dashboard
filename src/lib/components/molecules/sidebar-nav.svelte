@@ -29,9 +29,9 @@
 						{#if item.items}
 							<Collapsible.Trigger>
 								{#snippet child({ props })}
-									<Sidebar.MenuAction {...props}>
+									<Sidebar.MenuAction class="h-6 w-6" {...props}>
 										<ChevronRightIcon
-											class="transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+											class="size-full transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
 										/>
 									</Sidebar.MenuAction>
 								{/snippet}
