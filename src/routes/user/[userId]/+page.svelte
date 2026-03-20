@@ -273,18 +273,26 @@
 					<div class="flex flex-1 flex-row gap-4">
 						<!-- Avatar -->
 						<div class="relative shrink-0">
+							{#if user.isActive}
+								<!-- Place this status on the opposite of your absolute position -->
+								<!-- For example: .bottom-1 if the span is before the img, .top-1 if after the img -->
+								<span
+									class="absolute right-1 bottom-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500"
+									title="Active"
+								></span>
+							{/if}
 							<img
 								src={user.avatarUrl}
 								alt={user.username}
 								loading="lazy"
 								class="h-20 w-20 rounded-xl border-2 border-border object-cover shadow-sm"
 							/>
-							{#if user.isActive}
-								<span
-									class="absolute right-1 bottom-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500"
+							<!-- Place this status on the opposite of your absolute position otherwise will break in different breakpoints -->
+							<!-- For example: .top-1 if the span is before the img, .bottom-1 if after the img -->
+							<!-- <span
+									class="absolute right-1 top-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500"
 									title="Active"
-								></span>
-							{/if}
+								></span> -->
 						</div>
 
 						<!-- Identity -->
@@ -329,7 +337,7 @@
 		</Card.Root>
 
 		<!-- Resource bars row -->
-		<div class="grid gap-4 lg:grid-cols-4">
+		<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 			{#each resourceBars as bar}
 				<Card.Root class="flex flex-col gap-1">
 					<Card.Header class="">
