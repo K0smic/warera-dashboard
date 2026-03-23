@@ -3,24 +3,17 @@ import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import type { EndpointInput } from '$lib/types/api/registry';
 import type { UserLiteResponse, TopOrdersResponse } from '$lib/types/api/schemas';
+import type { CompanyDashboardData } from '$lib/types';
 import { isProductItem } from '$lib/types/api/schemas';
 
 import { batchFetch, ApiError } from '$lib/services';
 import { configsState } from '$lib/stores/configs.svelte';
 import { queryCache } from '$lib/stores/cache.svelte';
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
 const CONCRETE = 'concrete';
 const STEEL = 'steel';
 const TOP_ORDERS_LIMIT = 5;
 const CACHE_TTL_MS = 30000;
-
-// ---------------------------------------------------------------------------
-// Local types
-// ---------------------------------------------------------------------------
 
 type TopOrdersRequest = {
 	path: 'tradingOrder.getTopOrders';
@@ -32,32 +25,23 @@ type UserLiteRequest = {
 	input: EndpointInput<'user.getUserLite'>;
 };
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 export const ssr = false;
 export const prerender = false;
 
-// ---------------------------------------------------------------------------
-// Load
-// ---------------------------------------------------------------------------
-
-export const load: PageLoad = async ({ fetch, params, depends }) => {
+export const load: PageLoad = async ({ fetch, params, depends }): Promise<CompanyDashboardData> => {
 	const { companyId } = params;
 
 	const cacheKey: `${string}:${string}` = `company-dashboard:${companyId}`;
 	depends(cacheKey);
 
 	if (!queryCache.isStale(cacheKey)) {
-		const cached = queryCache.get(cacheKey);
+		const cached = queryCache.get<CompanyDashboardData>(cacheKey);
 		if (cached) return cached;
 	}
 
 	const controller = new AbortController();
 
 	try {
-		// ── First batch: company core data ───────────────────────────────────
 		const [
 			company,
 			workers,
@@ -95,12 +79,10 @@ export const load: PageLoad = async ({ fetch, params, depends }) => {
 			error(500, 'Unexpected workers response type');
 		}
 
-		// ── Production needs config ──────────────────────────────────────────
 		const item = configsState.configs?.items[company.itemCode];
 		const productionNeedsConfig = item && isProductItem(item) ? item.productionNeeds : {};
 		const productionNeedsKeys = productionNeedsConfig ? Object.keys(productionNeedsConfig) : [];
 
-		// ── Second batch: per-worker users + per-production-need orders ──────
 		const workerUserRequests: UserLiteRequest[] = workers.workers.map(({ user }) => ({
 			path: 'user.getUserLite',
 			input: { userId: user }
@@ -128,7 +110,6 @@ export const load: PageLoad = async ({ fetch, params, depends }) => {
 			controller.signal
 		);
 
-		// ── Merge rest: [workerUsers..., productionNeedsOrders...] ───────────
 		const workerUsers = rest.slice(0, workerUserRequests.length) as UserLiteResponse[];
 		const productionNeedsOrders = rest.slice(workerUserRequests.length) as TopOrdersResponse[];
 
@@ -139,13 +120,12 @@ export const load: PageLoad = async ({ fetch, params, depends }) => {
 
 		const productionNeeds = productionNeedsKeys.map((itemCode, i) => ({
 			itemCode,
-			quantity: productionNeedsConfig ? productionNeedsConfig[itemCode] : {},
+			quantity: productionNeedsConfig ? productionNeedsConfig[itemCode] : 0,
 			buy: productionNeedsOrders[i]?.buyOrders[0]?.price ?? 0,
 			sell: productionNeedsOrders[i]?.sellOrders[0]?.price ?? 0
 		}));
 
-		// ── Cache and return ─────────────────────────────────────────────────
-		const result = {
+		const result: CompanyDashboardData = {
 			company,
 			workers: workersWithData,
 			activeProductionBonus,
@@ -164,7 +144,7 @@ export const load: PageLoad = async ({ fetch, params, depends }) => {
 		return result;
 	} catch (e) {
 		if (e instanceof DOMException && e.name === 'AbortError') {
-			return queryCache.get(cacheKey) ?? error(503, 'Request cancelled');
+			return queryCache.get<CompanyDashboardData>(cacheKey) ?? error(503, 'Request cancelled'); // ← typed
 		}
 
 		if (e instanceof ApiError) {
