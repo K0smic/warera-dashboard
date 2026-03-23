@@ -33,7 +33,7 @@ export const configsState = {
 		return state.error;
 	},
 
-	async loadConfigs(fetchFn: typeof fetch = fetch) {
+	async loadConfigs(fetchFn: typeof fetch = fetch, signal?: AbortSignal) {
 		state.loading = true;
 		state.error = null;
 		try {

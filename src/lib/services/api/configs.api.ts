@@ -7,7 +7,8 @@ import type { EndpointInput } from '$lib/types/api/registry';
 
 export function getGameConfig(
 	input: EndpointInput<'gameConfig.getGameConfig'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('gameConfig.getGameConfig', input, fetchFn);
+	return trpcFetch('gameConfig.getGameConfig', input, fetchFn, signal);
 }

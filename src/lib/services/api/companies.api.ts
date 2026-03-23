@@ -7,27 +7,34 @@ import type { EndpointInput } from '$lib/types';
 
 export function getCompaniesId(
 	input: EndpointInput<'company.getCompanies'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('company.getCompanies', input, fetchFn);
+	return trpcFetch('company.getCompanies', input, fetchFn, signal);
 }
 
-export function getCompany(input: EndpointInput<'company.getById'>, fetchFn: typeof fetch = fetch) {
-	return trpcFetch('company.getById', input, fetchFn);
+export function getCompany(
+	input: EndpointInput<'company.getById'>,
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
+) {
+	return trpcFetch('company.getById', input, fetchFn, signal);
 }
 
 export function getProductionBonus(
 	input: EndpointInput<'company.getProductionBonus'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('company.getProductionBonus', input, fetchFn);
+	return trpcFetch('company.getProductionBonus', input, fetchFn, signal);
 }
 
 export function getRecommendedRegionIdsByItemCode(
 	input: EndpointInput<'company.getRecommendedRegionIdsByItemCode'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('company.getRecommendedRegionIdsByItemCode', input, fetchFn);
+	return trpcFetch('company.getRecommendedRegionIdsByItemCode', input, fetchFn, signal);
 }
 
 /* =======================
@@ -36,9 +43,10 @@ export function getRecommendedRegionIdsByItemCode(
 
 export function getWageStats(
 	input: EndpointInput<'workOffer.getWageStats'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('workOffer.getWageStats', input, fetchFn);
+	return trpcFetch('workOffer.getWageStats', input, fetchFn, signal);
 }
 
 /* =======================
@@ -47,9 +55,10 @@ export function getWageStats(
 
 export function getUpgradeByTypeAndEntity(
 	input: EndpointInput<'upgrade.getUpgradeByTypeAndEntity'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('upgrade.getUpgradeByTypeAndEntity', input, fetchFn);
+	return trpcFetch('upgrade.getUpgradeByTypeAndEntity', input, fetchFn, signal);
 }
 
 /* =======================
@@ -58,7 +67,8 @@ export function getUpgradeByTypeAndEntity(
 
 export function getWorkers(
 	input: EndpointInput<'worker.getWorkers'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('worker.getWorkers', input, fetchFn);
+	return trpcFetch('worker.getWorkers', input, fetchFn, signal);
 }

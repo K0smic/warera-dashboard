@@ -36,7 +36,7 @@ function getRegionsFromStorage() {
 	}
 }
 
-async function loadCountries(fetchFn: typeof fetch = fetch) {
+async function loadCountries(fetchFn: typeof fetch = fetch, signal?: AbortSignal) {
 	state.loading = true;
 	state.error = null;
 
@@ -53,7 +53,7 @@ async function loadCountries(fetchFn: typeof fetch = fetch) {
 	}
 }
 
-async function loadRegions(fetchFn: typeof fetch = fetch) {
+async function loadRegions(fetchFn: typeof fetch = fetch, signal?: AbortSignal) {
 	state.loading = true;
 	state.error = null;
 

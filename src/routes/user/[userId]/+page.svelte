@@ -27,7 +27,7 @@
 
 	$effect(() => {
 		if (!isOwnProfile) {
-			usePolling(() => `user-profile:${page.params.userId}`, 30_000);
+			usePolling(`user-profile:${page.params.userId}`, 30000);
 		}
 	});
 

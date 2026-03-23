@@ -7,15 +7,17 @@ import type { EndpointInput } from '$lib/types/api/registry';
 
 export function getUserLite(
 	input: EndpointInput<'user.getUserLite'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('user.getUserLite', input, fetchFn);
+	return trpcFetch('user.getUserLite', input, fetchFn, signal);
 }
 
 //TODO: add responses['UsersByCountryResponse'] type, now is not used
 export function getUsersByCountry(
 	input: EndpointInput<'user.getUsersByCountry'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('user.getUsersByCountry', input, fetchFn);
+	return trpcFetch('user.getUsersByCountry', input, fetchFn, signal);
 }

@@ -7,7 +7,8 @@ import type { EndpointInput } from '$lib/types/api/registry';
 
 export function getTopOrders(
 	input: EndpointInput<'tradingOrder.getTopOrders'>,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
 ) {
-	return trpcFetch('tradingOrder.getTopOrders', input, fetchFn);
+	return trpcFetch('tradingOrder.getTopOrders', input, fetchFn, signal);
 }

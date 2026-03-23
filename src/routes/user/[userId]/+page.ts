@@ -6,13 +6,14 @@ import { getUserLite } from '$lib/services';
 import { ApiError } from '$lib/services';
 import { queryCache } from '$lib/stores/cache.svelte';
 import { userState } from '$lib/stores/user.svelte';
+import type { UserLiteResponse } from '$lib/types/api/schemas';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
 // User profile data includes rankings and skills that update frequently.
-const CACHE_TTL_MS = 30_000;
+const CACHE_TTL_MS = 30000;
 
 export const ssr = false;
 export const prerender = false;
@@ -23,7 +24,7 @@ export const prerender = false;
 
 export const load: PageLoad = async ({ fetch, params, depends }) => {
 	const { userId } = params;
-	const cacheKey = `user-profile:${userId}`;
+	const cacheKey: `${string}:${string}` = `user-profile:${userId}`;
 
 	depends(cacheKey);
 
@@ -36,7 +37,7 @@ export const load: PageLoad = async ({ fetch, params, depends }) => {
 	// ── SWR: return cached data if still fresh ───────────────────────────────
 	if (!queryCache.isStale(cacheKey)) {
 		const cached = queryCache.get(cacheKey);
-		if (cached) return { user: cached };
+		if (cached) return { user: cached as UserLiteResponse };
 	}
 
 	// ── Fetch ────────────────────────────────────────────────────────────────
@@ -51,7 +52,7 @@ export const load: PageLoad = async ({ fetch, params, depends }) => {
 	} catch (e) {
 		if (e instanceof DOMException && e.name === 'AbortError') {
 			const stale = queryCache.get(cacheKey);
-			if (stale) return { user: stale };
+			if (stale) return { user: stale as UserLiteResponse };
 			error(503, 'Request cancelled');
 		}
 

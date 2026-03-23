@@ -16,7 +16,7 @@ import { queryCache } from '$lib/stores/cache.svelte';
 const CONCRETE = 'concrete';
 const STEEL = 'steel';
 const TOP_ORDERS_LIMIT = 5;
-const CACHE_TTL_MS = 30_000;
+const CACHE_TTL_MS = 30000;
 
 // ---------------------------------------------------------------------------
 // Local types
