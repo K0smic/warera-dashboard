@@ -3,8 +3,7 @@
 	import logo from '$lib/assets/logo.png';
 
 	import { toggleMode } from 'mode-watcher';
-	import MdiWhiteBalanceSunny from '~icons/mdi/white-balance-sunny';
-	import MdiMoonAndStars from '~icons/mdi/moon-and-stars';
+	import Icon from '../atoms/Icon/icon.svelte';
 	import { resolve } from '$app/paths';
 </script>
 
@@ -28,10 +27,12 @@
 			</Sidebar.MenuButton>
 		</a>
 		<Sidebar.MenuAction onclick={toggleMode} class="size-7" title="Toggle light/dark theme">
-			<MdiWhiteBalanceSunny
+			<Icon
+				name="light"
 				class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all! dark:scale-100 dark:rotate-0"
 			/>
-			<MdiMoonAndStars
+			<Icon
+				name="dark"
 				class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all! dark:scale-0 dark:-rotate-90"
 			/>
 			<span class="sr-only">Toggle theme</span>

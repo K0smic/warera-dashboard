@@ -22,8 +22,9 @@
 	// invalidate() re-runs the load function (which has SWR caching) without
 	// unmounting the component, so the UI never flashes.
 	// ---------------------------------------------------------------------------
-
-	usePolling(() => `companies:${data.companies[0].user}`, 60000);
+	$effect(() => {
+		usePolling(`companies:${data.companies[0].user}`, 60000);
+	});
 </script>
 
 <!-- ── List ──────────────────────────────────────────────────────────────── -->

@@ -4,7 +4,7 @@
 	import { camelCaseToNormalText } from '$lib/utils';
 
 	import type { CompanyResponse } from '$lib/types/api/schemas';
-	import MdiBitcoin from '~icons/mdi/bitcoin';
+	import Icon from '../atoms/Icon/icon.svelte';
 
 	//     {
 	//   "_id": "699175837456ac88335f8ee4",
@@ -44,14 +44,14 @@
 	<Card.Header>
 		<div class="flex items-start justify-between">
 			<div>
-				<Card.Title class="text-lg">{company.name}</Card.Title>
+				<Card.Title class="flex gap-1 text-lg"><Icon name="company" />{company.name}</Card.Title>
 				<Card.Description>
 					{camelCaseToNormalText(company.itemCode)}
 				</Card.Description>
 			</div>
 
 			<span
-				class="rounded-full px-2 py-1 text-xs font-medium"
+				class="rounded-sm px-2 py-1 text-xs font-medium"
 				class:bg-green-100={!company.isFull}
 				class:text-green-700={!company.isFull}
 				class:bg-red-100={company.isFull}
@@ -82,11 +82,11 @@
 
 			<div>
 				<p class="text-muted-foreground">Estimated Value</p>
-				<div class="flex items-center">
+				<div class="flex items-center gap-1">
 					<p class="font-semibold">
 						{company.estimatedValue.toFixed(2)}
 					</p>
-					<MdiBitcoin class="ml-1" />
+					<Icon name="currency" />
 				</div>
 			</div>
 		</div>

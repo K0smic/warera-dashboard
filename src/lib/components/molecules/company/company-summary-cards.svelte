@@ -5,11 +5,7 @@
 	import { camelCaseToNormalText } from '$lib/utils';
 	import Separator from '$lib/components/atoms/separator/separator.svelte';
 
-	import IconFactory from '~icons/mdi/factory';
-	import MdiPickaxe from '~icons/mdi/pickaxe';
-	import MdiBitcoin from '~icons/mdi/bitcoin';
-	import MdiInformationBox from '~icons/mdi/information-box';
-	import IconChart from '~icons/mdi/chart-line';
+	import Icon from '$lib/components/atoms/Icon/icon.svelte';
 
 	interface Props {
 		production: number;
@@ -52,7 +48,7 @@
 	<Card>
 		<CardHeader>
 			<CardTitle class="item-center flex gap-2">
-				<IconFactory class="h-5 w-5" />
+				<Icon name="company" class="h-5 w-5" />
 				Production
 			</CardTitle>
 		</CardHeader>
@@ -60,12 +56,12 @@
 			<div class="flex justify-between">
 				<div class="flex items-center" title="Current production">
 					<span class="text-2xl font-bold">{production.toFixed(2)}</span>
-					<MdiPickaxe class="mt-1 ml-1" />
+					<Icon name="production" class="mt-1 ml-1" />
 				</div>
 				<div class="flex items-center" title="Production value">
 					<span class="sr-only">Production value</span>
 					<span>{productionValue.toFixed(3)}</span>
-					<MdiBitcoin class="ml-1" />
+					<Icon name="currency" class="ml-1" />
 				</div>
 			</div>
 
@@ -84,7 +80,7 @@
 	<Card>
 		<CardHeader>
 			<CardTitle class="item-center flex gap-2">
-				<IconFactory class="h-5 w-5" />
+				<Icon name="company" class="h-5 w-5" />
 				Daily flow
 			</CardTitle>
 		</CardHeader>
@@ -96,7 +92,7 @@
 						<p class="text-sm font-bold {netValue > 0 ? 'text-green-600' : 'text-destructive'}">
 							{netValue > 0 ? '+' : ''}{netValue.toFixed(3)}
 						</p>
-						<span><MdiBitcoin class="ml-1" /></span>
+						<span><Icon name="currency" class="ml-1" /></span>
 					</div>
 				</div>
 				<div class="grid grid-cols-2 gap-2 text-center sm:grid-cols-2">
@@ -107,7 +103,7 @@
 						<p class="text-xs text-muted-foreground">Revenue</p>
 						<div class="flex items-center justify-center">
 							<p class="text-sm font-semibold text-green-600">+{revenue.toFixed(3)}</p>
-							<span><MdiBitcoin class="ml-1" /></span>
+							<span><Icon name="currency" class="ml-1" /></span>
 						</div>
 					</div>
 					<div
@@ -119,7 +115,7 @@
 							<p class="text-sm font-semibold text-destructive">
 								{expenses ? '-' + expenses.toFixed(3) : 0}
 							</p>
-							<span><MdiBitcoin class="ml-1" /></span>
+							<span><Icon name="currency" class="ml-1" /></span>
 						</div>
 					</div>
 				</div>
@@ -130,7 +126,7 @@
 	<Card>
 		<CardHeader>
 			<CardTitle class="item-center flex gap-2">
-				<IconChart class="h-5 w-5" />
+				<Icon name="chart" class="h-5 w-5" />
 				{camelCaseToNormalText(item.code)} market
 			</CardTitle>
 		</CardHeader>
@@ -166,7 +162,7 @@
 	<Card>
 		<CardHeader>
 			<CardTitle class="item-center flex gap-2">
-				<MdiInformationBox class="h-5 w-5" />
+				<Icon name="info" class="h-5 w-5" />
 				<span class="flex-1">Info</span>
 				<Badge title="Rarity" class="rounded-sm font-semibold"
 					>{camelCaseToNormalText(item.rarity)}</Badge

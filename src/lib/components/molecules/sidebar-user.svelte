@@ -4,12 +4,10 @@
 	import * as Sidebar from '$lib/components/atoms/sidebar/index';
 	import * as Collapsible from '$lib/components/atoms/collapsible/index';
 	import * as Card from '$lib/components/atoms/card/index';
-	import MdiExitRun from '~icons/mdi/exit-run';
-	import MdiUserSearch from '~icons/mdi/user-search';
-	import MdiSearch from '~icons/mdi/search';
 	import { userState } from '$lib/stores/user.svelte';
 	import { companiesState } from '$lib/stores/companies.svelte';
 	import Button from '$lib/components/atoms/button/button.svelte';
+	import Icon from '../atoms/Icon/icon.svelte';
 
 	let userId = $state('');
 	let isOpen = $state(false);
@@ -28,7 +26,7 @@
 						<InputGroup.Root>
 							<InputGroup.Input placeholder="Your account ID" bind:value={userId} />
 							<InputGroup.Addon align="inline-end">
-								<MdiSearch />
+								<Icon name="search" />
 							</InputGroup.Addon>
 						</InputGroup.Root>
 					</Card.CardContent>
@@ -57,7 +55,9 @@
 					src={userState.user ? userState.user.avatarUrl : ''}
 					alt={userState.user ? userState.user.username : ''}
 				/>
-				<Avatar.Fallback class="rounded-lg"><MdiUserSearch class="size-6" /></Avatar.Fallback>
+				<Avatar.Fallback class="rounded-lg"
+					><Icon name="user-search" class="size-6" /></Avatar.Fallback
+				>
 			</Avatar.Root>
 			<div class="grid flex-1 text-start text-sm leading-tight">
 				<span class="truncate font-medium"
@@ -73,7 +73,7 @@
 				style="color: var(--destructive)"
 				onclick={() => userState.reset()}
 			>
-				<MdiExitRun />
+				<Icon name="logout" />
 				<span class="sr-only">Logout</span>
 			</Sidebar.MenuAction>
 		{/if}

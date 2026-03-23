@@ -1,8 +1,7 @@
 import { resolve } from '$app/paths';
 import type { NavItemDef } from '$lib/types/common/navigation';
+import { getIcon } from './icons';
 
-import MdiIndustrial from '~icons/mdi/industrial';
-import MdiUser from '~icons/mdi/user';
 /**
  * Central definition of every sidebar navigation item.
  *
@@ -20,7 +19,7 @@ import MdiUser from '~icons/mdi/user';
 export const navItems: NavItemDef[] = [
 	{
 		title: 'Profile',
-		icon: MdiUser,
+		icon: getIcon('user'),
 		isActive: false,
 		requiresUser: true,
 		buildUrl: (userId?: string) => (userId ? resolve(`/user/${userId}`) : resolve('/'))
@@ -28,7 +27,7 @@ export const navItems: NavItemDef[] = [
 	},
 	{
 		title: 'Companies',
-		icon: MdiIndustrial,
+		icon: getIcon('company'),
 		isActive: true,
 		requiresUser: true,
 		buildUrl: (userId?: string, companyId?: string) => {

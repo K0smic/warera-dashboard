@@ -1,18 +1,5 @@
 import { trpcBatchFetch, ApiError } from './client';
-import type { EndpointPath, EndpointInput, BatchOutput } from '$lib/types/api/registry';
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-type BatchRequest<P extends EndpointPath> = {
-	path: P;
-	input: EndpointInput<P>;
-};
-
-type BatchResult<Requests extends ReadonlyArray<BatchRequest<EndpointPath>>> = BatchOutput<{
-	[K in keyof Requests]: Requests[K]['path'];
-}>;
+import type { EndpointPath, BatchRequest, BatchResult } from '$lib/types/api/registry';
 
 // ---------------------------------------------------------------------------
 // In-flight dedup map

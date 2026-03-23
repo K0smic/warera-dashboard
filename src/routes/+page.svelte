@@ -1,12 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 
-	import MdiSwordCross from '~icons/mdi/sword-cross';
-	import MapIcon from '~icons/mdi/map';
-	import ChartIcon from '~icons/mdi/chart-bar';
-	import MdiKeyVariant from '~icons/mdi/key-variant';
-	import MdiCompass from '~icons/mdi/compass-rose';
-	import MdiTrophy from '~icons/mdi/trophy';
+	import { getIcon } from '$lib/config/icons';
+	import Icon from '$lib/components/atoms/Icon/icon.svelte';
 
 	/** @typedef {import('svelte').Component} SvelteComponent */
 
@@ -25,7 +21,7 @@
 	/** @type {Tool[]} */
 	const tools = [
 		{
-			icon: MdiSwordCross,
+			icon: getIcon('battle'),
 			title: 'Battle Calculator',
 			available: 'Not Available',
 			description:
@@ -36,7 +32,7 @@
 			badgeColor: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300'
 		},
 		{
-			icon: ChartIcon,
+			icon: getIcon('chart'),
 			title: 'Resource Tracker',
 			available: 'Not Available',
 			description: 'Monitor production rates, consumption, and optimize your economy in real time.',
@@ -46,7 +42,7 @@
 			badgeColor: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300'
 		},
 		{
-			icon: MapIcon,
+			icon: getIcon('map'),
 			title: 'Territory Planner',
 			available: 'Not Available',
 			description:
@@ -70,19 +66,19 @@
 			step: '01',
 			title: 'Set Your User ID',
 			desc: 'Enter your WarEra User ID in the sidebar panel below to link your account.',
-			icon: MdiKeyVariant
+			icon: getIcon('key')
 		},
 		{
 			step: '02',
 			title: 'Choose a Tool',
 			desc: 'Navigate to any tool from the sidebar. Each module connects to your game data.',
-			icon: MdiCompass
+			icon: getIcon('navigate')
 		},
 		{
 			step: '03',
 			title: 'Dominate',
 			desc: 'Use insights from your dashboard to make smarter decisions and outpace your rivals.',
-			icon: MdiTrophy
+			icon: getIcon('ranking')
 		}
 	];
 
@@ -93,39 +89,13 @@
 		requestAnimationFrame(() => {
 			visible = true;
 			setTimeout(() => {
-				statsVisible = true;
+				statsVisible = false;
 			}, 400);
 		});
 	});
 </script>
 
-<!--
-	Renders `icon` as:
-	- A plain emoji / text span  →  when typeof icon === 'string'
-	- A Svelte component         →  otherwise (e.g. unplugin-icons MDI)
--->
-{#snippet toolIcon(icon)}
-	{#if typeof icon === 'string'}
-		<span class="text-3xl leading-none">{icon}</span>
-	{:else}
-		{@const Icon = icon}
-		<Icon class="h-8 w-8" />
-	{/if}
-{/snippet}
-
-<!--
-	Smaller variant for inline icons (e.g. Getting Started step titles)
--->
-{#snippet inlineIcon(icon)}
-	{#if typeof icon === 'string'}
-		<span>{icon}</span>
-	{:else}
-		{@const Icon = icon}
-		<Icon class="h-4 w-4" />
-	{/if}
-{/snippet}
-
-<div class="page-wrapper flex flex-1 flex-col gap-6 p-4 md:p-6">
+<div class="page-wrapper flex flex-1 flex-col gap-6">
 	<!-- Hero Section -->
 	<div
 		class="hero-bg grid-bg relative overflow-hidden rounded-xl border border-primary/25"
@@ -148,7 +118,7 @@
 
 		<!-- Scanline effect -->
 		<div
-			class="scanline pointer-events-none absolute right-0 left-0 h-[2px] bg-gradient-to-r from-transparent via-primary/15 to-transparent"
+			class="scanline pointer-events-none absolute right-0 left-0 h-0.5 bg-linear-to-r from-transparent via-primary/15 to-transparent"
 		></div>
 
 		<!-- Decorative background emblem -->
@@ -156,7 +126,7 @@
 			class="pointer-events-none absolute top-1/2 right-6 -translate-y-1/2 text-[120px] opacity-[0.04] select-none"
 			aria-hidden="true"
 		>
-			<MdiSwordCross />
+			<Icon name="battle" />
 		</div>
 
 		<div class="relative z-10 flex flex-col gap-4 p-6 md:p-8">
@@ -222,14 +192,14 @@
 	{/if}
 
 	<!-- Tool Cards -->
-	{#if visible}
+	<!-- {#if visible}
 		<div class="grid gap-4 md:grid-cols-3">
 			{#each tools as tool, i}
 				<div
 					class="tool-card card-delay-{i +
 						1} flex flex-col gap-3 rounded-xl border bg-card bg-gradient-to-br p-5 fade-in {tool.color} {tool.border}"
 				>
-					<!-- Card header -->
+					Card header
 					<div class="flex items-start justify-between gap-2">
 						{@render toolIcon(tool.icon)}
 						<span
@@ -239,7 +209,7 @@
 						</span>
 					</div>
 
-					<!-- Card body -->
+					Card body
 					<div class="flex flex-col gap-1.5">
 						<h3 class="label-font text-base font-semibold tracking-wide text-card-foreground">
 							{tool.title}
@@ -249,7 +219,7 @@
 						</p>
 					</div>
 
-					<!-- Card footer -->
+					Card footer
 					<div class="mt-auto flex items-center gap-1.5 border-t border-border/50 pt-2">
 						<span class="h-1.5 w-1.5 rounded-full bg-primary/50"></span>
 						<span class="label-font text-[10px] tracking-widest text-muted-foreground uppercase"
@@ -262,7 +232,7 @@
 				</div>
 			{/each}
 		</div>
-	{/if}
+	{/if} -->
 
 	<!-- Getting Started Panel -->
 	{#if visible}
@@ -278,7 +248,7 @@
 				{#each steps as item}
 					<div class="flex items-start gap-3">
 						<div
-							class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded border border-primary/40 bg-primary/10"
+							class="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-primary/40 bg-primary/10"
 						>
 							<span class="label-font text-[10px] font-bold tracking-wider text-primary"
 								>{item.step}</span
@@ -288,7 +258,7 @@
 							<span
 								class="label-font flex items-center gap-1.5 text-sm font-semibold tracking-wide text-card-foreground"
 							>
-								{@render inlineIcon(item.icon)}
+								<item.icon />
 								{item.title}
 							</span>
 							<p class="text-xs leading-relaxed text-muted-foreground">{item.desc}</p>

@@ -5,9 +5,7 @@
 	import * as Card from '$lib/components/atoms/card';
 	import * as InputGroup from '$lib/components/atoms/input-group/index.js';
 	import Button from '$lib/components/atoms/button/button.svelte';
-
-	import MdiBitcoin from '~icons/mdi/bitcoin';
-	import MdiPickaxe from '~icons/mdi/pickaxe';
+	import Icon from '$lib/components/atoms/Icon/icon.svelte';
 
 	interface Props {
 		marketPrice?: number;
@@ -110,7 +108,7 @@
 							bind:value={marketPrice}
 						/>
 						<InputGroup.Addon align="inline-end">
-							<MdiBitcoin />
+							<Icon name="currency" />
 						</InputGroup.Addon>
 					</InputGroup.Root>
 				</div>
@@ -127,7 +125,7 @@
 							bind:value={inputPrice}
 						/>
 						<InputGroup.Addon align="inline-end">
-							<MdiBitcoin />
+							<Icon name="currency" />
 						</InputGroup.Addon></InputGroup.Root
 					>
 				</div>
@@ -143,7 +141,7 @@
 							bind:value={productionPoints}
 						/>
 						<InputGroup.Addon align="inline-end">
-							<MdiPickaxe />
+							<Icon name="production" />
 						</InputGroup.Addon></InputGroup.Root
 					>
 				</div>

@@ -10,7 +10,7 @@
 	import { Badge } from '$lib/components/atoms/badge/index';
 	import { Separator } from '$lib/components/atoms/separator/index';
 	import { Progress } from '$lib/components/atoms/progress';
-	import MdiEarth from '~icons/mdi/earth';
+	import Icon from '$lib/components/atoms/Icon/icon.svelte';
 
 	import type { GameConfigSkills, GameConfigSkillTable } from '$lib/types/api/schemas';
 	import type { RankingTier } from '$lib/types/api/schemas';
@@ -20,15 +20,8 @@
 
 	let { data }: PageProps = $props();
 
-	// ── Polling ────────────────────────────────────────────────────────────────
-	// Own profile is kept fresh by userState's internal polling — no extra
-	// interval needed. For other users' profiles we poll via the load function.
-	const isOwnProfile = $derived(page.params.userId === userState.user?._id);
-
 	$effect(() => {
-		if (!isOwnProfile) {
-			usePolling(`user-profile:${page.params.userId}`, 30000);
-		}
+		usePolling(`user-profile:${page.params.userId}`, 30000);
 	});
 
 	// ── Helpers ────────────────────────────────────────────────────────────────
@@ -277,7 +270,7 @@
 	{@const user = data.user}
 	{@const lv = user.leveling}
 
-	<div class="flex flex-col gap-4 p-4 md:gap-6 md:p-6">
+	<div class="flex flex-col gap-6">
 		<!-- ── Profile header ───────────────────────────────────────────────────── -->
 		<Card.Root class="overflow-hidden">
 			<Card.Content class="">
@@ -313,7 +306,7 @@
 							<p class="text-xs text-muted-foreground">Member since {fmtDate(user.createdAt)}</p>
 							{#if countryName}
 								<p class="flex items-center gap-1 text-sm text-muted-foreground">
-									<MdiEarth class="h-4 w-4 shrink-0" />{countryName}
+									<Icon name="earth" class="h-4 w-4 shrink-0" />{countryName}
 								</p>
 							{/if}
 						</div>
@@ -345,8 +338,9 @@
 				<Card.Root class="flex flex-col gap-1">
 					<Card.Header class="">
 						<Card.Title
-							class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
+							class="flex items-center gap-1 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
 						>
+							<Icon name={bar.key} />
 							{bar.label}
 						</Card.Title>
 					</Card.Header>
@@ -374,8 +368,9 @@
 			<Card.Root>
 				<Card.Header class="">
 					<Card.Title
-						class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
+						class="flex items-center gap-1 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
 					>
+						<Icon name="battle" />
 						Combat
 					</Card.Title>
 				</Card.Header>
@@ -395,6 +390,7 @@
 					<Card.Title
 						class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
 					>
+						<Icon name="chart" />
 						Economy
 					</Card.Title>
 				</Card.Header>
@@ -414,6 +410,7 @@
 					<Card.Title
 						class="flex items-center gap-2 text-sm font-semibold tracking-wider text-muted-foreground uppercase"
 					>
+						<Icon name="ranking" />
 						Rankings
 					</Card.Title>
 				</Card.Header>

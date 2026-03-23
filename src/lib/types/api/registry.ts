@@ -311,6 +311,15 @@ export type EndpointPath = keyof ApiRegistry;
 export type EndpointInput<P extends EndpointPath> = ApiRegistry[P]['input'];
 export type EndpointOutput<P extends EndpointPath> = ApiRegistry[P]['output'];
 
+export type BatchRequest<P extends EndpointPath> = {
+	path: P;
+	input: EndpointInput<P>;
+};
+
+export type BatchResult<Requests extends ReadonlyArray<BatchRequest<EndpointPath>>> = BatchOutput<{
+	[K in keyof Requests]: Requests[K]['path'];
+}>;
+
 export type BatchOutput<Paths extends ReadonlyArray<EndpointPath>> = {
 	[K in keyof Paths]: Paths[K] extends EndpointPath ? EndpointOutput<Paths[K]> : never;
 };

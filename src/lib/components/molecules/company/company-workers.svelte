@@ -6,11 +6,9 @@
 	import * as Card from '$lib/components/atoms/card';
 	import * as Avatar from '$lib/components/atoms/avatar';
 	import Badge from '$lib/components/atoms/badge/badge.svelte';
+	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import { getIcon } from '$lib/config/icons';
 
-	import MdiHeart from '~icons/mdi/heart';
-	import MdiPickaxe from '~icons/mdi/pickaxe';
-	import MdiLightningBolt from '~icons/mdi/lightning-bolt';
-	import MdiBitcoin from '~icons/mdi/bitcoin';
 	import { resolve } from '$app/paths';
 
 	interface Props {
@@ -88,7 +86,7 @@
 
 		<!-- Summary stats row -->
 		<div class="grid grid-cols-3 gap-2 text-center sm:grid-cols-3">
-			{#each [{ label: 'Daily Production', value: totalDailyProduction.toFixed(1), hint: 'Production points/day', icon: MdiPickaxe }, { label: 'Avg. Energy', value: (totalEnergy / workers.length || 0).toFixed(0), hint: 'Average energy skill', icon: MdiLightningBolt }, { label: 'Daily Wages', value: estimatedDailyWage.toFixed(3), hint: 'Total wage cost/day', icon: MdiBitcoin }] as stat}
+			{#each [{ label: 'Daily Production', value: totalDailyProduction.toFixed(1), hint: 'Production points/day', icon: getIcon('production') }, { label: 'Avg. Energy', value: (totalEnergy / workers.length || 0).toFixed(0), hint: 'Average energy skill', icon: getIcon('energy') }, { label: 'Daily Wages', value: estimatedDailyWage.toFixed(3), hint: 'Total wage cost/day', icon: getIcon('currency') }] as stat}
 				<div class="rounded-md bg-muted px-2 py-1.5">
 					<p class="text-xs text-muted-foreground">{stat.label}</p>
 					<div class="flex items-center justify-center gap-1">
@@ -106,7 +104,7 @@
 	<Card.Content class="pm-4 flex flex-col gap-2 overflow-y-auto">
 		{#each workers as worker (worker._id)}
 			{@const breakEvenWithFidelity = breakEvenWage.getByFidelity?.(worker.fidelity)}
-			{@const isOverBreakEven = worker.wage >= breakEvenWithFidelity}
+			{@const isOverBreakEven = worker.wage >= (breakEvenWithFidelity ?? 0)}
 			{@const taxedWage = (worker.wage - (worker.wage * tax) / 100).toFixed(3)}
 
 			<a href={resolve(`/user/${worker.user}`)}>
@@ -138,10 +136,10 @@
 									class="rounded px-1.5 py-0 text-xs"
 									title="Wage"
 								>
-									{worker.wage.toFixed(3)}<MdiBitcoin />
+									{worker.wage.toFixed(3)}<Icon name="currency" />
 								</Badge>
 								<Badge variant="secondary" class="rounded px-1.5 py-0 text-xs" title="Net wage">
-									-{tax}% → {taxedWage}<MdiBitcoin />
+									-{tax}% → {taxedWage}<Icon name="currency" />
 								</Badge>
 							</div>
 						</div>
@@ -151,21 +149,22 @@
 							<Badge
 								variant="outline"
 								class="flex w-1/4 grow gap-1 rounded-sm font-medium text-foreground"
-								title="Fidelity"><MdiHeart class="size-4" /> {worker.fidelity}%</Badge
+								title="Fidelity"><Icon name="health" class="size-4" /> {worker.fidelity}%</Badge
 							>
 
 							<Badge
 								variant="outline"
 								class="flex w-1/4 grow gap-1 rounded-sm font-medium text-foreground"
 								title="Production"
-								><MdiPickaxe class="size-4" /> {worker.userData.skills.production.total}</Badge
+								><Icon name="production" class="size-4" />
+								{worker.userData.skills.production.total}</Badge
 							>
 
 							<Badge
 								variant="outline"
 								class="flex w-1/4 grow rounded-sm font-medium text-foreground"
 								title="Energy"
-								><MdiLightningBolt class="size-4" /> {worker.userData.skills.energy.total}</Badge
+								><Icon name="energy" class="size-4" /> {worker.userData.skills.energy.total}</Badge
 							>
 						</div>
 					</div>

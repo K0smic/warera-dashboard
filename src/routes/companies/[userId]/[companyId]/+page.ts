@@ -46,7 +46,7 @@ export const prerender = false;
 export const load: PageLoad = async ({ fetch, params, depends }) => {
 	const { companyId } = params;
 
-	const cacheKey = `company-dashboard:${companyId}`;
+	const cacheKey: `${string}:${string}` = `company-dashboard:${companyId}`;
 	depends(cacheKey);
 
 	if (!queryCache.isStale(cacheKey)) {
