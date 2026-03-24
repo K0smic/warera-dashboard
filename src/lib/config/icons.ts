@@ -22,7 +22,7 @@ import MdiLightningBolt from '~icons/mdi/lightning-bolt';
 import MdiLightbulb from '~icons/mdi/lightbulb';
 
 // ── Economy ──────────────────────────────────────────────────────────────────
-import MdiBitcoin from '~icons/mdi/bitcoin';
+import BoxiconsCoinFilled from '~icons/boxicons/coin-filled';
 import MdiPickaxe from '~icons/mdi/pickaxe';
 import MdiFactory from '~icons/mdi/factory';
 import MdiChartLine from '~icons/mdi/chart-line';
@@ -59,6 +59,9 @@ import MdiMoonAndStars from '~icons/mdi/moon-and-stars';
 import MdiHelpCircle from '~icons/mdi/help-circle';
 import MdiErrorOutline from '~icons/mdi/error-outline';
 
+// ── Social ───────────────────────────────────────────────────────────────────
+import MdiGithub from '~icons/mdi/github';
+
 // ---------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------
@@ -71,7 +74,7 @@ export const iconMap = {
 	energy: MdiLightningBolt,
 
 	// Economy
-	currency: MdiBitcoin,
+	currency: BoxiconsCoinFilled,
 	production: MdiPickaxe,
 	fidelity: MdiHeart,
 	company: MdiFactory,
@@ -106,7 +109,10 @@ export const iconMap = {
 
 	// Theme
 	light: MdiWhiteBalanceSunny,
-	dark: MdiMoonAndStars
+	dark: MdiMoonAndStars,
+
+	// Social
+	github: MdiGithub
 } as const satisfies Record<string, Component>;
 
 export type IconName = keyof typeof iconMap;

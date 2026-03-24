@@ -3,6 +3,7 @@
 	import SideHeader from '$lib/components/molecules/sidebar-header.svelte';
 	import NavUser from '$lib/components/molecules/sidebar-user.svelte';
 	import SideNav from '$lib/components/molecules/sidebar-nav.svelte';
+	import Social from '$lib/components/molecules/sidebar-social.svelte';
 	import { userState } from '$lib/stores/user.svelte';
 	import { companiesState } from '$lib/stores/companies.svelte';
 	import { navItems } from '$lib/config/navigation';
@@ -66,5 +67,6 @@
 	</Sidebar.Content>
 	<Sidebar.Footer>
 		<NavUser />
+		<Social />
 	</Sidebar.Footer>
 </Sidebar.Root>

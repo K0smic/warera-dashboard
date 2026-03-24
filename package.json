@@ -14,6 +14,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
+		"@iconify-json/boxicons": "^1.2.0",
 		"@iconify-json/material-symbols": "^1.2.55",
 		"@iconify-json/material-symbols-light": "^1.2.55",
 		"@iconify-json/mdi": "^1.2.3",
