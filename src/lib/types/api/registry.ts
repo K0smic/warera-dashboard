@@ -45,7 +45,12 @@ export interface ApiRegistry {
 		output: CompanyResponse;
 	};
 	'company.getCompanies': {
-		input: { userId?: string; orgId?: string } & PaginatedInput;
+		input: {
+			userId?: string;
+			orgId?: string;
+			perPage?: number;
+			direction?: string;
+		} & PaginatedInput;
 		output: CompaniesResponse;
 	};
 	'company.getProductionBonus': {

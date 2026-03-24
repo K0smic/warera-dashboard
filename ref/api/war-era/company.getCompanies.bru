@@ -1,0 +1,15 @@
+meta {
+  name: company.getCompanies
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://api2.warera.io/trpc/company.getCompanies?input={"userId": "", "nextCursor": ""}
+  body: none
+  auth: none
+}
+
+params:query {
+  input: {"userId": "", "nextCursor": ""}
+}

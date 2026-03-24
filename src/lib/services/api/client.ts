@@ -5,7 +5,7 @@ import type {
 	BatchOutput
 } from '$lib/types/api/registry';
 
-const BASE_URL = 'https://api2.warera.io/trpc';
+const BASE_URL = 'https://api4.warera.io/trpc';
 
 // ---------------------------------------------------------------------------
 // Typed API error
@@ -102,6 +102,10 @@ function unwrap<T>(json: unknown): T {
  * const company = await trpcFetch('company.getById', { companyId: '123' });
  * //    ^? CompanyResponse
  */
+
+//{"0":{"userId":"68ce7d55aca5f67db7dfedb0"},"1":{"userId":"68ce7d55aca5f67db7dfedb0","perPage":12,"direction":"forward"}}
+//"data":12
+
 export async function trpcFetch<P extends EndpointPath>(
 	path: P,
 	input: EndpointInput<P>,
@@ -111,11 +115,12 @@ export async function trpcFetch<P extends EndpointPath>(
 	return withRetry(
 		async () => {
 			const url = new URL(`${BASE_URL}/${path}`);
-			url.searchParams.set('input', JSON.stringify(input));
+			// url.searchParams.set('input', JSON.stringify(input));
 
 			const res = await fetchFn(url.toString(), {
-				method: 'GET',
-				headers: { accept: 'application/json' },
+				method: 'POST',
+				headers: { accept: 'application/json', 'content-type': 'application/json' },
+				body: JSON.stringify(input),
 				signal
 			});
 
@@ -169,11 +174,12 @@ export async function trpcBatchFetch<
 			requests.forEach((req, i) => {
 				batchInput[String(i)] = req.input;
 			});
-			url.searchParams.set('input', JSON.stringify(batchInput));
+			// url.searchParams.set('input', JSON.stringify(batchInput));
 
 			const res = await fetchFn(url.toString(), {
-				method: 'GET',
-				headers: { accept: 'application/json' },
+				method: 'POST',
+				headers: { accept: 'application/json', 'content-type': 'application/json' },
+				body: JSON.stringify(batchInput),
 				signal
 			});
 

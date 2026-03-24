@@ -10,7 +10,13 @@ export function getCompaniesId(
 	fetchFn: typeof fetch = fetch,
 	signal?: AbortSignal
 ) {
-	return trpcFetch('company.getCompanies', input, fetchFn, signal);
+	// Add perPage to input
+	const defaultedInput = {
+		perPage: 12,
+		...input
+	};
+
+	return trpcFetch('company.getCompanies', defaultedInput, fetchFn, signal);
 }
 
 export function getCompany(
