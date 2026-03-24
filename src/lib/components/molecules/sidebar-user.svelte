@@ -7,7 +7,7 @@
 	import { userState } from '$lib/stores/user.svelte';
 	import { companiesState } from '$lib/stores/companies.svelte';
 	import Button from '$lib/components/atoms/button/button.svelte';
-	import Icon from '../atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/Icon/icon.svelte';
 
 	let userId = $state('');
 	let isOpen = $state(false);

@@ -4,43 +4,12 @@
 	import { camelCaseToNormalText } from '$lib/utils';
 
 	import type { CompanyResponse } from '$lib/types/api/schemas';
-	import Icon from '../atoms/Icon/icon.svelte';
-
-	//     {
-	//   "_id": "699175837456ac88335f8ee4",
-	//   "user": "696f3823bcd04419d1f91460",
-	//   "region": "6813b7079403bc4170a5d87c",
-	//   "itemCode": "lead",
-	//   "isFull": false,
-	//   "name": "Piombino",
-	//   "concreteInvested": 300,
-	//   "production": 28.319999999999983,
-	//   "activeUpgradeLevels": {
-	//     "storage": 1,
-	//     "automatedEngine": 3,
-	//     "breakRoom": 1
-	//   },
-	//   "workerCount": 0,
-	//   "createdAt": "2026-02-15T07:28:03.643Z",
-	//   "updatedAt": "2026-02-16T13:00:36.538Z",
-	//   "__v": 0,
-	//   "estimatedValue": 681.7804922650128
-	// }
+	import Icon from '$lib/components/atoms/Icon/icon.svelte';
 
 	let company: CompanyResponse = $props();
-	// $inspect(company);
 </script>
 
 <Card.Root class="@container/card">
-	<!-- <Card.Header>
-		<Card.Title>{company.name}</Card.Title>
-		<Card.Description>
-			{company.itemCode}
-		</Card.Description>
-	</Card.Header>
-	<Card.Content></Card.Content>
-	<Card.Footer></Card.Footer> -->
-
 	<Card.Header>
 		<div class="flex items-start justify-between">
 			<div>
@@ -64,29 +33,39 @@
 	</Card.Header>
 
 	<Card.Content class="space-y-3">
-		<div class="grid grid-cols-2 gap-3 text-sm">
+		<div class="flex gap-3 text-sm">
 			<div>
-				<p class="text-muted-foreground">Production</p>
-				<p class="font-semibold">{company.production.toFixed(2)}</p>
+				<img
+					src="https://app.warera.io/images/items/{company.itemCode}.png"
+					class=" inline aspect-square w-30"
+					loading="lazy"
+					alt={camelCaseToNormalText(company.itemCode)}
+				/>
 			</div>
+			<div class="grid w-full grid-cols-2">
+				<div>
+					<p class="text-muted-foreground">Production</p>
+					<p class="font-semibold">{company.production.toFixed(2)}</p>
+				</div>
 
-			<div>
-				<p class="text-muted-foreground">Workers</p>
-				<p class="font-semibold">{company.workerCount}</p>
-			</div>
+				<div>
+					<p class="text-muted-foreground">Workers</p>
+					<p class="font-semibold">{company.workerCount}</p>
+				</div>
 
-			<div>
-				<p class="text-muted-foreground">Concrete Invested</p>
-				<p class="font-semibold">{company.concreteInvested}</p>
-			</div>
+				<div>
+					<p class="text-muted-foreground">Concrete Invested</p>
+					<p class="font-semibold">{company.concreteInvested}</p>
+				</div>
 
-			<div>
-				<p class="text-muted-foreground">Estimated Value</p>
-				<div class="flex items-center gap-1">
-					<p class="font-semibold">
-						{company.estimatedValue.toFixed(2)}
-					</p>
-					<Icon name="currency" />
+				<div>
+					<p class="text-muted-foreground">Estimated Value</p>
+					<div class="flex items-center gap-1">
+						<p class="font-semibold">
+							{company.estimatedValue.toFixed(2)}
+						</p>
+						<Icon name="currency" />
+					</div>
 				</div>
 			</div>
 		</div>

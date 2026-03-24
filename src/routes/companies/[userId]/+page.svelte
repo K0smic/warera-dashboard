@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 
-	import CompaniesCards from '$lib/components/molecules/companies-cards.svelte';
+	import CompaniesCards from '$lib/components/molecules/companies/companies-cards.svelte';
 	import { usePolling } from '$lib/services';
 
 	import type { PageProps } from './$types';
