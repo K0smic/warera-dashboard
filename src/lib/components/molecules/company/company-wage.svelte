@@ -20,14 +20,20 @@
 
 	const breakEvenWageConnector = getContext<BreakEvenWageContext>(BREAK_EVEN_WAGE_CTX);
 
-	let marketPrice = $derived(props.marketPrice ?? 0);
-	let inputPrice = $derived(Number(props.inputPrice?.toFixed(3)) ?? 0);
-	let productionPoints = $derived(props.productionPoints ?? 1);
-	let totalBonus = $derived(props.totalBonus ?? 0);
-	let fidelity = $derived(props.fidelity ?? 1);
-	let margin = $derived(props.margin ?? 0);
+	// svelte-ignore state_referenced_locally
+	let marketPrice = $state(props.marketPrice ?? 0);
+	// svelte-ignore state_referenced_locally
+	let inputPrice = $state(Number(props.inputPrice?.toFixed(3)) ?? 0);
+	// svelte-ignore state_referenced_locally
+	let productionPoints = $state(props.productionPoints ?? 1);
+	// svelte-ignore state_referenced_locally
+	let totalBonus = $state(props.totalBonus ?? 0);
+	// svelte-ignore state_referenced_locally
+	let fidelity = $state(props.fidelity ?? 1);
+	// svelte-ignore state_referenced_locally
+	let margin = $state(props.margin ?? 0);
 
-	let initialValues = $derived({
+	const initialValues = $derived({
 		marketPrice: props.marketPrice ?? 0,
 		inputPrice: props.inputPrice ?? 0,
 		productionPoints: props.productionPoints ?? 1,

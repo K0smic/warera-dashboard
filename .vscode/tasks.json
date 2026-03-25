@@ -9,5 +9,14 @@
 			"detail": "vite dev",
 			"runOptions": { "runOn": "folderOpen" }
 		}
+		// {
+		// 	"label": "Svelte dev",
+		// 	"type": "shell",
+		// 	"command": "npm run dev",
+		// 	"runOptions": {
+		// 		"runOn": "folderOpen"
+		// 	},
+		// 	"problemMatcher": []
+		// }
 	]
 }

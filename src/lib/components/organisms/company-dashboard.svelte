@@ -207,14 +207,16 @@
 	<div
 		class="grid grid-cols-2 gap-4 overflow-hidden *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-2 dark:*:data-[slot=card]:bg-card"
 	>
-		<WorkersWidget
-			marketPrice={bestSellPrice}
-			{inputPrice}
-			productionPoints={item && isProductibleItem(item) ? item.productionPoints : 0}
-			totalBonus={data.activeProductionBonus.total}
-			workers={data.workers}
-			tax={countryTaxes}
-		/>
+		{#key data.company._id}
+			<WorkersWidget
+				marketPrice={bestSellPrice}
+				{inputPrice}
+				productionPoints={item && isProductibleItem(item) ? item.productionPoints : 0}
+				totalBonus={data.activeProductionBonus.total}
+				workers={data.workers}
+				tax={countryTaxes}
+			/>
+		{/key}
 
 		<!-- <UpgradesCard
 			engineLevel={data.company.activeUpgradeLevels.automatedEngine}
