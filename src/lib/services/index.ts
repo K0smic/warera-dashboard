@@ -16,5 +16,6 @@ export {
 export { getCountries, getCountry, getRegions, getRegion } from './api/countries.api';
 export { getGameConfig } from './api/configs.api';
 export { getTopOrders } from './api/trading.api';
+export { search } from './api/search.api';
 
 export { usePolling } from './api/utils/use-polling.svelte';

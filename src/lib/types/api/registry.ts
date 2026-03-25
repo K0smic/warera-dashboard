@@ -15,6 +15,7 @@ import type { UserLiteResponse } from './schemas/user';
 import type { GameConfigResponse } from './schemas/gameConfig';
 import type { TopOrdersResponse } from './schemas/market';
 import type { RankingEntry } from './schemas/ranking';
+import type { searchResult } from './schemas';
 
 // ---------------------------------------------------------------------------
 // Shared primitives
@@ -258,7 +259,7 @@ export interface ApiRegistry {
 	// --- Search ---
 	'search.searchAnything': {
 		input: { searchText: string };
-		output: unknown;
+		output: searchResult;
 	};
 
 	// --- Upgrade ---

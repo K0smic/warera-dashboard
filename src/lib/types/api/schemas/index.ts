@@ -8,6 +8,7 @@ export type * from './region.ts';
 export type * from './skill.ts';
 export type * from './user.ts';
 export type * from './worker.ts';
+export type * from './search.ts';
 
 export * from './common.ts';
 export * from './company.ts';
