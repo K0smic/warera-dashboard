@@ -4,7 +4,6 @@ import type { PageLoad } from './$types';
 import type { EndpointInput } from '$lib/types/api/registry';
 import type { UserLiteResponse, TopOrdersResponse } from '$lib/types/api/schemas';
 import type { CompanyDashboardData } from '$lib/types';
-import { isProductItem } from '$lib/types/api/schemas';
 
 import { batchFetch, ApiError } from '$lib/services';
 import { configsState } from '$lib/stores/configs.svelte';
@@ -79,8 +78,9 @@ export const load: PageLoad = async ({ fetch, params, depends }): Promise<Compan
 			error(500, 'Unexpected workers response type');
 		}
 
-		const item = configsState.configs?.items[company.itemCode];
-		const productionNeedsConfig = item && isProductItem(item) ? item.productionNeeds : {};
+		const item = configsState.productibleItem(company.itemCode);
+
+		const productionNeedsConfig = item.type === 'product' ? item.productionNeeds : {};
 		const productionNeedsKeys = productionNeedsConfig ? Object.keys(productionNeedsConfig) : [];
 
 		const workerUserRequests: UserLiteRequest[] = workers.workers.map(({ user }) => ({

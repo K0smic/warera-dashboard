@@ -56,7 +56,7 @@
 
 	// --- Config helpers ---
 	const getLevel = (upgradeKey: 'storage' | 'automatedEngine', level: number) =>
-		configsState.configs?.upgradesConfig[upgradeKey].levels[level];
+		configsState.upgradesConfig(upgradeKey)?.levels[level];
 
 	const getNextUpgradeSteelCost = (
 		upgradeKey: 'storage' | 'automatedEngine',
@@ -67,7 +67,7 @@
 		upgradeKey: 'storage' | 'automatedEngine',
 		currentLevel: number
 	): number => {
-		const levels = configsState.configs?.upgradesConfig[upgradeKey].levels ?? {};
+		const levels = configsState.upgradesConfig(upgradeKey)?.levels ?? {};
 		return Object.entries(levels)
 			.filter(([l]) => Number(l) <= currentLevel)
 			.reduce((total, [, cfg]) => total + ((cfg as any).steelCost ?? 0), 0);

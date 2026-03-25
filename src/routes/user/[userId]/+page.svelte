@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-	import { userState } from '$lib/stores/user.svelte';
 	import { configsState } from '$lib/stores/configs.svelte';
 	import { countriesState } from '$lib/stores/countries.svelte';
 	import { usePolling } from '$lib/services';
@@ -277,7 +276,7 @@
 				<div class="flex flex-col gap-4 sm:items-start sm:gap-6 xl:flex-row">
 					<div class="flex flex-1 flex-row gap-4">
 						<!-- Avatar -->
-						<div class="relative shrink-0">
+						<div class="relative h-20 w-20 shrink-0">
 							{#if user.isActive}
 								<span
 									class="absolute right-1 bottom-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500"

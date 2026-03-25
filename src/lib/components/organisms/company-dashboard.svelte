@@ -2,7 +2,6 @@
 	import { setContext } from 'svelte';
 
 	import { WORKER_INFO_CTX, type WorkerInfoContext } from '$lib/types';
-	import { isProductibleItem } from '$lib/types/api/schemas';
 	import { configsState } from '$lib/stores/configs.svelte';
 	import { countriesState, regionsState } from '$lib/stores/countries.svelte';
 
@@ -30,7 +29,7 @@
 	// Item config
 	// ---------------------------------------------------------------------------
 
-	const item = $derived(configsState.configs?.items[data.company.itemCode]);
+	const item = $derived(configsState.productibleItem(data.company.itemCode));
 
 	// ---------------------------------------------------------------------------
 	// Input cost
@@ -58,8 +57,8 @@
 	// ---------------------------------------------------------------------------
 
 	const maxProduction = $derived(
-		configsState.configs?.upgradesConfig['storage'].levels[data.company.activeUpgradeLevels.storage]
-			.stats.maxProduction ?? 200
+		configsState.upgradesConfig('storage')?.levels[data.company.activeUpgradeLevels.storage].stats
+			.maxProduction ?? 200
 	);
 
 	const productionCapacity = $derived(
@@ -67,9 +66,7 @@
 	);
 
 	const productionValue = $derived(
-		item && isProductibleItem(item)
-			? (data.company.production / item.productionPoints) * bestSellPrice
-			: 0
+		(data.company.production / item.productionPoints) * bestSellPrice
 	);
 
 	// ---------------------------------------------------------------------------
@@ -121,7 +118,7 @@
 	// ---------------------------------------------------------------------------
 
 	const engineDailyProd = $derived(
-		configsState.configs?.upgradesConfig['automatedEngine']?.levels[
+		configsState.upgradesConfig('automatedEngine')?.levels[
 			data.company.activeUpgradeLevels.automatedEngine
 		]?.stats.dailyProd ?? 0
 	);
@@ -134,10 +131,8 @@
 
 	/** Units of output produced per day (workers + engine, with bonus applied). */
 	const dailyUnits = $derived(
-		item && isProductibleItem(item)
-			? ((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
-					(1 + data.activeProductionBonus.total / 100)
-			: 0
+		((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
+			(1 + data.activeProductionBonus.total / 100)
 	);
 
 	/** Total daily expenses: worker wages + raw material cost for all units produced. */
@@ -151,11 +146,9 @@
 	 *   activeProductionBonus = percentage bonus applied to total output
 	 */
 	const revenue = $derived(
-		item && isProductibleItem(item)
-			? ((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
-					(1 + data.activeProductionBonus.total / 100) *
-					bestSellPrice
-			: 0
+		((workersInfos.totalDailyProduction + engineDailyProd) / item.productionPoints) *
+			(1 + data.activeProductionBonus.total / 100) *
+			bestSellPrice
 	);
 
 	/** Net daily profit: revenue minus all operational expenses. */
@@ -180,7 +173,7 @@
 	<!-- HEADER -->
 	<CompanyHeader
 		companyName={data.company.name}
-		itemCode={item?.code ?? ''}
+		itemCode={item.code}
 		regionName={regionsState.regions?.[data.company.region].name ?? ''}
 		estimatedValue={data.company.estimatedValue}
 	/>
@@ -211,7 +204,7 @@
 			<WorkersWidget
 				marketPrice={bestSellPrice}
 				{inputPrice}
-				productionPoints={item && isProductibleItem(item) ? item.productionPoints : 0}
+				productionPoints={item.productionPoints}
 				totalBonus={data.activeProductionBonus.total}
 				workers={data.workers}
 				tax={countryTaxes}
@@ -224,7 +217,7 @@
 			breakRoomLevel={data.company.activeUpgradeLevels.breakRoom}
 			engineUpgrade={data.engineUpgrade}
 			storageUpgrade={data.storageUpgrade}
-			productionPoints={item && isProductibleItem(item) ? item.productionPoints : 0}
+			productionPoints={item.productionPoints}
 			{inputPrice}
 			totalBonus={data.activeProductionBonus.total}
 			outputBestBuyPrice={bestBuyPrice}

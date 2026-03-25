@@ -1,5 +1,13 @@
 import { getGameConfig } from '$lib/services/api/configs.api';
-import type { GameConfigResponse } from '$lib/types/api/schemas';
+import type {
+	GameConfigResponse,
+	GameConfigUpgradesConfig,
+	GameConfigItemsMap,
+	GameConfigProdItemsMap,
+	GameConfigRawItem,
+	GameConfigProductItem
+} from '$lib/types/api/schemas';
+import { error } from '@sveltejs/kit';
 
 const STORAGE_KEY = 'gameConfigs';
 
@@ -31,6 +39,50 @@ export const configsState = {
 	},
 	get error() {
 		return state.error;
+	},
+
+	upgradesConfig(key: keyof GameConfigUpgradesConfig) {
+		return state.configs?.upgradesConfig[key];
+	},
+
+	items<K extends keyof GameConfigItemsMap>(key: K) {
+		return state.configs?.items[key];
+	},
+
+	productibleItem<K extends keyof GameConfigProdItemsMap>(key: K) {
+		if (!state.configs) throw error(404, 'state.configs is not found');
+
+		const item = state.configs.items[key];
+
+		if (item.type === 'raw' || item.type === 'product') {
+			return item;
+		}
+
+		throw error(400, 'Item is not productible');
+	},
+
+	rawItem(key: GameConfigRawItem['code']) {
+		if (!state.configs) throw error(404, 'state.configs is not found');
+
+		const item = state.configs.items[key];
+
+		if (item.type === 'raw') {
+			return item;
+		}
+
+		throw error(400, 'Item is not raw');
+	},
+
+	prodItem(key: GameConfigProductItem['code']) {
+		if (!state.configs) throw error(404, 'state.configs is not found');
+
+		const item = state.configs.items[key];
+
+		if (item.type === 'product') {
+			return item;
+		}
+
+		throw error(400, 'Item is not a product');
 	},
 
 	async loadConfigs(fetchFn: typeof fetch = fetch, signal?: AbortSignal) {

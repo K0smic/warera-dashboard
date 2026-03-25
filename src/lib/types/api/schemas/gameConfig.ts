@@ -38,17 +38,17 @@ export interface GameConfigItemFlatStats {
 
 export type GameConfigProductibleItem = GameConfigRawItem | GameConfigProductItem;
 
-export function isProductibleItem(item: GameConfigItem): item is GameConfigProductibleItem {
-	return item.type === 'raw' || item.type === 'product';
-}
+// export function isProductibleItem(item: GameConfigItem): item is GameConfigProductibleItem {
+// 	return item.type === 'raw' || item.type === 'product';
+// }
 
-export function isRawItem(item: GameConfigItem): item is GameConfigRawItem {
-	return item.type === 'raw';
-}
+// export function isRawItem(item: GameConfigItem): item is GameConfigRawItem {
+// 	return item.type === 'raw';
+// }
 
-export function isProductItem(item: GameConfigItem): item is GameConfigProductItem {
-	return item.type === 'product';
-}
+// export function isProductItem(item: GameConfigItem): item is GameConfigProductItem {
+// 	return item.type === 'product';
+// }
 
 export interface GameConfigRawItem {
 	type: 'raw';
@@ -157,6 +157,14 @@ export type GameConfigItem =
 	| GameConfigWeaponItem
 	| GameConfigEquipmentItem
 	| GameConfigCaseItem;
+
+export type GameConfigItemsMap = {
+	[K in GameConfigItem['code']]: GameConfigItem;
+};
+
+export type GameConfigProdItemsMap = {
+	[K in GameConfigProductibleItem['code']]: GameConfigProductibleItem;
+};
 
 export interface GameConfigUpgradeLevelStats {
 	attackBonus?: number;
@@ -330,7 +338,7 @@ export interface GameConfigResponse {
 		refundPercent: number;
 	};
 
-	items: { [key: string]: GameConfigItem };
+	items: GameConfigItemsMap;
 
 	referral: {
 		levelNeededForBadge: number;
