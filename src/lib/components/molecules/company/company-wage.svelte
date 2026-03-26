@@ -15,10 +15,9 @@
 		fidelity?: number;
 		margin?: number;
 	}
-
 	const props: Props = $props();
 
-	const breakEvenWageConnector = getContext<BreakEvenWageContext>(BREAK_EVEN_WAGE_CTX);
+	let breakEvenWageConnector = getContext<BreakEvenWageContext>(BREAK_EVEN_WAGE_CTX);
 
 	// svelte-ignore state_referenced_locally
 	let marketPrice = $state(props.marketPrice ?? 0);
@@ -84,6 +83,22 @@
 		return calculateBreakEvenWage(inputPrice, productionAdjustedByFidelity);
 	};
 
+	let hasChanged = $derived(
+		marketPrice !== initialValues.marketPrice ||
+			inputPrice !== initialValues.inputPrice ||
+			productionPoints !== initialValues.productionPoints ||
+			totalBonus !== initialValues.totalBonus ||
+			fidelity !== initialValues.fidelity ||
+			margin !== initialValues.margin
+	);
+
+	// $inspect(hasChanged);
+
+	$effect(() => {
+		breakEvenWageConnector.isModified = hasChanged;
+		breakEvenWageConnector.wage = breakEvenWageWithFidelity;
+	});
+
 	function handleReset() {
 		marketPrice = initialValues.marketPrice;
 		inputPrice = initialValues.inputPrice;
@@ -91,6 +106,7 @@
 		totalBonus = initialValues.totalBonus;
 		fidelity = initialValues.fidelity;
 		margin = initialValues.margin;
+		hasChanged = false;
 	}
 </script>
 

@@ -70,6 +70,8 @@
 		workersInfos.totalDailyProduction = totalDailyProduction;
 		workersInfos.totalWages = estimatedDailyWage;
 	});
+
+	$inspect(breakEvenWage.isModified);
 </script>
 
 <Card.Root class="col-span-2 flex h-full max-h-120 flex-col overflow-hidden xl:col-span-1">
@@ -78,9 +80,14 @@
 		<div class="flex items-start justify-between gap-2">
 			<div>
 				<Card.Title class="text-base">Workers</Card.Title>
-				<Card.Description
-					>{workers.length} active worker{workers.length !== 1 ? 's' : ''}</Card.Description
-				>
+				<Card.Description>
+					{workers.length} active worker{workers.length !== 1 ? 's' : ''}
+				</Card.Description>
+			</div>
+			<div
+				title="Worker border turns red in loss (default: relative worker fidelity). Wages calculator override this; reset/refresh to revert."
+			>
+				<Icon name="info" />
 			</div>
 		</div>
 
@@ -104,12 +111,15 @@
 	<Card.Content class="pm-4 flex flex-col gap-2 overflow-y-auto">
 		{#each workers as worker (worker._id)}
 			{@const breakEvenWithFidelity = breakEvenWage.getByFidelity?.(worker.fidelity)}
-			{@const isOverBreakEven = worker.wage >= (breakEvenWithFidelity ?? 0)}
+			{@const breakEvenValue = breakEvenWage.isModified
+				? breakEvenWage.wage
+				: (breakEvenWithFidelity ?? 0)}
+			{@const isWorkerInLoss = worker.wage > breakEvenValue}
 			{@const taxedWage = (worker.wage - (worker.wage * tax) / 100).toFixed(3)}
 
 			<a href={resolve(`/user/${worker.user}`)}>
 				<article
-					class="flex items-center gap-3 rounded-lg bg-card p-3 transition-colors hover:bg-muted/40 {isOverBreakEven
+					class="flex items-center gap-3 rounded-lg bg-card p-3 transition-colors hover:bg-muted/40 {isWorkerInLoss
 						? 'border border-destructive'
 						: 'border'}"
 				>
@@ -132,7 +142,7 @@
 							</h3>
 							<div class="flex shrink-0 gap-1">
 								<Badge
-									variant={isOverBreakEven ? 'destructive' : 'outline'}
+									variant={isWorkerInLoss ? 'destructive' : 'outline'}
 									class="rounded px-1.5 py-0 text-xs"
 									title="Wage"
 								>

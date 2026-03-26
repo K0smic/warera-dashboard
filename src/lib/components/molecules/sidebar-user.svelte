@@ -58,8 +58,6 @@
 		input = '';
 		users = [];
 	}
-
-	$inspect(users);
 </script>
 
 <Sidebar.Menu>

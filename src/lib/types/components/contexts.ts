@@ -73,6 +73,7 @@ export const BREAK_EVEN_WAGE_CTX = 'breakEvenWage' as const;
  * ```ts
  * let breakEvenWage = $state<BreakEvenWageContext>({
  *     wage:           undefined,
+ *     isModified:     false;
  *     getByFidelity:  null,
  * });
  * setContext(BREAK_EVEN_WAGE_CTX, breakEvenWage);
@@ -92,6 +93,7 @@ export const BREAK_EVEN_WAGE_CTX = 'breakEvenWage' as const;
  *
  * let breakEvenWage = $state<BreakEvenWageContext>({
  *     wage:          undefined,
+ * 	   isModified:    false;
  *     getByFidelity: null,
  * });
  * setContext(BREAK_EVEN_WAGE_CTX, breakEvenWage);
@@ -107,6 +109,11 @@ export interface BreakEvenWageContext {
 	 * `undefined` until `company-wage.svelte` has mounted and computed it.
 	 */
 	wage: number;
+
+	/**
+	 * Is true when user edits the wage calculator, default false
+	 */
+	isModified: boolean;
 
 	/**
 	 * Returns the break-even wage adjusted for a given fidelity percentage.
