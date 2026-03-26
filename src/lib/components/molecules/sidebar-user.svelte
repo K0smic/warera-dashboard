@@ -63,7 +63,7 @@
 <Sidebar.Menu>
 	<Sidebar.MenuItem>
 		<Dialog.Root bind:open={isOpen}>
-			<Dialog.Content showCloseButton={false} class="bg-popover p-2">
+			<Dialog.Content showCloseButton={false} class="h-1/2 bg-popover p-2">
 				<Command.Root>
 					<Command.Input
 						placeholder="Search your username..."

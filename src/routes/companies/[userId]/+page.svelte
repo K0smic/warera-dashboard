@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-
 	import CompaniesCards from '$lib/components/molecules/companies/companies-cards.svelte';
 	import { usePolling } from '$lib/services';
 
@@ -44,10 +42,6 @@
 		       @5xl/main:grid-cols-3
 		       dark:*:data-[slot=card]:bg-card"
 	>
-		{#each data.companies as company (company._id)}
-			<a href={resolve(`/companies/${company.user}/${company._id}`)}>
-				<CompaniesCards {...company} />
-			</a>
-		{/each}
+		<CompaniesCards companies={data.companies} />
 	</div>
 {/if}

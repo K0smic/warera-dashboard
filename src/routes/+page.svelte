@@ -64,9 +64,9 @@
 	const steps = [
 		{
 			step: '01',
-			title: 'Set Your User ID',
-			desc: 'Enter your WarEra User ID in the sidebar panel below to link your account.',
-			icon: getIcon('key')
+			title: 'Search Your User',
+			desc: 'Search your user in the sidebar panel below to link your account.',
+			icon: getIcon('search')
 		},
 		{
 			step: '02',
