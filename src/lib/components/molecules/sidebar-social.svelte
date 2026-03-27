@@ -30,7 +30,7 @@
 	let {
 		items,
 		...restProps
-	}: { items: { title: string; url: string; icon: Icon }[] } & WithoutChildren<
+	}: { items: { title: string; url: string; icon: any }[] } & WithoutChildren<
 		ComponentProps<typeof Sidebar.Group>
 	> = $props();
 </script>
@@ -41,7 +41,7 @@
 		<Sidebar.Menu>
 			{#each items as item (item.title)}
 				<Sidebar.MenuItem>
-					<Sidebar.MenuButton tooltipContent>
+					<Sidebar.MenuButton>
 						{#snippet child({ props })}
 							<a href={item.url} target="_blank" {...props}>
 								<item.icon />
