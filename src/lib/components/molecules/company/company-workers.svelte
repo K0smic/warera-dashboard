@@ -6,7 +6,7 @@
 	import * as Card from '$lib/components/atoms/card';
 	import * as Avatar from '$lib/components/atoms/avatar';
 	import Badge from '$lib/components/atoms/badge/badge.svelte';
-	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/icon/icon.svelte';
 	import { getIcon } from '$lib/config/icons';
 
 	import { resolve } from '$app/paths';

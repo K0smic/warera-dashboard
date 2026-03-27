@@ -8,11 +8,13 @@
 	import { companiesState } from '$lib/stores/companies.svelte';
 	import { navItems } from '$lib/config/navigation';
 	import type { ComponentProps } from 'svelte';
+	import { getIcon } from '$lib/config/icons';
 
 	const companyItems = $derived(
 		(companiesState.companies ?? []).map((company) => ({
 			title: company.name,
-			companyId: company._id
+			companyId: company._id,
+			itemCode: company.itemCode
 		}))
 	);
 
@@ -33,6 +35,7 @@
 						items: companyItems.map((company) => ({
 							id: company.companyId,
 							title: company.title,
+							itemCode: company.itemCode,
 							url: item.buildUrl(userState.user?._id, company.companyId)
 						}))
 					};
@@ -49,6 +52,19 @@
 			})
 	);
 
+	const sideSocial = $derived([
+		{
+			title: 'GitHub',
+			url: 'https://github.com/K0smic/warera-dashboard',
+			icon: getIcon('github')
+		},
+		{
+			title: 'War Era',
+			url: 'https://app.warera.io?referrerId=696f3823bcd04419d1f91460',
+			icon: getIcon('currency')
+		}
+	]);
+
 	let {
 		ref = $bindable(null),
 		collapsible = 'icon',
@@ -64,9 +80,9 @@
 	<Sidebar.Separator />
 	<Sidebar.Content>
 		<SideNav items={sideNav} />
+		<Social items={sideSocial} class="mt-auto" />
 	</Sidebar.Content>
 	<Sidebar.Footer>
 		<NavUser />
-		<Social />
 	</Sidebar.Footer>
 </Sidebar.Root>

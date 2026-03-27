@@ -3,6 +3,7 @@
 	import * as Sidebar from '$lib/components/atoms/sidebar/index.js';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 	import type { NavItem } from '$lib/types/common/navigation';
+	import ItemsImages from '../atoms/items-images/items-images.svelte';
 
 	let { items }: { items: NavItem[] } = $props();
 </script>
@@ -41,10 +42,21 @@
 								<Sidebar.MenuSub>
 									{#each item.items as subItem (subItem.id)}
 										<Sidebar.MenuSubItem>
-											<Sidebar.MenuSubButton>
+											<Sidebar.MenuSubButton class="px-0">
 												{#snippet child({ props })}
 													<a href={subItem.url} {...props}>
-														<span>{subItem.title}</span>
+														<div class="flex flex-nowrap content-center gap-0.5 align-middle">
+															{#if subItem.itemCode}
+																<ItemsImages
+																	item={subItem.itemCode}
+																	alt={subItem.itemCode}
+																	{...props}
+																/>
+															{/if}
+															<span class="my-auto h-full">
+																{subItem.title}
+															</span>
+														</div>
 													</a>
 												{/snippet}
 											</Sidebar.MenuSubButton>

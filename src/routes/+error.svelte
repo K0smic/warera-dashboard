@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/icon/icon.svelte';
 </script>
 
 <div

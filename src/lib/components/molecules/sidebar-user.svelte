@@ -8,7 +8,7 @@
 	import { userState } from '$lib/stores/user.svelte';
 	import { companiesState } from '$lib/stores/companies.svelte';
 	import Button from '$lib/components/atoms/button/button.svelte';
-	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/icon/icon.svelte';
 
 	import { batchFetch, search } from '$lib/services';
 	import type { UserLiteResponse } from '$lib/types/api/schemas';

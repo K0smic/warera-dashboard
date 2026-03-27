@@ -10,6 +10,8 @@
 
 	let { data }: PageProps = $props();
 
+	$inspect(data);
+
 	// ---------------------------------------------------------------------------
 	// Polling
 	//
@@ -42,6 +44,6 @@
 		       @5xl/main:grid-cols-3
 		       dark:*:data-[slot=card]:bg-card"
 	>
-		<CompaniesCards companies={data.companies} />
+		<CompaniesCards companies={data.companies} bestRegions={data.bestRegions} />
 	</div>
 {/if}

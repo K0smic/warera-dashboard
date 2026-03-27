@@ -2,18 +2,20 @@
 	import * as Card from '$lib/components/atoms/card/index';
 	import { Badge } from '$lib/components/atoms/badge';
 	import { camelCaseToNormalText } from '$lib/utils';
-
-	import type { CompanyResponse } from '$lib/types/api/schemas';
-	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/icon/icon.svelte';
 	import { resolve } from '$app/paths';
 	import { configsState } from '$lib/stores/configs.svelte';
 	import { error } from '@sveltejs/kit';
+	import ItemsImages from '$lib/components/atoms/items-images/items-images.svelte';
+
+	import type { bestBonusRegions, CompanyWithBonus } from '$lib/types/components/companies';
 
 	interface Props {
-		companies: CompanyResponse[];
+		companies: CompanyWithBonus[];
+		bestRegions: bestBonusRegions;
 	}
 
-	let { companies }: Props = $props();
+	let { companies, bestRegions }: Props = $props();
 
 	function maxUpgradeLvl(upgrade: 'automatedEngine' | 'storage'): number {
 		const levels = configsState.upgradesConfig(upgrade)?.levels;
@@ -35,6 +37,10 @@
 </script>
 
 {#each companies as company (company._id)}
+	{@const itemBestBonus = bestRegions[company.itemCode]}
+	{@const filteredBonuses = itemBestBonus.filter(
+		(b) => b.bonus > company.productionBonus.total && b.regionId !== company.region
+	)}
 	<a href={resolve(`/companies/${company.user}/${company._id}`)}>
 		<Card.Root class="@container/card">
 			<Card.Header>
@@ -46,28 +52,34 @@
 							{camelCaseToNormalText(company.itemCode)}
 						</Card.Description>
 					</div>
-
-					<span
-						class="rounded-sm px-2 py-1 text-xs font-medium"
-						class:bg-green-100={!company.isFull}
-						class:text-green-700={!company.isFull}
-						class:bg-red-100={company.isFull}
-						class:text-red-700={company.isFull}
-						title="Space available"
+					<Badge
+						variant="outline"
+						class="text mt-1 rounded-sm {filteredBonuses.length > 0
+							? 'border-destructive'
+							: 'border-green-100'}"
+						title={filteredBonuses.length > 0 ? 'Better bonus found' : 'Max bonus'}
 					>
-						{company.isFull ? 'Full' : 'Available'}
-					</span>
+						{filteredBonuses.length > 0
+							? `${company.productionBonus.total}% < ${filteredBonuses[0].bonus}%`
+							: company.productionBonus.total + '%'}
+					</Badge>
 				</div>
 			</Card.Header>
 
 			<Card.Content class="space-y-3">
 				<div class="flex gap-3 text-sm">
-					<div>
-						<img
+					<div class="rounded-lg bg-muted/50">
+						<!-- <img
 							src="https://app.warera.io/images/items/{company.itemCode}.png"
 							class=" inline aspect-square w-30"
 							loading="lazy"
 							alt={camelCaseToNormalText(company.itemCode)}
+						/> -->
+						<ItemsImages
+							item={company.itemCode}
+							alt={camelCaseToNormalText(company.itemCode)}
+							class=" inline aspect-square w-30"
+							loading="lazy"
 						/>
 					</div>
 					<div class="grid w-full grid-cols-2">

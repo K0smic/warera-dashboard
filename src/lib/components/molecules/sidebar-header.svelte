@@ -3,7 +3,7 @@
 	import logo from '$lib/assets/logo.png';
 
 	import { toggleMode } from 'mode-watcher';
-	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/icon/icon.svelte';
 	import { resolve } from '$app/paths';
 </script>
 

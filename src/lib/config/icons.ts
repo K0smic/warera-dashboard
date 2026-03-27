@@ -37,6 +37,7 @@ import MdiMap from '~icons/mdi/map';
 import MdiEarth from '~icons/mdi/earth';
 import MdiInformationBox from '~icons/mdi/information-box';
 import MdiSettings from '~icons/mdi/settings';
+import MdiMapMarkerAlert from '~icons/mdi/map-marker-alert';
 
 // ── Actions ──────────────────────────────────────────────────────────────────
 import MdiExitRun from '~icons/mdi/exit-run';
@@ -93,6 +94,7 @@ export const iconMap = {
 	info: MdiInformationBox,
 	settings: MdiSettings,
 	error: MdiErrorOutline,
+	location: MdiMapMarkerAlert,
 
 	// Actions
 	logout: MdiExitRun,

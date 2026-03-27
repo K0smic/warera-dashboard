@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	import { getIcon } from '$lib/config/icons';
-	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/icon/icon.svelte';
 
 	/** @typedef {import('svelte').Component} SvelteComponent */
 

@@ -5,7 +5,7 @@
 	import * as Card from '$lib/components/atoms/card';
 	import * as InputGroup from '$lib/components/atoms/input-group/index.js';
 	import Button from '$lib/components/atoms/button/button.svelte';
-	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/icon/icon.svelte';
 
 	interface Props {
 		marketPrice?: number;

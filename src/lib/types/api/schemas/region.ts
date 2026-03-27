@@ -139,8 +139,6 @@ export interface RegionData {
 	taxPercent: number;
 }
 
-export interface RecommendedRegionIdsByItemCodeResponse {
-	data: RegionData[];
-}
+export type RecommendedRegionIdsByItemCodeResponse = RegionData[];
 
 export type AllRegionsResponse = { [key: string]: RegionResponse };

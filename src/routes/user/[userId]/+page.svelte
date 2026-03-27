@@ -9,7 +9,7 @@
 	import { Badge } from '$lib/components/atoms/badge/index';
 	import { Separator } from '$lib/components/atoms/separator/index';
 	import { Progress } from '$lib/components/atoms/progress';
-	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/icon/icon.svelte';
 
 	import type { GameConfigSkills, GameConfigSkillTable } from '$lib/types/api/schemas';
 	import type { RankingTier } from '$lib/types/api/schemas';

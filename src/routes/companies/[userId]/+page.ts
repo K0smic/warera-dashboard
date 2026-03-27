@@ -5,9 +5,11 @@ import { getCompaniesId } from '$lib/services';
 import { queryCache } from '$lib/stores/cache.svelte';
 import { userState } from '$lib/stores/user.svelte';
 import { companiesState } from '$lib/stores/companies.svelte';
+import { ITEM_CODES } from '$lib/config/items';
 
 import type { PageLoad } from './$types';
-import type { CompanyResponse } from '$lib/types/api/schemas';
+import type { CompanyResponse, ProductionBonusResponse } from '$lib/types/api/schemas';
+import type { bestBonusRegions, CompanyWithBonus } from '$lib/types/components/companies';
 
 // Cache TTL — 60 seconds is a reasonable default for company list pages.
 // Lower this if you add a polling interval in the component.
@@ -15,6 +17,11 @@ const CACHE_TTL_MS = 60000;
 
 export const ssr = false;
 export const prerender = false;
+
+interface Result {
+	companies: CompanyWithBonus[];
+	bestRegions: bestBonusRegions;
+}
 
 export const load: PageLoad = async ({ fetch, params, depends }) => {
 	// Register the dependency key so that invalidate(`companies:${userId}`)
@@ -25,7 +32,7 @@ export const load: PageLoad = async ({ fetch, params, depends }) => {
 	// ── SWR: return cached data immediately if still fresh ──────────────────
 	if (!queryCache.isStale(cacheKey)) {
 		const cached = queryCache.get(cacheKey);
-		if (cached) return { companies: cached as CompanyResponse[] };
+		if (cached) return cached as Result;
 	}
 
 	// ── Fetch ────────────────────────────────────────────────────────────────
@@ -41,17 +48,50 @@ export const load: PageLoad = async ({ fetch, params, depends }) => {
 			controller.signal
 		);
 
-		const companies = await batchFetch(
-			ids.map((companyId) => ({
-				path: 'company.getById' as const,
-				input: { companyId }
-			})),
+		const n = ids.length;
+		const allResults = await batchFetch(
+			[
+				...ids.map((companyId) => ({
+					path: 'company.getById' as const,
+					input: { companyId }
+				})),
+				...ids.map((companyId) => ({
+					path: 'company.getProductionBonus' as const,
+					input: { companyId }
+				}))
+			],
 			fetch,
 			controller.signal
 		);
 
+		// productionBonus has no companyId property, merging it will solve this issue
+		const companies: CompanyWithBonus[] = (allResults.slice(0, n) as CompanyResponse[]).map(
+			(company, i) => ({
+				...company,
+				productionBonus: allResults[n + i] as ProductionBonusResponse
+			})
+		);
+
+		const bestRegions = Object.fromEntries(
+			(
+				await batchFetch(
+					ITEM_CODES.map((itemCode) => ({
+						path: 'company.getRecommendedRegionIdsByItemCode' as const,
+						input: { itemCode }
+					})),
+					fetch,
+					controller.signal
+				)
+			).map((result, i) => [ITEM_CODES[i], result])
+		) as bestBonusRegions;
+
+		const result = {
+			companies,
+			bestRegions
+		};
+
 		// ── Cache the result ─────────────────────────────────────────────────
-		queryCache.set(cacheKey, companies, CACHE_TTL_MS);
+		queryCache.set(cacheKey, result, CACHE_TTL_MS);
 
 		// ── Side-effect: sync own companies into the global store ────────────
 		// Only runs when the user is viewing their own company list, not when
@@ -60,11 +100,11 @@ export const load: PageLoad = async ({ fetch, params, depends }) => {
 			companiesState.loadCompanies(companies);
 		}
 
-		return { companies };
+		return { ...result };
 	} catch (e) {
 		// Navigation cancelled — SvelteKit will discard this load anyway.
 		if (e instanceof DOMException && e.name === 'AbortError') {
-			return { companies: [] as CompanyResponse[] };
+			return queryCache.get<Result>(cacheKey) ?? error(503, 'Request cancelled');
 		}
 
 		// Typed API error — map to SvelteKit error page.

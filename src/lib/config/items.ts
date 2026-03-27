@@ -1,0 +1,20 @@
+export const ITEM_CODES = [
+	'limestone',
+	'grain',
+	'livestock',
+	'fish',
+	'iron',
+	'coca',
+	'lead',
+	'petroleum',
+	'concrete',
+	'steel',
+	'bread',
+	'steak',
+	'cookedFish',
+	'lightAmmo',
+	'ammo',
+	'cocain',
+	'oil',
+	'heavyAmmo'
+];

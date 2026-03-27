@@ -4,6 +4,7 @@
 export interface NavSubItem {
 	id: string;
 	title: string;
+	itemCode?: string;
 	url: string;
 }
 
@@ -23,6 +24,7 @@ export interface NavItem {
 export interface NavSubItemDef {
 	id: string;
 	title: string;
+	itemCode?: string;
 	buildUrl: (userId?: string, companyId?: string) => string;
 }
 

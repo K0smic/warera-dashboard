@@ -5,7 +5,7 @@
 	import { camelCaseToNormalText } from '$lib/utils';
 	import Separator from '$lib/components/atoms/separator/separator.svelte';
 
-	import Icon from '$lib/components/atoms/Icon/icon.svelte';
+	import Icon from '$lib/components/atoms/icon/icon.svelte';
 
 	interface Props {
 		production: number;
