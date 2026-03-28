@@ -3,7 +3,8 @@
 
 	import { WORKER_INFO_CTX, type WorkerInfoContext } from '$lib/types';
 	import { configsState } from '$lib/stores/configs.svelte';
-	import { countriesState, regionsState } from '$lib/stores/countries.svelte';
+	import { countriesState } from '$lib/stores/countries.svelte';
+	import { regionsState } from '$lib/stores/regions.svelte';
 
 	import {
 		CompanyHeader,

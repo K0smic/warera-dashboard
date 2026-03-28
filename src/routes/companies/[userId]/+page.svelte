@@ -2,6 +2,9 @@
 	import CompaniesCards from '$lib/components/molecules/companies/companies-cards.svelte';
 	import { usePolling } from '$lib/services';
 
+	import { regionsState } from '$lib/stores/regions.svelte';
+	import { error } from '@sveltejs/kit';
+
 	import type { PageProps } from './$types';
 
 	// ---------------------------------------------------------------------------
@@ -21,8 +24,13 @@
 	// unmounting the component, so the UI never flashes.
 	// ---------------------------------------------------------------------------
 	$effect(() => {
-		usePolling(`companies:${data.companies[0].user}`, 60000);
+		const userId = data.companies[0]?.user;
+		if (userId) usePolling(`companies:${userId}`, 60_000);
 	});
+
+	const bestRegions = $derived(
+		regionsState.bonuses ? regionsState.bonuses : error(404, 'regionsState not found in companies')
+	);
 </script>
 
 <!-- ── List ──────────────────────────────────────────────────────────────── -->
@@ -42,6 +50,6 @@
 		       @5xl/main:grid-cols-3
 		       dark:*:data-[slot=card]:bg-card"
 	>
-		<CompaniesCards companies={data.companies} bestRegions={data.bestRegions} />
+		<CompaniesCards companies={data.companies} {bestRegions} />
 	</div>
 {/if}

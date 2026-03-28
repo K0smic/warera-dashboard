@@ -3,7 +3,8 @@ import { error } from '@sveltejs/kit';
 import type { LayoutLoad } from './$types';
 
 import { configsState } from '$lib/stores/configs.svelte';
-import { countriesState, regionsState } from '$lib/stores/countries.svelte';
+import { countriesState } from '$lib/stores/countries.svelte';
+import { regionsState } from '$lib/stores/regions.svelte';
 import { queryCache } from '$lib/stores/cache.svelte';
 import { ApiError } from '$lib/services';
 
@@ -18,6 +19,7 @@ const LAYOUT_CACHE_TTL_MS = 5 * 60000;
 const CACHE_KEY_CONFIGS = 'layout:configs';
 const CACHE_KEY_COUNTRIES = 'layout:countries';
 const CACHE_KEY_REGIONS = 'layout:regions';
+const CACHE_KEY_BONUSES = 'layout:bonuses';
 
 export const prerender = true;
 export const ssr = false;
@@ -32,6 +34,7 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
 	depends(CACHE_KEY_CONFIGS);
 	depends(CACHE_KEY_COUNTRIES);
 	depends(CACHE_KEY_REGIONS);
+	depends(CACHE_KEY_BONUSES);
 
 	const promises: Promise<void>[] = [];
 
@@ -58,6 +61,14 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
 		promises.push(
 			regionsState.loadRegions(fetch).then(() => {
 				queryCache.set(CACHE_KEY_REGIONS, true, LAYOUT_CACHE_TTL_MS);
+			})
+		);
+	}
+
+	if (!regionsState.bonuses || queryCache.isStale(CACHE_KEY_BONUSES)) {
+		promises.push(
+			regionsState.loadBonuses(fetch).then(() => {
+				queryCache.set(CACHE_KEY_BONUSES, true, LAYOUT_CACHE_TTL_MS);
 			})
 		);
 	}

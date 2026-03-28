@@ -15,7 +15,7 @@
 
 	let { children } = $props();
 
-	usePolling(['layout:configs', 'layout:countries', 'layout:regions'], 5 * 60000);
+	usePolling(['layout:configs', 'layout:countries', 'layout:regions', 'layout:bonuses'], 5 * 60000);
 </script>
 
 <svelte:head>
