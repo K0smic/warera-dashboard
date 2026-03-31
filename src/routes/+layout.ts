@@ -63,7 +63,7 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
 			.then(() => {
 				queryCache.set(CACHE_KEY_REGIONS, true, LAYOUT_CACHE_TTL_MS);
 			})
-			.catch((e) => regionsState.setError(e));
+			.catch((e) => regionsState.setRegionsError(e));
 	}
 
 	if (!regionsState.bonuses || queryCache.isStale(CACHE_KEY_BONUSES)) {
@@ -72,7 +72,7 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
 			.then(() => {
 				queryCache.set(CACHE_KEY_BONUSES, true, LAYOUT_CACHE_TTL_MS);
 			})
-			.catch((e) => regionsState.setError(e));
+			.catch((e) => regionsState.setBonusesError(e));
 	}
 
 	return {};
