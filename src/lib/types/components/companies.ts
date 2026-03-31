@@ -7,6 +7,6 @@ import type {
 
 export type CompanyWithBonus = CompanyResponse & { productionBonus: ProductionBonusResponse };
 
-export type bestBonusRegions = {
+export type BestBonusRegions = {
 	[K in keyof GameConfigProdItemsMap]: RegionData[];
 };

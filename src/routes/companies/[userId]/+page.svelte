@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CompaniesCards from '$lib/components/molecules/companies/companies-cards.svelte';
+	import CompaniesSummary from '$lib/components/molecules/companies/companies-summary.svelte';
 	import { usePolling } from '$lib/services';
 
 	import { regionsState } from '$lib/stores/regions.svelte';
@@ -50,6 +51,7 @@
 		       @5xl/main:grid-cols-3
 		       dark:*:data-[slot=card]:bg-card"
 	>
+		<!-- <CompaniesSummary /> -->
 		<CompaniesCards companies={data.companies} {bestRegions} />
 	</div>
 {/if}

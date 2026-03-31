@@ -36,51 +36,44 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
 	depends(CACHE_KEY_REGIONS);
 	depends(CACHE_KEY_BONUSES);
 
-	const promises: Promise<void>[] = [];
-
 	// Each resource is loaded only when its store is empty OR its cache entry
 	// has gone stale. The store-level guard (`!configsState.configs`) handles
 	// the in-memory case; the cache TTL handles the time-based staleness case.
 	if (!configsState.configs || queryCache.isStale(CACHE_KEY_CONFIGS)) {
-		promises.push(
-			configsState.loadConfigs(fetch).then(() => {
+		configsState
+			.loadConfigs(fetch)
+			.then(() => {
 				queryCache.set(CACHE_KEY_CONFIGS, true, LAYOUT_CACHE_TTL_MS);
 			})
-		);
+			.catch((e) => configsState.setError(e)); // store-level error
 	}
 
 	if (!countriesState.countries || queryCache.isStale(CACHE_KEY_COUNTRIES)) {
-		promises.push(
-			countriesState.loadCountries(fetch).then(() => {
+		countriesState
+			.loadCountries(fetch)
+			.then(() => {
 				queryCache.set(CACHE_KEY_COUNTRIES, true, LAYOUT_CACHE_TTL_MS);
 			})
-		);
+			.catch((e) => countriesState.setError(e));
 	}
 
 	if (!regionsState.regions || queryCache.isStale(CACHE_KEY_REGIONS)) {
-		promises.push(
-			regionsState.loadRegions(fetch).then(() => {
+		regionsState
+			.loadRegions(fetch)
+			.then(() => {
 				queryCache.set(CACHE_KEY_REGIONS, true, LAYOUT_CACHE_TTL_MS);
 			})
-		);
+			.catch((e) => regionsState.setError(e));
 	}
 
 	if (!regionsState.bonuses || queryCache.isStale(CACHE_KEY_BONUSES)) {
-		promises.push(
-			regionsState.loadBonuses(fetch).then(() => {
+		regionsState
+			.loadBonuses(fetch)
+			.then(() => {
 				queryCache.set(CACHE_KEY_BONUSES, true, LAYOUT_CACHE_TTL_MS);
 			})
-		);
+			.catch((e) => regionsState.setError(e));
 	}
 
-	try {
-		await Promise.all(promises);
-	} catch (e) {
-		if (e instanceof ApiError) {
-			error(e.status === 404 ? 404 : 500, e.message);
-		}
-		throw e;
-	}
-
-	return;
+	return {};
 };

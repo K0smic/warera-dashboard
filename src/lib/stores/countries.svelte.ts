@@ -1,66 +1,81 @@
 import { getCountries } from '$lib/services';
 import type { AllCountriesResponse, CountryResponse } from '$lib/types/api/schemas';
+import { readStorage, writeStorage, clearStorage } from './helpers';
 
-const COUNTRIES_KEY = 'countries';
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+const COUNTRIES_KEY = 'countries' as const;
 
-function getCountriesFromStorage() {
-	if (typeof localStorage === 'undefined') return null;
-
-	const stored = localStorage.getItem(COUNTRIES_KEY);
-	if (!stored) return null;
-
-	try {
-		return JSON.parse(stored);
-	} catch {
-		localStorage.removeItem(COUNTRIES_KEY);
-		return null;
-	}
-}
-
-async function loadCountries(fetchFn: typeof fetch = fetch, signal?: AbortSignal) {
-	state.loading = true;
-	state.error = null;
-
-	try {
-		const fetchedCountries = await getCountries({}, fetchFn);
-		state.countries = fetchedCountries;
-		localStorage.setItem(COUNTRIES_KEY, JSON.stringify(fetchedCountries));
-	} catch (e) {
-		state.error = e instanceof Error ? e.message : 'Unknown error';
-		state.countries = null;
-		localStorage.removeItem(COUNTRIES_KEY);
-	} finally {
-		state.loading = false;
-	}
-}
-
-function getCountryById(id: string | undefined) {
-	if (!id) return undefined;
-	return state.countries?.find((country: CountryResponse) => country._id === id);
-}
-function resetCountries() {
-	state.error = null;
-	state.countries = null;
-	localStorage.removeItem(COUNTRIES_KEY);
-}
-
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
 const state = $state({
-	countries: getCountriesFromStorage() as AllCountriesResponse | null,
-	loading: false,
-	error: null as string | null
+	countries: readStorage<AllCountriesResponse>(COUNTRIES_KEY),
+	countriesLoading: false,
+	countriesError: null as string | null
 });
 
+// ---------------------------------------------------------------------------
+// Actions
+// ---------------------------------------------------------------------------
+async function loadCountries(fetchFn: typeof fetch = fetch, signal?: AbortSignal): Promise<void> {
+	state.countriesLoading = true;
+	state.countriesError = null;
+
+	try {
+		const countries = await getCountries({}, fetchFn, signal);
+		state.countries = countries;
+		writeStorage(COUNTRIES_KEY, countries);
+	} catch (e) {
+		state.countriesError = e instanceof Error ? e.message : 'Unknown error';
+		state.countries = null;
+		clearStorage(COUNTRIES_KEY);
+	} finally {
+		state.countriesLoading = false;
+	}
+}
+
+function getCountryById(id: string | undefined): CountryResponse | undefined {
+	if (!id) return undefined;
+	return state.countries?.find((country) => country._id === id);
+}
+
+function setError(e: unknown): void {
+	state.countriesError = e instanceof Error ? e.message : 'Unknown error';
+	state.countriesLoading = false;
+}
+
+function resetCountries(): void {
+	state.countries = null;
+	state.countriesError = null;
+	clearStorage(COUNTRIES_KEY);
+}
+
+// ---------------------------------------------------------------------------
+// Export
+// ---------------------------------------------------------------------------
 export const countriesState = {
 	get countries() {
 		return state.countries;
 	},
+	get countriesLoading() {
+		return state.countriesLoading;
+	},
+	get countriesError() {
+		return state.countriesError;
+	},
+
+	// convenience
 	get loading() {
-		return state.loading;
+		return state.countriesLoading;
 	},
 	get error() {
-		return state.error;
+		return state.countriesError;
 	},
+
 	loadCountries,
 	getCountryById,
+	setError,
 	resetCountries
-};
+} as const;

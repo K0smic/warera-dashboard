@@ -8,101 +8,130 @@ import type {
 	GameConfigProductItem
 } from '$lib/types/api/schemas';
 import { error } from '@sveltejs/kit';
+import { readStorage, writeStorage, clearStorage } from './helpers';
 
-const STORAGE_KEY = 'gameConfigs';
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+const CONFIGS_KEY = 'gameConfigs' as const;
 
-function getFromStorage() {
-	if (typeof localStorage === 'undefined') return null;
-	const stored = localStorage.getItem(STORAGE_KEY);
-	if (!stored) return null;
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+const state = $state({
+	configs: readStorage<GameConfigResponse>(CONFIGS_KEY),
+	configsLoading: false,
+	configsError: null as string | null
+});
+
+// ---------------------------------------------------------------------------
+// Actions
+// ---------------------------------------------------------------------------
+async function loadConfigs(fetchFn: typeof fetch = fetch, signal?: AbortSignal): Promise<void> {
+	state.configsLoading = true;
+	state.configsError = null;
+
 	try {
-		return JSON.parse(stored);
-	} catch {
-		localStorage.removeItem(STORAGE_KEY);
-		return null;
+		const configs = await getGameConfig({}, fetchFn, signal);
+		state.configs = configs;
+		writeStorage(CONFIGS_KEY, configs);
+	} catch (e) {
+		state.configsError = e instanceof Error ? e.message : 'Unknown error';
+		state.configs = null;
+		clearStorage(CONFIGS_KEY);
+	} finally {
+		state.configsLoading = false;
 	}
 }
 
-// $state at module level → true singleton, one instance for the whole app
-const state = $state({
-	configs: getFromStorage() as GameConfigResponse | null,
-	loading: false,
-	error: null as string | null
-});
+function setError(e: unknown): void {
+	state.configsError = e instanceof Error ? e.message : 'Unknown error';
+	state.configsLoading = false;
+}
 
+function reset(): void {
+	state.configs = null;
+	state.configsError = null;
+	clearStorage(CONFIGS_KEY);
+}
+
+// ---------------------------------------------------------------------------
+// Selectors (domain logic)
+// ---------------------------------------------------------------------------
+function upgradesConfig(key: keyof GameConfigUpgradesConfig) {
+	return state.configs?.upgradesConfig[key];
+}
+
+function items<K extends keyof GameConfigItemsMap>(key: K) {
+	return state.configs?.items[key];
+}
+
+function productibleItem<K extends keyof GameConfigProdItemsMap>(key: K) {
+	if (!state.configs) throw error(404, 'state.configs is not found');
+
+	const item = state.configs.items[key];
+
+	if (item.type === 'raw' || item.type === 'product') {
+		return item;
+	}
+
+	throw error(400, 'Item is not productible');
+}
+
+function rawItem(key: GameConfigRawItem['code']) {
+	if (!state.configs) throw error(404, 'state.configs is not found');
+
+	const item = state.configs.items[key];
+
+	if (item.type === 'raw') {
+		return item;
+	}
+
+	throw error(400, 'Item is not raw');
+}
+
+function prodItem(key: GameConfigProductItem['code']) {
+	if (!state.configs) throw error(404, 'state.configs is not found');
+
+	const item = state.configs.items[key];
+
+	if (item.type === 'product') {
+		return item;
+	}
+
+	throw error(400, 'Item is not a product');
+}
+
+// ---------------------------------------------------------------------------
+// Export
+// ---------------------------------------------------------------------------
 export const configsState = {
 	get configs() {
 		return state.configs;
 	},
+	get configsLoading() {
+		return state.configsLoading;
+	},
+	get configsError() {
+		return state.configsError;
+	},
+
+	// convenience
 	get loading() {
-		return state.loading;
+		return state.configsLoading;
 	},
 	get error() {
-		return state.error;
+		return state.configsError;
 	},
 
-	upgradesConfig(key: keyof GameConfigUpgradesConfig) {
-		return state.configs?.upgradesConfig[key];
-	},
+	loadConfigs,
+	setError,
+	reset,
 
-	items<K extends keyof GameConfigItemsMap>(key: K) {
-		return state.configs?.items[key];
-	},
-
-	productibleItem<K extends keyof GameConfigProdItemsMap>(key: K) {
-		if (!state.configs) throw error(404, 'state.configs is not found');
-
-		const item = state.configs.items[key];
-
-		if (item.type === 'raw' || item.type === 'product') {
-			return item;
-		}
-
-		throw error(400, 'Item is not productible');
-	},
-
-	rawItem(key: GameConfigRawItem['code']) {
-		if (!state.configs) throw error(404, 'state.configs is not found');
-
-		const item = state.configs.items[key];
-
-		if (item.type === 'raw') {
-			return item;
-		}
-
-		throw error(400, 'Item is not raw');
-	},
-
-	prodItem(key: GameConfigProductItem['code']) {
-		if (!state.configs) throw error(404, 'state.configs is not found');
-
-		const item = state.configs.items[key];
-
-		if (item.type === 'product') {
-			return item;
-		}
-
-		throw error(400, 'Item is not a product');
-	},
-
-	async loadConfigs(fetchFn: typeof fetch = fetch, signal?: AbortSignal) {
-		state.loading = true;
-		state.error = null;
-		try {
-			state.configs = await getGameConfig({}, fetchFn);
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(state.configs));
-		} catch (e) {
-			state.error = e instanceof Error ? e.message : 'Unknown error';
-			state.configs = null;
-			localStorage.removeItem(STORAGE_KEY);
-		} finally {
-			state.loading = false;
-		}
-	},
-
-	reset() {
-		state.configs = null;
-		state.error = null;
-		localStorage.removeItem(STORAGE_KEY);
-	}
-};
+	// domain selectors
+	upgradesConfig,
+	items,
+	productibleItem,
+	rawItem,
+	prodItem
+} as const;

@@ -1,94 +1,116 @@
 import { getCompaniesId, batchFetch } from '$lib/services';
 import type { CompanyResponse } from '$lib/types/api/schemas';
+import { readStorage, writeStorage, clearStorage } from './helpers';
 
-const STORAGE_KEY = 'companies';
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+const COMPANIES_KEY = 'companies' as const;
 
-function getCompaniesFromStorage() {
-	if (typeof localStorage === 'undefined') return null;
-
-	const stored = localStorage.getItem(STORAGE_KEY);
-	if (!stored) return null;
-
-	try {
-		return JSON.parse(stored);
-	} catch {
-		localStorage.removeItem(STORAGE_KEY);
-		return null;
-	}
-}
-
-let state = $state({
-	companies: getCompaniesFromStorage() as CompanyResponse[] | null,
-	loading: false,
-	error: null as string | null
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+const state = $state({
+	companies: readStorage<CompanyResponse[]>(COMPANIES_KEY),
+	companiesLoading: false,
+	companiesError: null as string | null
 });
 
-async function fetchCompanies(userId: string) {
+// ---------------------------------------------------------------------------
+// Actions
+// ---------------------------------------------------------------------------
+async function fetchCompanies(
+	userId: string,
+	fetchFn: typeof fetch = fetch,
+	signal?: AbortSignal
+): Promise<void> {
 	if (!userId.trim()) {
-		state.error = 'userId required';
+		state.companiesError = 'userId required';
 		return;
 	}
 
-	state.loading = true;
-	state.error = null;
+	state.companiesLoading = true;
+	state.companiesError = null;
 
 	try {
-		const fetchedCompanies = await getCompaniesId({ userId });
+		const fetchedCompanies = await getCompaniesId({ userId }, fetchFn, signal);
+
 		const companies = await batchFetch(
 			fetchedCompanies.items.map((companyId: string) => ({
-				path: 'company.getById',
+				path: 'company.getById' as const,
 				input: { companyId }
-			}))
+			})),
+			fetchFn,
+			signal
 		);
+
 		state.companies = companies;
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(companies));
+		writeStorage(COMPANIES_KEY, companies);
 	} catch (e) {
-		state.error = e instanceof Error ? e.message : 'Unknown error';
+		state.companiesError = e instanceof Error ? e.message : 'Unknown error';
 		state.companies = null;
-		localStorage.removeItem(STORAGE_KEY);
+		clearStorage(COMPANIES_KEY);
 	} finally {
-		state.loading = false;
+		state.companiesLoading = false;
 	}
 }
 
-async function loadCompanies(companies: CompanyResponse[]) {
+async function loadCompanies(companies: CompanyResponse[]): Promise<void> {
 	if (!companies) {
-		state.error = 'Companies array required';
+		state.companiesError = 'Companies array required';
 		return;
 	}
 
-	state.loading = true;
-	state.error = null;
+	state.companiesLoading = true;
+	state.companiesError = null;
 
 	try {
 		state.companies = companies;
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(companies));
+		writeStorage(COMPANIES_KEY, companies);
 	} catch (e) {
-		state.error = e instanceof Error ? e.message : 'Unknown error';
+		state.companiesError = e instanceof Error ? e.message : 'Unknown error';
 		state.companies = null;
-		localStorage.removeItem(STORAGE_KEY);
+		clearStorage(COMPANIES_KEY);
 	} finally {
-		state.loading = false;
+		state.companiesLoading = false;
 	}
 }
 
-function reset() {
-	state.error = null;
-	state.companies = null;
-	localStorage.removeItem(STORAGE_KEY);
+function setCompaniesError(e: unknown): void {
+	state.companiesError = e instanceof Error ? e.message : 'Unknown error';
+	state.companiesLoading = false;
 }
 
+function reset(): void {
+	state.companies = null;
+	state.companiesError = null;
+	clearStorage(COMPANIES_KEY);
+}
+
+// ---------------------------------------------------------------------------
+// Export
+// ---------------------------------------------------------------------------
 export const companiesState = {
 	get companies() {
 		return state.companies;
 	},
+	get companiesLoading() {
+		return state.companiesLoading;
+	},
+	get companiesError() {
+		return state.companiesError;
+	},
+
+	// convenience
 	get loading() {
-		return state.loading;
+		return state.companiesLoading;
 	},
 	get error() {
-		return state.error;
+		return state.companiesError;
 	},
+
 	fetchCompanies,
 	loadCompanies,
+	setCompaniesError,
 	reset
-};
+} as const;

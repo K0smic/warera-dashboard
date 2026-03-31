@@ -45,14 +45,18 @@
 											<Sidebar.MenuSubButton class="px-0">
 												{#snippet child({ props })}
 													<a href={subItem.url} {...props}>
-														<div class="flex flex-nowrap content-center gap-0.5 align-middle">
-															{#if subItem.itemCode}
-																<ItemsImages
-																	item={subItem.itemCode}
-																	alt={subItem.itemCode}
-																	{...props}
-																/>
-															{/if}
+														<div
+															class="flex flex-nowrap content-center gap-0.5 align-middle text-nowrap"
+														>
+															<div class="aspect-square w-7">
+																{#if subItem.itemCode}
+																	<ItemsImages
+																		item={subItem.itemCode}
+																		alt={subItem.itemCode}
+																		{...props}
+																	/>
+																{/if}
+															</div>
 															<span class="my-auto h-full">
 																{subItem.title}
 															</span>
